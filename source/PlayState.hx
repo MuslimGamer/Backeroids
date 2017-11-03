@@ -3,6 +3,7 @@ package;
 import backeroids.view.PlayerShip;
 import flixel.FlxG;
 import helix.core.HelixState;
+using helix.core.HelixSpriteFluentApi;
 
 class PlayState extends HelixState
 {
