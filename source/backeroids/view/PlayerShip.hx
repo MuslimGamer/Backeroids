@@ -3,6 +3,7 @@ package backeroids.view;
 import helix.core.HelixSprite;
 import flixel.FlxG;
 import flixel.math.FlxPoint;
+import flixel.util.FlxSpriteUtil;
 
 class PlayerShip extends HelixSprite
 {
@@ -31,5 +32,7 @@ class PlayerShip extends HelixSprite
 			this.acceleration.set(0, -90);
 			this.acceleration.rotate(FlxPoint.weak(0, 0), this.angle);
 		}
+
+        FlxSpriteUtil.screenWrap(this);
     }
 }
