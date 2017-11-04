@@ -10,29 +10,29 @@ class PlayerShip extends HelixSprite
     public function new():Void
     {
         super("assets/images/ship.png");
+
+        super.addKeyBind(["LEFT", "A"], this.rotateLeft);
+        super.addKeyBind(["RIGHT", "D"], this.rotateRight);
+        super.addMovement(["UP", "W"], this.accelerateForward);
     }
-    
+
+    private function rotateLeft():Void
+    {
+        this.angle -= 2.5;
+    }
+    private function rotateRight():Void
+    {
+        this.angle += 2.5;
+    }
+    private function accelerateForward():Void
+    {
+        this.acceleration.set(0, -90); 
+        this.acceleration.rotate(FlxPoint.weak(0, 0), this.angle);
+    }
+
     override public function update(elapsedSeconds:Float):Void
     {
         super.update(elapsedSeconds);
-
-        // TODO: refactor into HelixSprite.onKeyPress method
-		if (FlxG.keys.pressed.LEFT || FlxG.keys.pressed.A)
-		{
-			this.angle -= 2.5;
-		}
-		else if (FlxG.keys.pressed.RIGHT || FlxG.keys.pressed.D)
-		{
-			this.angle += 2.5;
-		}
-
-		this.acceleration.set();
-		if (FlxG.keys.pressed.UP || FlxG.keys.pressed.W)
-		{
-			this.acceleration.set(0, -90);
-			this.acceleration.rotate(FlxPoint.weak(0, 0), this.angle);
-		}
-
         FlxSpriteUtil.screenWrap(this);
     }
 }
