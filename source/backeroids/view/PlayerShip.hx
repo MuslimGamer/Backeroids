@@ -4,6 +4,7 @@ import helix.core.HelixSprite;
 import flixel.FlxG;
 import flixel.math.FlxPoint;
 import flixel.util.FlxSpriteUtil;
+using helix.core.HelixSpriteFluentApi;
 
 class PlayerShip extends HelixSprite
 {
@@ -11,18 +12,18 @@ class PlayerShip extends HelixSprite
     {
         super("assets/images/ship.png");
 
-        super.addKeyBind(["LEFT", "A"], this.rotateLeft);
-        super.addKeyBind(["RIGHT", "D"], this.rotateRight);
-        super.addMovement(["UP", "W"], this.accelerateForward);
+        this.addKeyBind(["LEFT", "A"], this.rotateLeft);
+        this.addKeyBind(["RIGHT", "D"], this.rotateRight);
+        this.addKeyBind(["UP", "W"], this.accelerateForward);
     }
 
     private function rotateLeft():Void
     {
-        this.angle -= 2.5;
+        this.angularVelocity -= 200;
     }
     private function rotateRight():Void
     {
-        this.angle += 2.5;
+        this.angularVelocity += 200;
     }
     private function accelerateForward():Void
     {
