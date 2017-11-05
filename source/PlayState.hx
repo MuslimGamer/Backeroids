@@ -5,6 +5,7 @@ import helix.core.HelixState;
 import backeroids.view.Asteroid;
 import flixel.group.FlxGroup;
 import flixel.FlxObject;
+import flixel.util.FlxTimer;
 using helix.core.HelixSpriteFluentApi;
 
 class PlayState extends HelixState
@@ -13,6 +14,7 @@ class PlayState extends HelixState
 
 	private static var asteroids:FlxTypedGroup<Asteroid>;
 	private static var initialAsteroids = 3;
+	private static var asteroidsPerSecond = 0.2;
 
 	override public function create():Void
 	{
@@ -30,6 +32,8 @@ class PlayState extends HelixState
 			asteroid.collideResolve(asteroids);
 			asteroid.collideResolve(this, this.asteroidHitsShip);
 		}
+
+		this.asteroidTimer(new FlxTimer());
 	}
 	
 	private function addAsteroid():Asteroid
@@ -39,9 +43,15 @@ class PlayState extends HelixState
 		return asteroid;
 	}
 
+	private function asteroidTimer(timer:FlxTimer):Void
+	{
+		timer.start(1/asteroidsPerSecond, this.asteroidTimer);
+		this.addAsteroid();
+	}
+
 	private function asteroidHitsShip(asteroid:FlxObject, ship:FlxObject):Void
 	{
-		ship.destroy();
+		// ship.destroy();
 	}
 
 	override public function update(elapsed:Float):Void
