@@ -4,6 +4,7 @@ import backeroids.view.PlayerShip;
 import helix.core.HelixState;
 import backeroids.view.Asteroid;
 import flixel.group.FlxGroup;
+import flixel.FlxObject;
 using helix.core.HelixSpriteFluentApi;
 
 class PlayState extends HelixState
@@ -25,14 +26,22 @@ class PlayState extends HelixState
 
 		for (i in 0...initialAsteroids) 
 		{
-			this.addAsteroid();
+			var asteroid = this.addAsteroid();
+			asteroid.collideResolve(asteroids);
+			asteroid.collideResolve(this, this.asteroidHitsShip);
 		}
 	}
 	
-	private function addAsteroid():Void
+	private function addAsteroid():Asteroid
 	{
 		var asteroid = asteroids.recycle(Asteroid);
 		asteroid.respawn();
+		return asteroid;
+	}
+
+	private function asteroidHitsShip(asteroid:FlxObject, ship:FlxObject):Void
+	{
+		ship.destroy();
 	}
 
 	override public function update(elapsed:Float):Void
