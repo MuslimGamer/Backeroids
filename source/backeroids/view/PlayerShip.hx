@@ -4,7 +4,10 @@ import helix.core.HelixSprite;
 import flixel.FlxG;
 import flixel.math.FlxPoint;
 import flixel.util.FlxSpriteUtil;
+import flixel.input.FlxInput;
+import flixel.input.keyboard.FlxKey;
 using helix.core.HelixSpriteFluentApi;
+using Lambda;
 
 class PlayerShip extends HelixSprite
 {
@@ -12,9 +15,27 @@ class PlayerShip extends HelixSprite
     {
         super("assets/images/ship.png");
 
-        this.addKeyBind(["LEFT", "A"], this.rotateLeft);
-        this.addKeyBind(["RIGHT", "D"], this.rotateRight);
-        this.addKeyBind(["UP", "W"], this.accelerateForward);
+        this.onKeyDown(this.processControls);
+    }
+
+    private function resetAcceleration():Void
+    {
+        this.acceleration.set();
+        this.angularVelocity = 0;
+    }
+
+    private function processControls(keys:Array<FlxKey>):Void
+    {
+        this.resetAcceleration();
+        if (keys.has(FlxKey.LEFT) || keys.has(FlxKey.A)) { 
+            this.rotateLeft(); 
+        }
+        if (keys.has(FlxKey.RIGHT) || keys.has(FlxKey.D)) { 
+            this.rotateRight(); 
+        }
+        if (keys.has(FlxKey.UP) || keys.has(FlxKey.W)) { 
+            this.accelerateForward(); 
+        }
     }
 
     private function rotateLeft():Void
