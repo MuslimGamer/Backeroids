@@ -1,20 +1,23 @@
 package;
 
-import backeroids.view.PlayerShip;
-import helix.core.HelixState;
 import backeroids.view.Asteroid;
+import backeroids.view.PlayerShip;
 import flixel.group.FlxGroup;
 import flixel.FlxObject;
 import flixel.util.FlxTimer;
+import helix.core.HelixSprite;
 using helix.core.HelixSpriteFluentApi;
+import helix.core.HelixState;
 
 class PlayState extends HelixState
 {
 	private var playerShip:PlayerShip;
 
-	private static var asteroids:FlxTypedGroup<Asteroid>;
-	private static var initialAsteroids = 3;
-	private static var asteroidsPerSecond = 0.2;
+	private static inline var NUM_INITIAL_ASTEROIDS = 3;
+	private static inline var SECONDS_PER_ASTEROID = 5;
+
+	private var asteroids = new FlxTypedGroup<Asteroid>();
+	private var asteroidTimer = new FlxTimer();
 
 	override public function create():Void
 	{
@@ -23,17 +26,21 @@ class PlayState extends HelixState
 		this.playerShip = new PlayerShip();		
 		this.playerShip.move((this.width - playerShip.width) / 2, (this.height - playerShip.height) / 2);
 
-		asteroids = new FlxTypedGroup<Asteroid>();
-		this.add(asteroids);
-
-		for (i in 0...initialAsteroids) 
+		this.playerShip.collideResolve(this.asteroids, function(player:PlayerShip, asteroid:Asteroid)
 		{
-			var asteroid = this.addAsteroid();
-			asteroid.collideResolve(asteroids);
-			asteroid.collideResolve(this, this.asteroidHitsShip);
-		}
+			// Player hits asteroid. Yay!
+			trace("CRUNCH!");
+			asteroid.damage();
+		});
 
-		this.asteroidTimer(new FlxTimer());
+		this.asteroidTimer.start(SECONDS_PER_ASTEROID, function(timer) {
+			var asteroid = this.addAsteroid();
+
+			asteroid.collideResolve(this.asteroids, function(a1:Asteroid, a2:Asteroid)
+			{			
+				trace("BAM!");
+			});
+		}, 0);
 	}
 	
 	private function addAsteroid():Asteroid
@@ -41,17 +48,6 @@ class PlayState extends HelixState
 		var asteroid = asteroids.recycle(Asteroid);
 		asteroid.respawn();
 		return asteroid;
-	}
-
-	private function asteroidTimer(timer:FlxTimer):Void
-	{
-		timer.start(1/asteroidsPerSecond, this.asteroidTimer);
-		this.addAsteroid();
-	}
-
-	private function asteroidHitsShip(asteroid:FlxObject, ship:FlxObject):Void
-	{
-		// ship.destroy();
 	}
 
 	override public function update(elapsed:Float):Void
