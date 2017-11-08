@@ -15,6 +15,7 @@
     },
 
     "gun": {
-        "timeBetweenShots": 1
+        "timeBetweenShots": 1,
+        "bulletVelocity": 150
     }
 }
