@@ -1,4 +1,4 @@
-package backeroids;
+package backeroids.model;
 
 import helix.GameTime;
 import backeroids.view.PlayerShip;
@@ -8,7 +8,7 @@ import flixel.util.FlxTimer;
 class Gun
 {
     private var playerShip:PlayerShip;
-    private var timeSinceFire:Float = 0;
+    private var secondsSinceFire:Float = 0;
 
     public function new(ship:PlayerShip):Void
     {
@@ -17,11 +17,10 @@ class Gun
 
     public function fire(bullet:Bullet):Void
     {
-        if (GameTime.totalGameTimeSeconds - this.timeSinceFire > 1) 
+        if (GameTime.totalGameTimeSeconds - this.secondsSinceFire > Config.get("gun".timeBetweenShots)) 
         {
-            trace("PEW!");
             bullet.shoot(this.playerShip);
-            this.timeSinceFire = GameTime.totalGameTimeSeconds;
+            this.secondsSinceFire = GameTime.totalGameTimeSeconds;
         }
     }
 }

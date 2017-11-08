@@ -6,7 +6,7 @@ import flixel.util.FlxSpriteUtil;
 import flixel.input.FlxInput;
 import flixel.group.FlxGroup;
 import flixel.input.keyboard.FlxKey;
-import backeroids.Gun;
+import backeroids.model.Gun;
 import helix.core.HelixSprite;
 import helix.data.Config;
 using helix.core.HelixSpriteFluentApi;

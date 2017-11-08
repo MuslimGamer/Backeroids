@@ -12,5 +12,9 @@
         "acceleration": 90,
         "maxVelocity": 200,
         "decelerationMultiplier": 2 // decelerate n-times faster
+    },
+
+    "gun": {
+        "timeBetweenShots": 1
     }
 }
