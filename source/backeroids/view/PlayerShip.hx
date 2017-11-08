@@ -1,25 +1,32 @@
 package backeroids.view;
  
-import helix.core.HelixSprite;
 import flixel.FlxG;
 import flixel.math.FlxPoint;
 import flixel.util.FlxSpriteUtil;
 import flixel.input.FlxInput;
 import flixel.input.keyboard.FlxKey;
+import helix.core.HelixSprite;
 using helix.core.HelixSpriteFluentApi;
+import helix.data.Config;
 using Lambda;
 
 class PlayerShip extends HelixSprite
 {
     // TODO: should be in config.json
-    private static inline var ROTATION_VELOCITY:Int = 200;
-    private static inline var ACCELERATION:Int = 90;
-    private static inline var DECELERATION_MULTIPLIER:Float = 2;
+    private static var ROTATION_VELOCITY:Int = Config.get("ship").rotationVelocity;
+    private static var ACCELERATION:Int = Config.get("ship").acceleration;
+    private static var DECELERATION_MULTIPLIER:Float = Config.get("ship").decelerationMultiplier;
 
     public function new():Void
     {
         super("assets/images/ship.png");
         this.onKeyDown(this.processControls);
+
+        // Max velocity should really consider total velocity as a circle with radius r
+        // But, HaxeFlixel doesn't work like that, so we use an approximation. This doesn't
+        // work quite as well, since your max is (200, 200) if you're going diagonally.
+        var maxVelocity:Int = Config.get("ship").maxVelocity;
+        this.maxVelocity.set(maxVelocity, maxVelocity);
     }
 
     override public function update(elapsedSeconds:Float):Void
@@ -30,7 +37,7 @@ class PlayerShip extends HelixSprite
         {
             this.angularVelocity = 0;
         }
-        
+
         FlxSpriteUtil.screenWrap(this);
     }
 
@@ -65,7 +72,7 @@ class PlayerShip extends HelixSprite
         }
         else if (keys.has(FlxKey.DOWN) || keys.has(FlxKey.S))
         {
-            this.accelerateForward(-ACCELERATION * DECELERATION_MULTIPLIER); 
+            this.accelerateForward(Std.int(-ACCELERATION * DECELERATION_MULTIPLIER));
         }
     }
 

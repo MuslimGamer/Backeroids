@@ -7,6 +7,10 @@
     },
 
     "ship": {
-        "secondsToRevive": 3
+        "secondsToRevive": 3,
+        "rotationVelocity": 200, // pixels per second
+        "acceleration": 90,
+        "maxVelocity": 200,
+        "decelerationMultiplier": 2 // decelerate n-times faster
     }
 }
