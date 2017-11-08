@@ -1,6 +1,7 @@
 package backeroids.model;
 
 import helix.GameTime;
+import helix.data.Config;
 import backeroids.view.PlayerShip;
 import backeroids.view.Bullet;
 import flixel.util.FlxTimer;
