@@ -6,10 +6,11 @@ import backeroids.view.Bullet;
 import flixel.group.FlxGroup;
 import flixel.FlxObject;
 import flixel.util.FlxTimer;
+import flixel.FlxG;
 import helix.core.HelixSprite;
-using helix.core.HelixSpriteFluentApi;
 import helix.core.HelixState;
 import helix.data.Config;
+using helix.core.HelixSpriteFluentApi;
 
 class PlayState extends HelixState
 {
@@ -31,10 +32,7 @@ class PlayState extends HelixState
 		this.playerShip = new PlayerShip();
 		this.playerShip.setOnFireBulletCallback(function(bullet:Bullet):Void
 		{
-			bullet.collideResolve(this.asteroids, function(b:Bullet, asteroid:Asteroid) {
-				b.destroy();
-				asteroid.damage();
-			});
+			bullets.add(bullet);
 		});
 		resetShip();
 
@@ -64,6 +62,11 @@ class PlayState extends HelixState
 	override public function update(elapsed:Float):Void
 	{
 		super.update(elapsed);
+		
+		FlxG.collide(bullets, asteroids, function(b:Bullet, asteroid:Asteroid) {
+				b.kill();
+				asteroid.damage();
+		});
 	}
 	
 	private function addAsteroid():Asteroid
