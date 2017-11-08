@@ -8,14 +8,15 @@ import flixel.util.FlxTimer;
 import helix.core.HelixSprite;
 using helix.core.HelixSpriteFluentApi;
 import helix.core.HelixState;
+import helix.data.Config;
 
 class PlayState extends HelixState
 {
 	private var playerShip:PlayerShip;
 
-	private static inline var NUM_INITIAL_ASTEROIDS:Int = 3;
-	private static inline var SECONDS_PER_ASTEROID:Int = 5;
-	private static inline var SECONDS_TO_REVIVE:Int = 3;
+	private static var NUM_INITIAL_ASTEROIDS:Int = Config.get("asteroids").initialNumber;
+	private static var SECONDS_PER_ASTEROID:Int = Config.get("asteroids").secondsToSpawn;
+	private static var SECONDS_TO_REVIVE:Int = Config.get("ship").secondsToRevive;
 
 	private var asteroids = new FlxTypedGroup<Asteroid>();
 	private var asteroidTimer = new FlxTimer();
