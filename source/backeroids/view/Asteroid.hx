@@ -4,8 +4,8 @@ import flixel.util.FlxColor;
 import flixel.util.FlxSpriteUtil;
 import flixel.FlxG;
 import helix.core.HelixSprite;
-using helix.core.HelixSpriteFluentApi;
 import helix.data.Config;
+using helix.core.HelixSpriteFluentApi;
 
 class Asteroid extends HelixSprite
 {
@@ -75,34 +75,29 @@ class Asteroid extends HelixSprite
     private function processVelocityUp():Void
     {
         this.y = -this.height;
-        this.velocity.y = getHalfStartVelocity() + getVelocityRandomPercent();
+        this.velocity.y = startingVelocity / 2 + getVelocityRandomPercent();
     }
 
     private function processVelocityDown():Void
     {
         this.y = FlxG.height + this.height;
-        this.velocity.y = - getHalfStartVelocity() + getVelocityRandomPercent();
+        this.velocity.y = - startingVelocity / 2 + getVelocityRandomPercent();
     }
 
     private function processVelocityLeft():Void
     {
         this.x = -this.width;
-        this.velocity.x = getHalfStartVelocity() + getVelocityRandomPercent();
+        this.velocity.x = startingVelocity / 2 + getVelocityRandomPercent();
     }
 
     private function processVelocityRight():Void
     {
         this.x = FlxG.width + this.width;
-        this.velocity.x = - getHalfStartVelocity() - getVelocityRandomPercent();
+        this.velocity.x = - startingVelocity / 2 - getVelocityRandomPercent();
     }
 
     private static function getVelocityRandomPercent():Float
     {
         return FlxG.random.float() * startingVelocity;
-    }
-
-    private static function getHalfStartVelocity():Float
-    {
-        return startingVelocity / 2;
     }
 }

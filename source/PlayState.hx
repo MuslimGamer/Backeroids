@@ -2,6 +2,7 @@ package;
 
 import backeroids.view.Asteroid;
 import backeroids.view.PlayerShip;
+import backeroids.view.Bullet;
 import flixel.group.FlxGroup;
 import flixel.FlxObject;
 import flixel.util.FlxTimer;
@@ -21,11 +22,13 @@ class PlayState extends HelixState
 	private var asteroids = new FlxTypedGroup<Asteroid>();
 	private var asteroidTimer = new FlxTimer();
 
+	private var bullets = new FlxTypedGroup<Bullet>();
+
 	override public function create():Void
 	{
 		super.create();
 		
-		this.playerShip = new PlayerShip();
+		this.playerShip = new PlayerShip(this);
 		resetShip();
 
 		this.playerShip.collideResolve(this.asteroids, function(player:PlayerShip, asteroid:Asteroid)
@@ -41,12 +44,7 @@ class PlayState extends HelixState
 
 		this.asteroidTimer.start(SECONDS_PER_ASTEROID, function(timer)
 		{
-			var asteroid = this.addAsteroid();
-
-			asteroid.collideResolve(this.asteroids, function(a1:Asteroid, a2:Asteroid)
-			{			
-				trace("BAM!");
-			});
+			this.addAsteroid();
 		}, 0);
 
 		var asteroidsToCreate = NUM_INITIAL_ASTEROIDS;
@@ -54,16 +52,38 @@ class PlayState extends HelixState
 		{
 			this.addAsteroid();
 		}
+
+		var numBullets:Int = 16;
+		while (numBullets-- > 0)
+		{
+			bullets.add(this.addBullet());
+		}
 	}
 
 	override public function update(elapsed:Float):Void
 	{
 		super.update(elapsed);
 	}
+
+	public function addBullet():Bullet
+	{
+		var bullet = bullets.recycle(Bullet);
+		bullet.collideResolve(this.asteroids, function(b:Bullet, asteroid:Asteroid)
+		{
+			trace("POW!");
+			b.kill();
+			asteroid.damage();
+		});
+		return bullet;
+	}
 	
 	private function addAsteroid():Asteroid
 	{
 		var asteroid = asteroids.recycle(Asteroid);
+		asteroid.collideResolve(this.asteroids, function(a1:Asteroid, a2:Asteroid)
+		{			
+			trace("BAM!");
+		});
 		asteroid.respawn();
 		return asteroid;
 	}

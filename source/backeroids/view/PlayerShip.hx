@@ -4,10 +4,12 @@ import flixel.FlxG;
 import flixel.math.FlxPoint;
 import flixel.util.FlxSpriteUtil;
 import flixel.input.FlxInput;
+import flixel.group.FlxGroup;
 import flixel.input.keyboard.FlxKey;
+import backeroids.Gun;
 import helix.core.HelixSprite;
-using helix.core.HelixSpriteFluentApi;
 import helix.data.Config;
+using helix.core.HelixSpriteFluentApi;
 using Lambda;
 
 class PlayerShip extends HelixSprite
@@ -19,8 +21,14 @@ class PlayerShip extends HelixSprite
 
     private var isTurning:Bool = false;
 
-    public function new():Void
+    private var gun:Gun;
+    private var playState:PlayState;
+
+    public function new(playState:PlayState):Void
     {
+        this.playState = playState;
+        this.gun = new Gun(this);
+
         super("assets/images/ship.png");
         this.onKeyDown(this.processControls);
 
@@ -49,6 +57,7 @@ class PlayerShip extends HelixSprite
         super.revive();
         this.resetAcceleration();
         this.velocity.set(0, 0);
+        this.gun = new Gun(this);
     }
 
     private function resetAcceleration():Void
@@ -78,6 +87,10 @@ class PlayerShip extends HelixSprite
         else if (keys.has(FlxKey.DOWN) || keys.has(FlxKey.S))
         {
             this.accelerateForward(Std.int(-ACCELERATION * DECELERATION_MULTIPLIER));
+        }
+        else if (keys.has(FlxKey.SPACE))
+        {
+            this.gun.fire(this.playState.addBullet());
         }
     }
 
