@@ -22,9 +22,28 @@ class PlayerShip extends HelixSprite
         this.onKeyDown(this.processControls);
     }
 
+    override public function update(elapsedSeconds:Float):Void
+    {
+        super.update(elapsedSeconds);
+
+        if (FlxG.keys.getIsDown().length == 0)
+        {
+            this.angularVelocity = 0;
+        }
+        
+        FlxSpriteUtil.screenWrap(this);
+    }
+
+    override public function revive():Void
+    {
+        super.revive();
+        this.resetAcceleration();
+        this.velocity.set(0, 0);
+    }
+
     private function resetAcceleration():Void
     {
-        this.acceleration.set();
+        this.acceleration.set(0, 0);
         this.angularVelocity = 0;
     }
 
@@ -54,17 +73,5 @@ class PlayerShip extends HelixSprite
     {
         this.acceleration.set(0, -acceleration); 
         this.acceleration.rotate(FlxPoint.weak(0, 0), this.angle);
-    }
-
-    override public function update(elapsedSeconds:Float):Void
-    {
-        super.update(elapsedSeconds);
-
-        if (FlxG.keys.getIsDown().length == 0)
-        {
-            this.angularVelocity = 0;
-        }
-        
-        FlxSpriteUtil.screenWrap(this);
     }
 }

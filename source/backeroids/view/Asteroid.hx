@@ -13,7 +13,7 @@ class Asteroid extends HelixSprite
     public function new():Void
     {
         super(null, {width: 60, height: 60, colour: FlxColor.fromString('gray')});
-        this.elasticity = 1;
+        this.elasticity = 0.5;
     }
 
     override public function update(elapsedSeconds:Float):Void
