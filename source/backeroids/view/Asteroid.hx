@@ -36,6 +36,11 @@ class Asteroid extends HelixSprite
 		this.angularVelocity = (Math.abs(this.velocity.x) + Math.abs(this.velocity.y));
     }
 
+    public function damage():Void
+    {
+        // Deduct "health", split in two, disintegrate, etc.
+    }
+
     private function processVelocityUpDown():Void
     {
         if (FlxG.random.float() < 0.5)
