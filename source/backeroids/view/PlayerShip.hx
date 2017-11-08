@@ -17,6 +17,8 @@ class PlayerShip extends HelixSprite
     private static var ACCELERATION:Int = Config.get("ship").acceleration;
     private static var DECELERATION_MULTIPLIER:Float = Config.get("ship").decelerationMultiplier;
 
+    private var isTurning:Bool = false;
+
     public function new():Void
     {
         super("assets/images/ship.png");
@@ -33,12 +35,13 @@ class PlayerShip extends HelixSprite
     {
         super.update(elapsedSeconds);
 
-        if (FlxG.keys.getIsDown().length == 0)
+        if (!this.isTurning)
         {
             this.angularVelocity = 0;
         }
 
         FlxSpriteUtil.screenWrap(this);
+        isTurning = false;
     }
 
     override public function revive():Void
@@ -60,11 +63,13 @@ class PlayerShip extends HelixSprite
 
         if (keys.has(FlxKey.LEFT) || keys.has(FlxKey.A))
         { 
-            this.angularVelocity = -ROTATION_VELOCITY;            
+            this.angularVelocity = -ROTATION_VELOCITY;
+            isTurning = true;
         }
         else if (keys.has(FlxKey.RIGHT) || keys.has(FlxKey.D))
         { 
             this.angularVelocity = ROTATION_VELOCITY;
+            isTurning = true;
         }
         else if (keys.has(FlxKey.UP) || keys.has(FlxKey.W))
         { 
