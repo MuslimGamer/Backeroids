@@ -22,11 +22,9 @@ class PlayerShip extends HelixSprite
     private var isTurning:Bool = false;
 
     private var gun:Gun;
-    private var playState:PlayState;
 
-    public function new(playState:PlayState):Void
+    public function new():Void
     {
-        this.playState = playState;
         this.gun = new Gun(this);
 
         super("assets/images/ship.png");
@@ -90,8 +88,17 @@ class PlayerShip extends HelixSprite
         }
         else if (keys.has(FlxKey.SPACE))
         {
-            this.gun.fire(this.playState.addBullet());
+            var bullet = new Bullet();
+            this.onFireBullet(bullet);
+            this.gun.fire(bullet);
         }
+    }
+
+    dynamic private function onFireBullet(bullet:Bullet):Void {}
+
+    public function setOnFireBulletCallback(callback):Void
+    {
+        this.onFireBullet = callback;
     }
 
     private function accelerateForward(acceleration:Int):Void

@@ -5,6 +5,8 @@ import helix.data.Config;
 import backeroids.view.PlayerShip;
 import backeroids.view.Bullet;
 import flixel.util.FlxTimer;
+import flixel.math.FlxPoint;
+using helix.core.HelixSpriteFluentApi;
 
 class Gun
 {
@@ -18,8 +20,9 @@ class Gun
 
     public function fire(bullet:Bullet):Void
     {
-        if (GameTime.totalGameTimeSeconds - this.secondsSinceFire > Config.get("gun".timeBetweenShots)) 
+        if (GameTime.totalGameTimeSeconds - this.secondsSinceFire > Config.get("gun").timeBetweenShots) 
         {
+            bullet.revive();
             bullet.move(this.playerShip.x + (this.playerShip.width - bullet.width) / 2, this.playerShip.y + (this.playerShip.height - bullet.height) / 2);
             bullet.angle = this.playerShip.angle;
 

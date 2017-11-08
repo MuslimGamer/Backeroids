@@ -28,7 +28,14 @@ class PlayState extends HelixState
 	{
 		super.create();
 		
-		this.playerShip = new PlayerShip(this);
+		this.playerShip = new PlayerShip();
+		this.playerShip.setOnFireBulletCallback(function(bullet:Bullet):Void
+		{
+			bullet.collideResolve(this.asteroids, function(b:Bullet, asteroid:Asteroid) {
+				b.destroy();
+				asteroid.damage();
+			});
+		});
 		resetShip();
 
 		this.playerShip.collideResolve(this.asteroids, function(player:PlayerShip, asteroid:Asteroid)
@@ -57,17 +64,6 @@ class PlayState extends HelixState
 	override public function update(elapsed:Float):Void
 	{
 		super.update(elapsed);
-	}
-
-	public function addBullet():Bullet
-	{
-		var bullet = bullets.recycle(Bullet);
-		bullet.collideResolve(this.asteroids, function(b:Bullet, asteroid:Asteroid)
-		{
-			b.kill();
-			asteroid.damage();
-		});
-		return bullet;
 	}
 	
 	private function addAsteroid():Asteroid

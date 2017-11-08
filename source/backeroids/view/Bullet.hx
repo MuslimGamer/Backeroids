@@ -1,7 +1,6 @@
 package backeroids.view;
 
 import flixel.util.FlxColor;
-import flixel.math.FlxPoint;
 import flixel.util.FlxSpriteUtil;
 import backeroids.view.PlayerShip;
 import backeroids.view.Asteroid;
