@@ -1,19 +1,20 @@
 package backeroids.view;
 
-import helix.core.HelixSprite;
 import flixel.util.FlxColor;
 import flixel.util.FlxSpriteUtil;
 import flixel.FlxG;
+import helix.core.HelixSprite;
 using helix.core.HelixSpriteFluentApi;
+import helix.data.Config;
 
 class Asteroid extends HelixSprite
 {
-    private static var startingVelocity = 90;
+    private static var startingVelocity = Config.get("asteroids").initialVelocity;
 
     public function new():Void
     {
         super(null, {width: 60, height: 60, colour: FlxColor.fromString('gray')});
-        this.elasticity = 1;
+        this.elasticity = Config.get("asteroids").collisionElasticity;
     }
 
     override public function update(elapsedSeconds:Float):Void
@@ -73,25 +74,25 @@ class Asteroid extends HelixSprite
 
     private function processVelocityUp():Void
     {
-        this.y = - 64 + this.offset.y;
+        this.y = -this.height;
         this.velocity.y = getHalfStartVelocity() + getVelocityRandomPercent();
     }
 
     private function processVelocityDown():Void
     {
-        this.y = FlxG.height + this.offset.y;
+        this.y = FlxG.height + this.height;
         this.velocity.y = - getHalfStartVelocity() + getVelocityRandomPercent();
     }
 
     private function processVelocityLeft():Void
     {
-        this.x = - 64 + this.offset.x;
+        this.x = -this.width;
         this.velocity.x = getHalfStartVelocity() + getVelocityRandomPercent();
     }
 
     private function processVelocityRight():Void
     {
-        this.x = FlxG.width + this.offset.x;
+        this.x = FlxG.width + this.width;
         this.velocity.x = - getHalfStartVelocity() - getVelocityRandomPercent();
     }
 
