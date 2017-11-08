@@ -52,12 +52,6 @@ class PlayState extends HelixState
 		{
 			this.addAsteroid();
 		}
-
-		var numBullets:Int = 16;
-		while (numBullets-- > 0)
-		{
-			bullets.add(this.addBullet());
-		}
 	}
 
 	override public function update(elapsed:Float):Void
@@ -70,7 +64,6 @@ class PlayState extends HelixState
 		var bullet = bullets.recycle(Bullet);
 		bullet.collideResolve(this.asteroids, function(b:Bullet, asteroid:Asteroid)
 		{
-			trace("POW!");
 			b.kill();
 			asteroid.damage();
 		});
