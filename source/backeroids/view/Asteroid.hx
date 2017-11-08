@@ -74,25 +74,25 @@ class Asteroid extends HelixSprite
 
     private function processVelocityUp():Void
     {
-        this.y = - 64 + this.offset.y;
+        this.y = -this.height;
         this.velocity.y = getHalfStartVelocity() + getVelocityRandomPercent();
     }
 
     private function processVelocityDown():Void
     {
-        this.y = FlxG.height + this.offset.y;
+        this.y = FlxG.height + this.height;
         this.velocity.y = - getHalfStartVelocity() + getVelocityRandomPercent();
     }
 
     private function processVelocityLeft():Void
     {
-        this.x = - 64 + this.offset.x;
+        this.x = -this.width;
         this.velocity.x = getHalfStartVelocity() + getVelocityRandomPercent();
     }
 
     private function processVelocityRight():Void
     {
-        this.x = FlxG.width + this.offset.x;
+        this.x = FlxG.width + this.width;
         this.velocity.x = - getHalfStartVelocity() - getVelocityRandomPercent();
     }
 
