@@ -5,6 +5,7 @@ import flixel.util.FlxSpriteUtil;
 import backeroids.view.PlayerShip;
 import backeroids.view.Asteroid;
 import helix.core.HelixSprite;
+import helix.data.Config;
 using helix.core.HelixSpriteFluentApi;
 
 class Bullet extends HelixSprite
@@ -19,6 +20,9 @@ class Bullet extends HelixSprite
     override public function update(elapsedSeconds:Float):Void
     {
         super.update(elapsedSeconds);
-        FlxSpriteUtil.screenWrap(this);
+
+        if (Config.get("features").wrapBullets) {
+            FlxSpriteUtil.screenWrap(this);
+        }
     }
 }

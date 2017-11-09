@@ -17,5 +17,9 @@
     "gun": {
         "fireCooldownSeconds": 1,
         "bulletVelocity": 150
+    },
+
+    "features": {
+        "wrapBullets": false
     }
 }
