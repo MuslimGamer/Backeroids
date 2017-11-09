@@ -13,5 +13,14 @@
         "acceleration": 90,
         "maxVelocity": 200,
         "decelerationMultiplier": 2 // decelerate n-times faster
+    },
+
+    "gun": {
+        "fireCooldownSeconds": 0.5,
+        "bulletVelocity": 150
+    },
+
+    "features": {
+        "wrapBullets": false
     }
 }

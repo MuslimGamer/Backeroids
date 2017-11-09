@@ -2,6 +2,19 @@
 	"version": "0.2.0",
 	"configurations": [
 		{
+			"name": "neko build + launch",
+			"type": "fdb",
+			"request": "launch",
+			"program": "${workspaceRoot}/export/windows/neko/bin/Backeroids.exe",
+			"preLaunchTask": "neko debug"
+		},
+		{
+			"name": "neko launch",
+			"type": "fdb",
+			"request": "launch",
+			"program": "${workspaceRoot}/export/windows/neko/bin/Backeroids.exe"
+		},
+		{
 			"name": "flash build + launch",
 			"type": "fdb",
 			"request": "launch",
