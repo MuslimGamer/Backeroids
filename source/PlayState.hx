@@ -96,7 +96,7 @@ class PlayState extends HelixState
 	{
 		asteroid.damage();
 
-		if (asteroid.health <= 0 && asteroid.totalHealth > 1)
+		if (Config.get("features").splitAsteroidsOnDeath == true && asteroid.health <= 0 && asteroid.totalHealth > 1)
 		{
 			var health = Std.int(asteroid.totalHealth / 2);
 			var scale = asteroid.scale.x / 2;
