@@ -30,9 +30,9 @@ class PlayState extends HelixState
 		super.create();
 		
 		this.playerShip = new PlayerShip();
-		this.playerShip.setOnFireBulletCallback(function(bullet:Bullet):Void
+		this.playerShip.setRecycleBulletCallback(function():Bullet
 		{
-			bullets.add(bullet);
+			return bullets.recycle(Bullet);
 		});
 		resetShip();
 
