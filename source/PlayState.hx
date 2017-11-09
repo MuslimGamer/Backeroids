@@ -87,13 +87,10 @@ class PlayState extends HelixState
 			for (i in 0 ... 2)
 			{
 				// Respawn at half health
-				var newAsteroid = asteroids.recycle(Asteroid);
+				// Sets velocity and position				
+				var newAsteroid = addAsteroid();
 				newAsteroid.totalHealth = health;
 				newAsteroid.health = health;
-				asteroids.add(newAsteroid);
-
-				// Sets velocity and position
-				newAsteroid.respawn();
 				
 				// Reset (move) to current destroyed position, offset so they don't
 				// immediately destroy each other
