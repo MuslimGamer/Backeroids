@@ -10,11 +10,19 @@ using helix.core.HelixSpriteFluentApi;
 class Asteroid extends HelixSprite
 {
     private static var startingVelocity = Config.get("asteroids").initialVelocity;
+    public var totalHealth(default, default):Int = 0;
 
-    public function new():Void
+    public function new(health:Int):Void
     {
         super(null, {width: 60, height: 60, colour: FlxColor.fromString('gray')});
         this.elasticity = Config.get("asteroids").collisionElasticity;
+
+        if (health == null)
+        {
+            health = Config.get("asteroids").initialHealth;
+        }
+        this.health = health;
+        this.totalHealth = health;
     }
 
     override public function update(elapsedSeconds:Float):Void
@@ -39,7 +47,11 @@ class Asteroid extends HelixSprite
 
     public function damage():Void
     {
-        // Deduct "health", split in two, disintegrate, etc.
+        this.health -= 1;
+        if (this.health <= 0)
+        {
+            this.kill();
+        }
     }
 
     private function processVelocityUpDown():Void
