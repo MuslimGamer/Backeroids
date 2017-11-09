@@ -89,17 +89,25 @@ class PlayerShip extends HelixSprite
         }
 
         if (keys.has(FlxKey.SPACE) && this.gun.canFire()) {
-            var bullet = new Bullet(this);
-            this.onFireBullet(bullet);
-            bullet.shoot();
+            var vector = {
+                x: this.x,
+                y: this.y,
+                angle: this.angle,
+                width: this.width,
+                height: this.height
+            }
+            this.recycleBullet().shoot(vector);
         }
     }
 
-    dynamic private function onFireBullet(bullet:Bullet):Void {}
-
-    public function setOnFireBulletCallback(callback):Void
+    dynamic private function recycleBullet():Bullet 
     {
-        this.onFireBullet = callback;
+        return null;
+    }
+
+    public function setRecycleBulletCallback(callback):Void
+    {
+        this.recycleBullet = callback;
     }
 
     private function accelerateForward(acceleration:Int):Void
