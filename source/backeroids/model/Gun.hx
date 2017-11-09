@@ -2,34 +2,26 @@ package backeroids.model;
 
 import helix.GameTime;
 import helix.data.Config;
-import backeroids.view.PlayerShip;
-import backeroids.view.Bullet;
-import flixel.util.FlxTimer;
-import flixel.math.FlxPoint;
-using helix.core.HelixSpriteFluentApi;
 
 class Gun
 {
-    private var playerShip:PlayerShip;
     private var timeSinceLastShot:Float = 0;
+    private var fireCooldownSeconds = Config.get("gun").fireCooldownSeconds;
 
-    public function new(ship:PlayerShip):Void
+    public function new():Void
     {
-        this.playerShip = ship;
     }
 
-    public function fire(bullet:Bullet):Void
+    public function canFire():Bool
     {
-        if (GameTime.totalGameTimeSeconds - this.timeSinceLastShot > Config.get("gun").fireCooldownSeconds) 
+        if (GameTime.totalGameTimeSeconds - this.timeSinceLastShot > this.fireCooldownSeconds) 
         {
-            bullet.revive();
-            bullet.move(this.playerShip.x + (this.playerShip.width - bullet.width) / 2, this.playerShip.y + (this.playerShip.height - bullet.height) / 2);
-            bullet.angle = this.playerShip.angle;
-
-            bullet.velocity.set(0, -Config.get("gun").bulletVelocity);
-            bullet.velocity.rotate(FlxPoint.weak(0, 0), bullet.angle);
-
             this.timeSinceLastShot = GameTime.totalGameTimeSeconds;
+            return true;
+        }
+        else
+        {
+            return false;
         }
     }
 }

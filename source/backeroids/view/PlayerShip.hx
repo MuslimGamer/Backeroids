@@ -25,7 +25,7 @@ class PlayerShip extends HelixSprite
 
     public function new():Void
     {
-        this.gun = new Gun(this);
+        this.gun = new Gun();
 
         super("assets/images/ship.png");
         this.onKeyDown(this.processControls);
@@ -55,7 +55,7 @@ class PlayerShip extends HelixSprite
         super.revive();
         this.resetAcceleration();
         this.velocity.set(0, 0);
-        this.gun = new Gun(this);
+        this.gun = new Gun();
     }
 
     private function resetAcceleration():Void
@@ -78,7 +78,8 @@ class PlayerShip extends HelixSprite
             this.angularVelocity = ROTATION_VELOCITY;
             isTurning = true;
         }
-        else if (keys.has(FlxKey.UP) || keys.has(FlxKey.W))
+
+        if (keys.has(FlxKey.UP) || keys.has(FlxKey.W))
         { 
             this.accelerateForward(ACCELERATION); 
         }
@@ -86,11 +87,11 @@ class PlayerShip extends HelixSprite
         {
             this.accelerateForward(Std.int(-ACCELERATION * DECELERATION_MULTIPLIER));
         }
-        else if (keys.has(FlxKey.SPACE))
-        {
-            var bullet = new Bullet();
+
+        if (keys.has(FlxKey.SPACE) && this.gun.canFire()) {
+            var bullet = new Bullet(this);
             this.onFireBullet(bullet);
-            this.gun.fire(bullet);
+            bullet.shoot();
         }
     }
 
