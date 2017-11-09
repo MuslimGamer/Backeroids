@@ -11,7 +11,7 @@ using helix.core.HelixSpriteFluentApi;
 class Gun
 {
     private var playerShip:PlayerShip;
-    private var secondsSinceFire:Float = 0;
+    private var timeSinceLastShot:Float = 0;
 
     public function new(ship:PlayerShip):Void
     {
@@ -20,7 +20,7 @@ class Gun
 
     public function fire(bullet:Bullet):Void
     {
-        if (GameTime.totalGameTimeSeconds - this.secondsSinceFire > Config.get("gun").timeBetweenShots) 
+        if (GameTime.totalGameTimeSeconds - this.timeSinceLastShot > Config.get("gun").fireCooldownSeconds) 
         {
             bullet.revive();
             bullet.move(this.playerShip.x + (this.playerShip.width - bullet.width) / 2, this.playerShip.y + (this.playerShip.height - bullet.height) / 2);
@@ -29,7 +29,7 @@ class Gun
             bullet.velocity.set(0, -Config.get("gun").bulletVelocity);
             bullet.velocity.rotate(FlxPoint.weak(0, 0), bullet.angle);
 
-            this.secondsSinceFire = GameTime.totalGameTimeSeconds;
+            this.timeSinceLastShot = GameTime.totalGameTimeSeconds;
         }
     }
 }
