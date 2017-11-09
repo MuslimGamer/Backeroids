@@ -21,6 +21,7 @@
     },
 
     "features": {
-        "wrapBullets": false
+        "wrapBullets": true,
+        "splitAsteroidsOnDeath": false
     }
 }
