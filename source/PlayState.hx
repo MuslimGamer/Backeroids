@@ -36,7 +36,8 @@ class PlayState extends HelixState
 				playerShip.revive();
 				resetShip();
 			});
-			asteroid.damage();
+
+			this.damageAndSplit(asteroid);
 		});
 
 		this.asteroidTimer.start(SECONDS_PER_ASTEROID, function(timer)
@@ -45,7 +46,8 @@ class PlayState extends HelixState
 
 			asteroid.collideResolve(this.asteroids, function(a1:Asteroid, a2:Asteroid)
 			{			
-				trace("BAM!");
+				this.damageAndSplit(a1);
+				this.damageAndSplit(a2);
 			});
 		}, 0);
 
@@ -71,5 +73,42 @@ class PlayState extends HelixState
 	private function resetShip():Void
 	{
 		this.playerShip.move((this.width - playerShip.width) / 2, (this.height - playerShip.height) / 2);		
+	}
+
+	private function damageAndSplit(asteroid:Asteroid):Void
+	{
+		asteroid.damage();
+
+		if (asteroid.health <= 0 && asteroid.totalHealth > 1)
+		{
+			var health = Std.int(asteroid.totalHealth / 2);
+			var scale = asteroid.scale.x / 2;
+
+			for (i in 0 ... 2)
+			{
+				// Respawn at half health
+				var newAsteroid = asteroids.recycle(Asteroid);
+				newAsteroid.totalHealth = health;
+				newAsteroid.health = health;
+				asteroids.add(newAsteroid);
+
+				// Sets velocity and position
+				newAsteroid.respawn();
+				
+				// Reset (move) to current destroyed position, offset so they don't
+				// immediately destroy each other
+				newAsteroid.x = asteroid.x;
+				if (i == 0)
+				{
+					newAsteroid.x -=  (asteroid.width / 2);
+				}
+				else
+				{
+					 newAsteroid.x += (asteroid.width / 2);
+				}
+				newAsteroid.y = asteroid.y;
+				newAsteroid.scale.set(scale, scale);
+			}
+		}
 	}
 }

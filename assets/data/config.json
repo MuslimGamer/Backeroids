@@ -3,7 +3,8 @@
         "initialNumber": 3,
         "secondsToSpawn": 5,
         "collisionElasticity": 0.5,
-        "initialVelocity": 90
+        "initialVelocity": 90,
+        "initialHealth": 4
     },
 
     "ship": {
