@@ -88,15 +88,11 @@ class PlayerShip extends HelixSprite
             this.accelerateForward(Std.int(-ACCELERATION * DECELERATION_MULTIPLIER));
         }
 
-        if (keys.has(FlxKey.SPACE) && this.gun.canFire()) {
-            var vector = {
-                x: this.x,
-                y: this.y,
-                angle: this.angle,
-                width: this.width,
-                height: this.height
-            }
-            this.recycleBullet().shoot(vector);
+        if (keys.has(FlxKey.SPACE) && this.gun.canFire())
+        {
+            var bullet = this.recycleBullet();
+            bullet.move(this.x + ((this.width - bullet.width) / 2), this.y + ((this.height - bullet.height) / 2));
+            bullet.shoot(this.angle);
         }
     }
 

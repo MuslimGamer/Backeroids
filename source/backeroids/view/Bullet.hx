@@ -31,21 +31,12 @@ class Bullet extends HelixSprite
         }
     }
 
-    public function shoot(vector:Vector):Void
+    public function shoot(angle:Float):Void
     {
         this.revive();
-        this.move(vector.x + (vector.width - this.width) / 2, vector.y + (vector.height - this.height) / 2);
-        this.angle = vector.angle;
+        this.angle = angle;
 
         this.velocity.set(0, -Config.get("gun").bulletVelocity);
         this.velocity.rotate(FlxPoint.weak(0, 0), this.angle);
     }
-}
-
-typedef Vector ={
-    x: Float,
-    y: Float,
-    angle: Float,
-    width: Float,
-    height: Float
 }
