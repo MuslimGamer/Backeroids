@@ -29,8 +29,6 @@ class Asteroid extends HelixSprite
         this.setHealth(health);
         this.setScale(1, 1);
         this.processVelocity();
-		
-		this.angularVelocity = (Math.abs(this.velocity.x) + Math.abs(this.velocity.y));
     }
 
     public function setHealth(?health:Int):Void
@@ -68,6 +66,8 @@ class Asteroid extends HelixSprite
 		{
 			this.processVelocityUpDown();
 		}
+
+        this.angularVelocity = (Math.abs(this.velocity.x) + Math.abs(this.velocity.y));
     }
 
     private function processVelocityUpDown():Void
