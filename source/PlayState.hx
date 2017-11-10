@@ -81,7 +81,8 @@ class PlayState extends HelixState
 		var asteroid = asteroids.recycle(Asteroid);
 		asteroid.collideResolve(this.asteroids, function(a1:Asteroid, a2:Asteroid)
 		{			
-			trace("BAM!");
+			damageAndSplit(a1);
+			damageAndSplit(a2);
 		});
 		asteroid.respawn();
 		return asteroid;
