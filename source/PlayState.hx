@@ -104,7 +104,7 @@ class PlayState extends HelixState
 				var newAsteroid = addAsteroid();
 				newAsteroid.totalHealth = health;
 				newAsteroid.health = health;
-				
+
 				// Reset (move) to current destroyed position, offset so they don't
 				// immediately destroy each other
 				newAsteroid.x = asteroid.x;
@@ -118,6 +118,7 @@ class PlayState extends HelixState
 				}
 				newAsteroid.y = asteroid.y;
 				newAsteroid.scale.set(scale, scale);
+				newAsteroid.updateHitbox();
 			}
 		}
 	}

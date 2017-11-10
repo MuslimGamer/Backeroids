@@ -5,6 +5,9 @@
         "collisionElasticity": 0.5,
         "initialVelocity": 90,
         "initialHealth": 4
+
+        "bigAsteroidWidth": 60,
+        "bigAsteroidHeight": 60
     },
 
     "ship": {
@@ -21,7 +24,7 @@
     },
 
     "features": {
-        "wrapBullets": true,
-        "splitAsteroidsOnDeath": false
+        "wrapBullets": false,
+        "splitAsteroidsOnDeath": true
     }
 }

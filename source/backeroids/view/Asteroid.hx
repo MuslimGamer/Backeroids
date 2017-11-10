@@ -12,9 +12,12 @@ class Asteroid extends HelixSprite
     private static var startingVelocity = Config.get("asteroids").initialVelocity;
     public var totalHealth(default, default):Int = 0;
 
+    private var bigAsteroidWidth = Config.get("asteroid").bigAsteroidWidth;
+    private var bigAsteroidHeight = Config.get("asteroid").bigAsteroidHeight;
+
     public function new(health:Int):Void
     {
-        super(null, {width: 60, height: 60, colour: FlxColor.fromString('gray')});
+        super(null, {width: this.bigAsteroidWidth, height: this.bigAsteroidHeight, colour: FlxColor.fromString('gray')});
         this.elasticity = Config.get("asteroids").collisionElasticity;
 
         if (health == null)
