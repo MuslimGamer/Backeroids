@@ -93,7 +93,7 @@ class PlayState extends HelixState
 	{
 		asteroid.damage();
 
-		if (Config.get("features").splitAsteroidsOnDeath == true && asteroid.health <= 0 && asteroid.totalHealth > 1 && asteroid.Size != 'small')
+		if (Config.get("features").splitAsteroidsOnDeath == true && asteroid.health <= 0 && asteroid.totalHealth > 1 && asteroid.type!= 'small')
 		{
 			for (i in 0 ... 2)
 			{
@@ -101,7 +101,7 @@ class PlayState extends HelixState
 				// Sets velocity and position				
 				var newAsteroid = addAsteroid();
 
-				switch asteroid.Size {
+				switch asteroid.type {
 					case "big":
 						newAsteroid.setMediumAsteroid();
 					case "medium":

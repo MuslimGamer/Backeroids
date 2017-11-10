@@ -13,7 +13,7 @@ class Asteroid extends HelixSprite
     public var totalHealth(default, default):Int = 0;
 
     public var asteroidSize:Int = 0;
-    public var Size:String = "big";
+    public var type:String = "big";
 
     public function new():Void
     {
@@ -26,7 +26,7 @@ class Asteroid extends HelixSprite
         this.setHealth(Config.get("asteroids").big.initialHealth);
         this.setScale(Config.get("asteroids").big.scale, Config.get("asteroids").big.scale);
         this.mass = Config.get("asteroids").big.mass;
-        this.Size = "big";
+        this.type = "big";
 
         return this;
     }
@@ -36,7 +36,7 @@ class Asteroid extends HelixSprite
         this.setHealth(Config.get("asteroids").medium.initialHealth);
         this.setScale(Config.get("asteroids").medium.scale, Config.get("asteroids").medium.scale);
         this.mass = Config.get("asteroids").medium.mass;
-        this.Size = "medium";
+        this.type = "medium";
 
         return this;
     }
@@ -46,7 +46,7 @@ class Asteroid extends HelixSprite
         this.setHealth(Config.get("asteroids").small.initialHealth);
         this.setScale(Config.get("asteroids").small.scale, Config.get("asteroids").small.scale);
         this.mass = Config.get("asteroids").small.mass;
-        this.Size = "small";
+        this.type = "small";
 
         return this;
     }
