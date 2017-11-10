@@ -50,13 +50,7 @@ class PlayState extends HelixState
 
 		this.asteroidTimer.start(SECONDS_PER_ASTEROID, function(timer)
 		{
-			var asteroid = this.addAsteroid();
-
-			asteroid.collideResolve(this.asteroids, function(a1:Asteroid, a2:Asteroid)
-			{			
-				this.damageAndSplit(a1);
-				this.damageAndSplit(a2);
-			});
+			this.addAsteroid();
 		}, 0);
 
 		var asteroidsToCreate = NUM_INITIAL_ASTEROIDS;
@@ -74,16 +68,17 @@ class PlayState extends HelixState
 				b.kill();
 				asteroid.damage();
 		});
+
+		FlxG.collide(asteroids, asteroids, function(a1:Asteroid, a2:Asteroid)
+		{			
+			this.damageAndSplit(a1);
+			this.damageAndSplit(a2);
+		});
 	}
 	
 	private function addAsteroid():Asteroid
 	{
 		var asteroid = asteroids.recycle(Asteroid);
-		asteroid.collideResolve(this.asteroids, function(a1:Asteroid, a2:Asteroid)
-		{			
-			damageAndSplit(a1);
-			damageAndSplit(a2);
-		});
 		asteroid.respawn();
 		return asteroid;
 	}
