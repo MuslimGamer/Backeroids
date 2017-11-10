@@ -4,7 +4,21 @@
         "secondsToSpawn": 5,
         "collisionElasticity": 0.5,
         "initialVelocity": 90,
-        "initialHealth": 4
+
+        "big": {
+            "initialHealth": 4,
+            "scale": 1
+        },
+
+        "medium": {
+            "initialHealth": 2,
+            "scale": 0.5
+        },
+
+        "small": {
+            "initialHealth": 1,
+            "scale": 0.25
+        }
     },
 
     "ship": {

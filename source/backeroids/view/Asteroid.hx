@@ -23,8 +23,8 @@ class Asteroid extends HelixSprite
 
     public function setBigAsteroid():Asteroid
     {
-        this.setHealth(Config.get("asteroids").initialHealth);
-        this.setScale(1, 1);
+        this.setHealth(Config.get("asteroids").big.initialHealth);
+        this.setScale(Config.get("asteroids").big.scale, Config.get("asteroids").big.scale);
         this.Size = "big";
 
         return this;
@@ -32,8 +32,8 @@ class Asteroid extends HelixSprite
 
     public function setMediumAsteroid():Asteroid
     {
-        this.setHealth(Std.int(Config.get("asteroids").initialHealth / 2));
-        this.setScale(0.5, 0.5);
+        this.setHealth(Config.get("asteroids").medium.initialHealth);
+        this.setScale(Config.get("asteroids").medium.scale, Config.get("asteroids").medium.scale);
         this.Size = "medium";
 
         return this;
@@ -41,8 +41,8 @@ class Asteroid extends HelixSprite
 
     public function setSmallAsteroid():Asteroid
     {
-        this.setHealth(Std.int(Config.get("asteroids").initialHealth / 4));
-        this.setScale(0.25, 0.25);
+        this.setHealth(Config.get("asteroids").small.initialHealth);
+        this.setScale(Config.get("asteroids").small.scale, Config.get("asteroids").small.scale);
         this.Size = "small";
 
         return this;

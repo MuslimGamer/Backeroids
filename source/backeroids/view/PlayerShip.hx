@@ -14,7 +14,6 @@ using Lambda;
 
 class PlayerShip extends HelixSprite
 {
-    // TODO: should be in config.json
     private static var ROTATION_VELOCITY:Int = Config.get("ship").rotationVelocity;
     private static var ACCELERATION:Int = Config.get("ship").acceleration;
     private static var DECELERATION_MULTIPLIER:Float = Config.get("ship").decelerationMultiplier;
