@@ -66,7 +66,7 @@ class PlayState extends HelixState
 		
 		FlxG.collide(bullets, asteroids, function(b:Bullet, asteroid:Asteroid) {
 				b.kill();
-				asteroid.damage();
+				this.damageAndSplit(asteroid);
 		});
 
 		if (Config.get("features").collideAsteroidsWithAsteroids) {
