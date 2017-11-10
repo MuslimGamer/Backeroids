@@ -12,10 +12,40 @@ class Asteroid extends HelixSprite
     private static var startingVelocity = Config.get("asteroids").initialVelocity;
     public var totalHealth(default, default):Int = 0;
 
+    public var asteroidSize:Int = 0;
+    public var Size:String = "big";
+
     public function new():Void
     {
         super(null, {width: 60, height: 60, colour: FlxColor.fromString('gray')});
         this.elasticity = Config.get("asteroids").collisionElasticity;
+    }
+
+    public function setBigAsteroid():Asteroid
+    {
+        this.setHealth(Config.get("asteroids").initialHealth);
+        this.setScale(1, 1);
+        this.Size = "big";
+
+        return this;
+    }
+
+    public function setMediumAsteroid():Asteroid
+    {
+        this.setHealth(Std.int(Config.get("asteroids").initialHealth / 2));
+        this.setScale(0.5, 0.5);
+        this.Size = "medium";
+
+        return this;
+    }
+
+    public function setSmallAsteroid():Asteroid
+    {
+        this.setHealth(Std.int(Config.get("asteroids").initialHealth / 4));
+        this.setScale(0.25, 0.25);
+        this.Size = "small";
+
+        return this;
     }
 
     override public function update(elapsedSeconds:Float):Void
@@ -24,19 +54,14 @@ class Asteroid extends HelixSprite
         FlxSpriteUtil.screenWrap(this);
     }
 
-    public function respawn(?health:Int):Void
+    public function respawn():Void
     {
-        this.setHealth(health);
-        this.setScale(1, 1);
+        this.setBigAsteroid();
         this.processVelocity();
     }
 
-    public function setHealth(?health:Int):Void
+    public function setHealth(health:Int):Void
     {
-        if (health == null)
-        {
-            health = Config.get("asteroids").initialHealth;
-        }
         this.health = health;
         this.totalHealth = health;
     }
