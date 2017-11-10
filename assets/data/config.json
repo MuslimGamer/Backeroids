@@ -39,6 +39,7 @@
 
     "features": {
         "wrapBullets": false,
-        "splitAsteroidsOnDeath": true
+        "splitAsteroidsOnDeath": true,
+        "collideAsteroidsWithAsteroids": false
     }
 }
