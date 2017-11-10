@@ -50,13 +50,13 @@ class PlayState extends HelixState
 
 		this.asteroidTimer.start(SECONDS_PER_ASTEROID, function(timer)
 		{
-			this.addAsteroid();
+			this.addAsteroid().respawn();
 		}, 0);
 
 		var asteroidsToCreate = NUM_INITIAL_ASTEROIDS;
 		while (asteroidsToCreate-- > 0)
 		{
-			this.addAsteroid();
+			this.addAsteroid().respawn();
 		}
 	}
 
@@ -79,7 +79,6 @@ class PlayState extends HelixState
 	private function addAsteroid():Asteroid
 	{
 		var asteroid = asteroids.recycle(Asteroid);
-		asteroid.respawn();
 		return asteroid;
 	}
 
@@ -102,8 +101,7 @@ class PlayState extends HelixState
 				// Respawn at half health
 				// Sets velocity and position				
 				var newAsteroid = addAsteroid();
-				newAsteroid.totalHealth = health;
-				newAsteroid.health = health;
+				newAsteroid.setHealth(health);
 
 				// Reset (move) to current destroyed position, offset so they don't
 				// immediately destroy each other
@@ -117,8 +115,7 @@ class PlayState extends HelixState
 					 newAsteroid.x += (asteroid.width / 2);
 				}
 				newAsteroid.y = asteroid.y;
-				newAsteroid.scale.set(scale, scale);
-				newAsteroid.updateHitbox();
+				newAsteroid.setScale(scale, scale);
 			}
 		}
 	}
