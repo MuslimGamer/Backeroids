@@ -50,19 +50,13 @@ class PlayState extends HelixState
 
 		this.asteroidTimer.start(SECONDS_PER_ASTEROID, function(timer)
 		{
-			var asteroid = this.addAsteroid();
-
-			asteroid.collideResolve(this.asteroids, function(a1:Asteroid, a2:Asteroid)
-			{			
-				this.damageAndSplit(a1);
-				this.damageAndSplit(a2);
-			});
+			this.addAsteroid().respawn();
 		}, 0);
 
 		var asteroidsToCreate = NUM_INITIAL_ASTEROIDS;
 		while (asteroidsToCreate-- > 0)
 		{
-			this.addAsteroid();
+			this.addAsteroid().respawn();
 		}
 	}
 
@@ -72,19 +66,21 @@ class PlayState extends HelixState
 		
 		FlxG.collide(bullets, asteroids, function(b:Bullet, asteroid:Asteroid) {
 				b.kill();
-				asteroid.damage();
+				this.damageAndSplit(asteroid);
 		});
+
+		if (Config.get("features").collideAsteroidsWithAsteroids) {
+		FlxG.collide(asteroids, asteroids, function(a1:Asteroid, a2:Asteroid)
+		{			
+			this.damageAndSplit(a1);
+			this.damageAndSplit(a2);
+		});
+	}
 	}
 	
 	private function addAsteroid():Asteroid
 	{
 		var asteroid = asteroids.recycle(Asteroid);
-		asteroid.collideResolve(this.asteroids, function(a1:Asteroid, a2:Asteroid)
-		{			
-			damageAndSplit(a1);
-			damageAndSplit(a2);
-		});
-		asteroid.respawn();
 		return asteroid;
 	}
 
@@ -97,19 +93,21 @@ class PlayState extends HelixState
 	{
 		asteroid.damage();
 
-		if (Config.get("features").splitAsteroidsOnDeath == true && asteroid.health <= 0 && asteroid.totalHealth > 1)
+		if (Config.get("features").splitAsteroidsOnDeath == true && asteroid.health <= 0 && asteroid.totalHealth > 1 && asteroid.type!= 'small')
 		{
-			var health = Std.int(asteroid.totalHealth / 2);
-			var scale = asteroid.scale.x / 2;
-
 			for (i in 0 ... 2)
 			{
 				// Respawn at half health
 				// Sets velocity and position				
 				var newAsteroid = addAsteroid();
-				newAsteroid.totalHealth = health;
-				newAsteroid.health = health;
-				
+
+				switch asteroid.type {
+					case "big":
+						newAsteroid.setMediumAsteroid();
+					case "medium":
+						newAsteroid.setSmallAsteroid();
+				}
+
 				// Reset (move) to current destroyed position, offset so they don't
 				// immediately destroy each other
 				newAsteroid.x = asteroid.x;
@@ -122,7 +120,6 @@ class PlayState extends HelixState
 					 newAsteroid.x += (asteroid.width / 2);
 				}
 				newAsteroid.y = asteroid.y;
-				newAsteroid.scale.set(scale, scale);
 			}
 		}
 	}

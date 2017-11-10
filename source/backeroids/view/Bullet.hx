@@ -16,7 +16,7 @@ class Bullet extends HelixSprite
 
     public function new(ship:PlayerShip):Void
     {
-        super(null, {width: 8, height: 8, colour: FlxColor.fromString('white')});
+        super(null, {width: 2, height: 8, colour: FlxColor.fromString('white')});
         this.kill();
 
         this.playerShip = ship;

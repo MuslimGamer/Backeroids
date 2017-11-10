@@ -4,7 +4,24 @@
         "secondsToSpawn": 5,
         "collisionElasticity": 0.5,
         "initialVelocity": 90,
-        "initialHealth": 4
+
+        "big": {
+            "initialHealth": 4,
+            "scale": 1,
+            "mass": 9
+        },
+
+        "medium": {
+            "initialHealth": 2,
+            "scale": 0.5,
+            "mass": 3
+        },
+
+        "small": {
+            "initialHealth": 1,
+            "scale": 0.25,
+            "mass": 1
+        }
     },
 
     "ship": {
@@ -17,11 +34,12 @@
 
     "gun": {
         "fireCooldownSeconds": 0.5,
-        "bulletVelocity": 150
+        "bulletVelocity": 300
     },
 
     "features": {
-        "wrapBullets": true,
-        "splitAsteroidsOnDeath": false
+        "wrapBullets": false,
+        "splitAsteroidsOnDeath": true,
+        "collideAsteroidsWithAsteroids": false
     }
 }
