@@ -28,15 +28,7 @@ class Asteroid extends HelixSprite
     {
         this.setHealth(health);
         this.setScale(1, 1);
-
-        if (FlxG.random.float() < 0.5)
-		{
-			this.processVelocityLeftRight();
-		}
-		else
-		{
-			this.processVelocityUpDown();
-		}
+        this.processVelocity();
 		
 		this.angularVelocity = (Math.abs(this.velocity.x) + Math.abs(this.velocity.y));
     }
@@ -66,15 +58,29 @@ class Asteroid extends HelixSprite
         }
     }
 
+    private function processVelocity():Void
+    {
+        if (FlxG.random.float() < 0.5)
+		{
+			this.processVelocityLeftRight();
+		}
+		else
+		{
+			this.processVelocityUpDown();
+		}
+    }
+
     private function processVelocityUpDown():Void
     {
         if (FlxG.random.float() < 0.5)
         {
-            this.processVelocityUp();
+            this.y = -this.height;
+            this.velocity.y = startingVelocity / 2 + getVelocityRandomPercent();
         }
         else
         {
-            this.processVelocityDown();
+            this.y = FlxG.height + this.height;
+            this.velocity.y = - startingVelocity / 2 + getVelocityRandomPercent();
         }
 			
         this.x = FlxG.random.float() * (FlxG.width - width);
@@ -85,39 +91,17 @@ class Asteroid extends HelixSprite
     {
         if (FlxG.random.float() < 0.5)
         {
-            this.processVelocityLeft();
+            this.x = -this.width;
+            this.velocity.x = startingVelocity / 2 + getVelocityRandomPercent();
         }
         else
         {
-            this.processVelocityRight();
+            this.x = FlxG.width + this.width;
+            this.velocity.x = - startingVelocity / 2 - getVelocityRandomPercent();
         }
 			
         this.y = FlxG.random.float() * (FlxG.height - height);
         this.velocity.y = getVelocityRandomPercent() * 2 - startingVelocity;
-    }
-
-    private function processVelocityUp():Void
-    {
-        this.y = -this.height;
-        this.velocity.y = startingVelocity / 2 + getVelocityRandomPercent();
-    }
-
-    private function processVelocityDown():Void
-    {
-        this.y = FlxG.height + this.height;
-        this.velocity.y = - startingVelocity / 2 + getVelocityRandomPercent();
-    }
-
-    private function processVelocityLeft():Void
-    {
-        this.x = -this.width;
-        this.velocity.x = startingVelocity / 2 + getVelocityRandomPercent();
-    }
-
-    private function processVelocityRight():Void
-    {
-        this.x = FlxG.width + this.width;
-        this.velocity.x = - startingVelocity / 2 - getVelocityRandomPercent();
     }
 
     private static function getVelocityRandomPercent():Float
