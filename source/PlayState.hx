@@ -1,5 +1,6 @@
 package;
 
+import backeroids.model.AsteroidType;
 import backeroids.view.Asteroid;
 import backeroids.view.PlayerShip;
 import backeroids.view.Bullet;
@@ -93,7 +94,8 @@ class PlayState extends HelixState
 	{
 		asteroid.damage();
 
-		if (Config.get("features").splitAsteroidsOnDeath == true && asteroid.health <= 0 && asteroid.totalHealth > 1 && asteroid.type!= 'small')
+		if (Config.get("features").splitAsteroidsOnDeath == true && asteroid.health <= 0 &&
+			 asteroid.totalHealth > 1 && (asteroid.type == AsteroidType.Large || asteroid.type == AsteroidType.Medium))
 		{
 			for (i in 0 ... 2)
 			{
@@ -101,11 +103,17 @@ class PlayState extends HelixState
 				// Sets velocity and position				
 				var newAsteroid = addAsteroid();
 
-				switch asteroid.type {
-					case "big":
-						newAsteroid.setMediumAsteroid();
-					case "medium":
-						newAsteroid.setSmallAsteroid();
+				if (asteroid.type == AsteroidType.Large)
+				{
+					newAsteroid.setMediumAsteroid();					
+				}
+				else if (asteroid.type == AsteroidType.Medium)
+				{
+					newAsteroid.setSmallAsteroid();
+				}
+				else
+				{
+					// Small and Backeroid asteroids don't split
 				}
 
 				// Reset (move) to current destroyed position, offset so they don't

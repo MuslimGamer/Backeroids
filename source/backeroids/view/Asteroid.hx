@@ -1,5 +1,6 @@
 package backeroids.view;
 
+import backeroids.model.AsteroidType;
 import flixel.util.FlxColor;
 import flixel.util.FlxSpriteUtil;
 import flixel.FlxG;
@@ -13,7 +14,7 @@ class Asteroid extends HelixSprite
     public var totalHealth(default, default):Int = 0;
 
     public var asteroidSize:Int = 0;
-    public var type:String = "big";
+    public var type(default, null):AsteroidType = AsteroidType.Large;
 
     public function new():Void
     {
@@ -26,7 +27,7 @@ class Asteroid extends HelixSprite
         this.setHealth(Config.get("asteroids").big.initialHealth);
         this.setScale(Config.get("asteroids").big.scale, Config.get("asteroids").big.scale);
         this.mass = Config.get("asteroids").big.mass;
-        this.type = "big";
+        this.type = AsteroidType.Large;
 
         return this;
     }
@@ -36,7 +37,7 @@ class Asteroid extends HelixSprite
         this.setHealth(Config.get("asteroids").medium.initialHealth);
         this.setScale(Config.get("asteroids").medium.scale, Config.get("asteroids").medium.scale);
         this.mass = Config.get("asteroids").medium.mass;
-        this.type = "medium";
+        this.type = AsteroidType.Medium;
 
         return this;
     }
@@ -46,7 +47,7 @@ class Asteroid extends HelixSprite
         this.setHealth(Config.get("asteroids").small.initialHealth);
         this.setScale(Config.get("asteroids").small.scale, Config.get("asteroids").small.scale);
         this.mass = Config.get("asteroids").small.mass;
-        this.type = "small";
+        this.type = AsteroidType.Small;
 
         return this;
     }
