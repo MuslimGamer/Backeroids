@@ -22,6 +22,18 @@ class Asteroid extends HelixSprite
         this.elasticity = Config.get("asteroids").collisionElasticity;
     }
 
+    public function setBackeroid():Asteroid
+    {
+        this.setHealth(1);
+        this.setScale(Config.get("asteroids").big.scale, Config.get("asteroids").big.scale);
+        this.mass = Config.get("asteroids").big.mass;
+        this.type = AsteroidType.Backeroid;
+
+        this.color = FlxColor.fromString('orange');
+
+        return this;
+    }
+
     public function setBigAsteroid():Asteroid
     {
         this.setHealth(Config.get("asteroids").big.initialHealth);
@@ -60,7 +72,14 @@ class Asteroid extends HelixSprite
 
     public function respawn():Void
     {
-        this.setBigAsteroid();
+        if (FlxG.random.float() < Config.get("asteroids").backeroidPercentage / 100)
+		{
+            this.setBackeroid();
+        }
+        else
+        {
+            this.setBigAsteroid();
+        }
         this.processVelocity();
     }
 
@@ -78,6 +97,11 @@ class Asteroid extends HelixSprite
 
     public function damage():Void
     {
+        if (this.type == AsteroidType.Backeroid) 
+        {
+            return;
+        }
+
         this.health -= 1;
         if (this.health <= 0)
         {

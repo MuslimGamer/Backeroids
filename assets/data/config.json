@@ -1,9 +1,10 @@
 {
     "asteroids": {
         "initialNumber": 3,
-        "secondsToSpawn": 5,
+        "secondsToSpawn": 3,
         "collisionElasticity": 0.5,
         "initialVelocity": 90,
+        "backeroidPercentage": 5,
 
         "big": {
             "initialHealth": 4,
@@ -33,7 +34,7 @@
     },
 
     "gun": {
-        "fireCooldownSeconds": 0.5,
+        "fireCooldownSeconds": 0.3,
         "bulletVelocity": 300
     },
 
