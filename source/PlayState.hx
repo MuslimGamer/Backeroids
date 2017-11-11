@@ -46,7 +46,9 @@ class PlayState extends HelixState
 				resetShip();
 			});
 
-			this.damageAndSplit(asteroid);
+			if (asteroid.type != AsteroidType.Backeroid) {
+				this.damageAndSplit(asteroid);
+			}
 		});
 
 		this.asteroidTimer.start(SECONDS_PER_ASTEROID, function(timer)
@@ -67,7 +69,9 @@ class PlayState extends HelixState
 		
 		FlxG.collide(bullets, asteroids, function(b:Bullet, asteroid:Asteroid) {
 				b.kill();
-				this.damageAndSplit(asteroid);
+				if (asteroid.type != AsteroidType.Backeroid) {
+					this.damageAndSplit(asteroid);
+				}
 		});
 
 		if (Config.get("features").collideAsteroidsWithAsteroids) {
