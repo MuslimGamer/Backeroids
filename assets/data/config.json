@@ -6,6 +6,12 @@
         "initialVelocity": 90,
         "backeroidPercentage": 5,
 
+        "backeroid": {
+            "initialHealth": 8,
+            "scale": 1,
+            "mass": 12
+        },
+
         "big": {
             "initialHealth": 4,
             "scale": 1,

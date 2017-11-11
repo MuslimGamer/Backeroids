@@ -24,9 +24,9 @@ class Asteroid extends HelixSprite
 
     public function setBackeroid():Asteroid
     {
-        this.setHealth(1);
-        this.setScale(Config.get("asteroids").big.scale, Config.get("asteroids").big.scale);
-        this.mass = Config.get("asteroids").big.mass;
+        this.setHealth(Config.get("asteroids").backeroid.initialHealth);
+        this.setScale(Config.get("asteroids").backeroid.scale, Config.get("asteroids").backeroid.scale);
+        this.mass = Config.get("asteroids").backeroid.mass;
         this.type = AsteroidType.Backeroid;
 
         this.color = FlxColor.fromString('orange');
