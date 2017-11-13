@@ -10,7 +10,8 @@ import helix.data.Config;
 class Shooter extends HelixSprite
 {
     private static var random = new FlxRandom();
-    private var lastVyChange:Float;
+    private var lastVyChange:GameTime;
+    private var lastShot:Float;
 
     public function new()
     {
@@ -31,15 +32,15 @@ class Shooter extends HelixSprite
         }
 
         this.y = random.int(Std.int(FlxG.height / 4), Std.int(3 * FlxG.height / 4));
-        this.lastVyChange = GameTime.totalGameTimeSeconds;
+        this.lastVyChange = GameTime.now();
     }
 
     override public function update(elapsedSeconds:Float):Void
     {
         super.update(elapsedSeconds);
         var perturbance = Config.get("enemies").shooter.perturbance;
-        var now = GameTime.totalGameTimeSeconds;
-        if (now - lastVyChange >= Config.get("enemies").shooter.sustainVyForSeconds)
+        var now = GameTime.now();
+        if (now.elapsedSeconds - lastVyChange.elapsedSeconds >= Config.get("enemies").shooter.sustainVyForSeconds)
         {
             lastVyChange = now;
             this.velocity.y *= -1;   
