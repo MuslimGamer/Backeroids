@@ -17,14 +17,13 @@ using helix.core.HelixSpriteFluentApi;
 
 class PlayState extends HelixState
 {
-	private var playerShip:PlayerShip;
-
 	private static var NUM_INITIAL_ASTEROIDS:Int = Config.get("asteroids").initialNumber;
 	private static var SECONDS_PER_ASTEROID:Int = Config.get("asteroids").secondsToSpawn;
 
 	private var asteroids = new FlxTypedGroup<Asteroid>();
 	private var asteroidTimer = new FlxTimer();
 
+	private var playerShip:PlayerShip;
 	private var bullets = new FlxTypedGroup<Bullet>();
 	private var enemyBullets = new FlxTypedGroup<Bullet>();
 	private var enemies = new FlxTypedGroup<AbstractEnemy>();
@@ -62,7 +61,10 @@ class PlayState extends HelixState
 		}
 
 		// TODO: un-hardcode
-		this.enemies.add(new Shooter());
+		this.enemies.add(new Shooter(function(eb:Bullet):Void
+		{
+			enemyBullets.add(eb);
+		}));
 	}
 
 	override public function update(elapsed:Float):Void

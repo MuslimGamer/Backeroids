@@ -53,6 +53,7 @@
     "enemies": {
         "shooter": {
             "health": 3,
+            "fireRatePerSecond": 3, // per second
             "elasticity": 0,
             "velocity": 
             {
