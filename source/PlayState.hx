@@ -82,6 +82,16 @@ class PlayState extends HelixState
 				}
 		});
 
+		FlxG.collide(bullets, enemies, function(bullet:Bullet, enemy:AbstractEnemy)
+		{
+				bullet.kill();
+				enemy.health -= 1;
+				if (enemy.health <= 0)
+				{
+					enemy.kill();
+				}
+		});
+
 		if (Config.get("features").collideAsteroidsWithAsteroids)
 		{
 			FlxG.collide(asteroids, asteroids, function(a1:Asteroid, a2:Asteroid)

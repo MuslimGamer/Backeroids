@@ -52,7 +52,8 @@
 
     "enemies": {
         "shooter": {
-            "elasticity": 1,
+            "health": 3,
+            "elasticity": 0,
             "velocity": 
             {
                 "x": 100,

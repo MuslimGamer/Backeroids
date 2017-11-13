@@ -17,8 +17,12 @@ class Shooter extends AbstractEnemy
     public function new()
     {
         super(null, {width: 80, height: 30, colour: FlxColor.GREEN });
-        this.elasticity = Config.get("enemies").shooter.elasticity;
-        this.velocity.x = Config.get("enemies").shooter.velocity.x;
+        
+        var config:Dynamic = Config.get("enemies").shooter;
+        this.elasticity = config.elasticity;
+        this.velocity.x = config.velocity.x;
+        this.health = config.health;
+
         this.velocity.y = (random.bool() == true ? -1 : 1) * (Config.get("enemies").shooter.velocity.y);
 
         var isGoingRight = random.bool();
@@ -39,7 +43,6 @@ class Shooter extends AbstractEnemy
     override public function update(elapsedSeconds:Float):Void
     {
         super.update(elapsedSeconds);
-        var perturbance = Config.get("enemies").shooter.perturbance;
         var now = GameTime.now();
         if (now.elapsedSeconds - lastVyChange.elapsedSeconds >= Config.get("enemies").shooter.sustainVyForSeconds)
         {
