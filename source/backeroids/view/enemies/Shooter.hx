@@ -1,5 +1,6 @@
 package backeroids.view.enemies;
 
+import backeroids.view.enemies.AbstractEnemy;
 import flixel.FlxG;
 import flixel.math.FlxRandom;
 import flixel.util.FlxColor;
@@ -7,7 +8,7 @@ import helix.GameTime;
 import helix.core.HelixSprite;
 import helix.data.Config;
 
-class Shooter extends HelixSprite
+class Shooter extends AbstractEnemy
 {
     private static var random = new FlxRandom();
     private var lastVyChange:GameTime;

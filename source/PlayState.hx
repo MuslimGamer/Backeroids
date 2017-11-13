@@ -6,6 +6,7 @@ import backeroids.view.Bullet;
 import backeroids.view.PlayerShip;
 import backeroids.view.enemies.Shooter;
 import flixel.group.FlxGroup;
+import backeroids.view.enemies.AbstractEnemy;
 import flixel.FlxObject;
 import flixel.util.FlxTimer;
 import flixel.FlxG;
@@ -20,12 +21,13 @@ class PlayState extends HelixState
 
 	private static var NUM_INITIAL_ASTEROIDS:Int = Config.get("asteroids").initialNumber;
 	private static var SECONDS_PER_ASTEROID:Int = Config.get("asteroids").secondsToSpawn;
-	private static var SECONDS_TO_REVIVE:Int = Config.get("ship").secondsToRevive;
 
 	private var asteroids = new FlxTypedGroup<Asteroid>();
 	private var asteroidTimer = new FlxTimer();
 
 	private var bullets = new FlxTypedGroup<Bullet>();
+	private var enemyBullets = new FlxTypedGroup<Bullet>();
+	private var enemies = new FlxTypedGroup<AbstractEnemy>();
 
 	override public function create():Void
 	{
@@ -40,12 +42,8 @@ class PlayState extends HelixState
 
 		this.playerShip.collideResolve(this.asteroids, function(player:PlayerShip, asteroid:Asteroid)
 		{
-			// Player hits asteroid. Yay!
-			this.playerShip.kill();
-			new FlxTimer().start(SECONDS_TO_REVIVE, function(timer) {
-				playerShip.revive();
-				resetShip();
-			});
+			// Player hits asteroid.
+			this.killPlayerShip();
 
 			if (asteroid.type != AsteroidType.Backeroid) {
 				this.damageAndSplit(asteroid);
@@ -64,27 +62,39 @@ class PlayState extends HelixState
 		}
 
 		// TODO: un-hardcode
-		new Shooter();
+		this.enemies.add(new Shooter());
 	}
 
 	override public function update(elapsed:Float):Void
 	{
 		super.update(elapsed);
+
+		FlxG.collide(enemies, playerShip, function(e:AbstractEnemy, p:PlayerShip)
+		{
+			this.killPlayerShip();
+		});
 		
-		FlxG.collide(bullets, asteroids, function(b:Bullet, asteroid:Asteroid) {
+		FlxG.collide(bullets, asteroids, function(b:Bullet, asteroid:Asteroid)
+		{
 				b.kill();
 				if (asteroid.type != AsteroidType.Backeroid) {
 					this.damageAndSplit(asteroid);
 				}
 		});
 
-		if (Config.get("features").collideAsteroidsWithAsteroids) {
-		FlxG.collide(asteroids, asteroids, function(a1:Asteroid, a2:Asteroid)
-		{			
-			this.damageAndSplit(a1);
-			this.damageAndSplit(a2);
-		});
+		if (Config.get("features").collideAsteroidsWithAsteroids)
+		{
+			FlxG.collide(asteroids, asteroids, function(a1:Asteroid, a2:Asteroid)
+			{			
+				this.damageAndSplit(a1);
+				this.damageAndSplit(a2);
+			});
+		}
 	}
+
+	private function killPlayerShip():Void
+	{
+		this.playerShip.die(this.resetShip);
 	}
 	
 	private function addAsteroid():Asteroid
