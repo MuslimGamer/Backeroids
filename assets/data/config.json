@@ -1,9 +1,16 @@
 {
     "asteroids": {
         "initialNumber": 3,
-        "secondsToSpawn": 5,
+        "secondsToSpawn": 3,
         "collisionElasticity": 0.5,
         "initialVelocity": 90,
+        "backeroidPercentage": 5,
+
+        "backeroid": {
+            "initialHealth": 8,
+            "scale": 1,
+            "mass": 12
+        },
 
         "big": {
             "initialHealth": 4,
@@ -33,13 +40,13 @@
     },
 
     "gun": {
-        "fireCooldownSeconds": 0.5,
+        "fireCooldownSeconds": 0.3,
         "bulletVelocity": 300
     },
 
     "features": {
         "wrapBullets": false,
         "splitAsteroidsOnDeath": true,
-        "collideAsteroidsWithAsteroids": false
+        "collideAsteroidsWithAsteroids": true
     }
 }

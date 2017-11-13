@@ -20,6 +20,19 @@ class Asteroid extends HelixSprite
     {
         super(null, {width: 60, height: 60, colour: FlxColor.fromString('gray')});
         this.elasticity = Config.get("asteroids").collisionElasticity;
+        this.kill();
+    }
+
+    public function setBackeroid():Asteroid
+    {
+        this.setHealth(Config.get("asteroids").backeroid.initialHealth);
+        this.setScale(Config.get("asteroids").backeroid.scale, Config.get("asteroids").backeroid.scale);
+        this.mass = Config.get("asteroids").backeroid.mass;
+        this.type = AsteroidType.Backeroid;
+
+        this.color = FlxColor.fromString('orange');
+
+        return this;
     }
 
     public function setBigAsteroid():Asteroid
@@ -28,6 +41,8 @@ class Asteroid extends HelixSprite
         this.setScale(Config.get("asteroids").big.scale, Config.get("asteroids").big.scale);
         this.mass = Config.get("asteroids").big.mass;
         this.type = AsteroidType.Large;
+
+        this.color = FlxColor.fromString('gray');
 
         return this;
     }
@@ -39,6 +54,8 @@ class Asteroid extends HelixSprite
         this.mass = Config.get("asteroids").medium.mass;
         this.type = AsteroidType.Medium;
 
+        this.color = FlxColor.fromString('gray');
+
         return this;
     }
 
@@ -48,6 +65,8 @@ class Asteroid extends HelixSprite
         this.setScale(Config.get("asteroids").small.scale, Config.get("asteroids").small.scale);
         this.mass = Config.get("asteroids").small.mass;
         this.type = AsteroidType.Small;
+
+        this.color = FlxColor.fromString('gray');
 
         return this;
     }
@@ -60,7 +79,16 @@ class Asteroid extends HelixSprite
 
     public function respawn():Void
     {
-        this.setBigAsteroid();
+        this.revive();
+
+        if (FlxG.random.float() < Config.get("asteroids").backeroidPercentage / 100)
+		{
+            this.setBackeroid();
+        }
+        else
+        {
+            this.setBigAsteroid();
+        }
         this.processVelocity();
     }
 
