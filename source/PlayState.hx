@@ -2,8 +2,9 @@ package;
 
 import backeroids.model.AsteroidType;
 import backeroids.view.Asteroid;
-import backeroids.view.PlayerShip;
 import backeroids.view.Bullet;
+import backeroids.view.PlayerShip;
+import backeroids.view.enemies.Shooter;
 import flixel.group.FlxGroup;
 import flixel.FlxObject;
 import flixel.util.FlxTimer;
@@ -61,6 +62,9 @@ class PlayState extends HelixState
 		{
 			this.addAsteroid().respawn();
 		}
+
+		// TODO: un-hardcode
+		new Shooter();
 	}
 
 	override public function update(elapsed:Float):Void

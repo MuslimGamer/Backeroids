@@ -48,5 +48,17 @@
         "wrapBullets": false,
         "splitAsteroidsOnDeath": true,
         "collideAsteroidsWithAsteroids": true
+    },
+
+    "enemies": {
+        "shooter": {
+            "elasticity": 1,
+            "velocity": 
+            {
+                "x": 100,
+                "y": 50
+            },
+            "sustainVyForSeconds": 1
+        }
     }
 }
