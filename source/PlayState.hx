@@ -4,16 +4,17 @@ import backeroids.model.AsteroidType;
 import backeroids.view.Asteroid;
 import backeroids.view.Bullet;
 import backeroids.view.PlayerShip;
-import backeroids.view.enemies.Shooter;
-import flixel.group.FlxGroup;
 import backeroids.view.enemies.AbstractEnemy;
-import flixel.FlxObject;
-import flixel.util.FlxTimer;
+import backeroids.view.enemies.Shooter;
+import backeroids.view.enemies.Tank;
 import flixel.FlxG;
+import flixel.FlxObject;
+import flixel.group.FlxGroup;
+import flixel.util.FlxTimer;
 import helix.core.HelixSprite;
+using helix.core.HelixSpriteFluentApi;
 import helix.core.HelixState;
 import helix.data.Config;
-using helix.core.HelixSpriteFluentApi;
 
 class PlayState extends HelixState
 {
@@ -59,12 +60,6 @@ class PlayState extends HelixState
 		{
 			this.addAsteroid().respawn();
 		}
-
-		// TODO: un-hardcode
-		this.enemies.add(new Shooter(function(eb:Bullet):Void
-		{
-			enemyBullets.add(eb);
-		}));
 	}
 
 	override public function update(elapsed:Float):Void
@@ -160,5 +155,18 @@ class PlayState extends HelixState
 				newAsteroid.y = asteroid.y;
 			}
 		}
+	}
+
+	private function addShooter():Void
+	{
+		this.enemies.add(new Shooter(function(eb:Bullet):Void
+		{
+			enemyBullets.add(eb);
+		}));
+	}
+
+	private function addTank():Void
+	{
+		this.enemies.add(new Tank(this.playerShip));		
 	}
 }

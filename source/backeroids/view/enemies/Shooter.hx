@@ -23,7 +23,7 @@ class Shooter extends AbstractEnemy
         this.onFireCallback = onFireCallback;
 
         var config:Dynamic = Config.get("enemies").shooter;
-        this.elasticity = config.elasticity;
+        this.elasticity = Config.get("enemies").elasticity;
         this.velocity.x = config.velocity.x;
         this.health = config.health;
 

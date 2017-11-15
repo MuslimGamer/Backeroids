@@ -51,16 +51,20 @@
     },
 
     "enemies": {
+        "elasticity": 0,
         "shooter": {
             "health": 3,
             "fireRatePerSecond": 3, // per second
-            "elasticity": 0,
             "velocity": 
             {
                 "x": 100,
                 "y": 50
             },
             "sustainVyForSeconds": 1
+        },
+        "tank": {
+            "health": 7,
+            "velocity": 25
         }
     }
 }
