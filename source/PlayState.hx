@@ -146,7 +146,7 @@ class PlayState extends HelixState
 				}
 				else
 				{
-					// Small and Backeroid asteroids don't split
+					newAsteroid.kill();
 				}
 
 				// Reset (move) to current destroyed position, offset so they don't
