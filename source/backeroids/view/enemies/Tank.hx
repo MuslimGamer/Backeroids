@@ -49,10 +49,9 @@ class Tank extends AbstractEnemy
         super.update(elapsedSeconds);
         var me = FlxPoint.weak(this.x, this.y);
         var player = FlxPoint.weak(this.player.x, this.player.y);
-        trace('Pre: v=${this.velocity} and a=${this.angle}');
+        
         this.angle = me.angleBetween(player);
         this.velocity.set(0, -this.baseVelocity);
-        this.velocity.rotate(FlxPoint.weak(0, 0), this.angle);
-        trace('Post: v=${this.velocity} and a=${this.angle}');        
+        this.velocity.rotate(FlxPoint.weak(0, 0), this.angle);      
     }
 }

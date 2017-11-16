@@ -52,6 +52,7 @@
 
     "enemies": {
         "elasticity": 0,
+        "secondsToSpawn": 3,
         "shooter": {
             "health": 3,
             "fireRatePerSecond": 3, // per second

@@ -20,14 +20,17 @@ class PlayState extends HelixState
 {
 	private static var NUM_INITIAL_ASTEROIDS:Int = Config.get("asteroids").initialNumber;
 	private static var SECONDS_PER_ASTEROID:Int = Config.get("asteroids").secondsToSpawn;
+	private static var SECONDS_PER_ENEMY:Int = Config.get("enemies").secondsToSpawn;
 
 	private var asteroids = new FlxTypedGroup<Asteroid>();
 	private var asteroidTimer = new FlxTimer();
 
 	private var playerShip:PlayerShip;
 	private var bullets = new FlxTypedGroup<Bullet>();
-	private var enemyBullets = new FlxTypedGroup<Bullet>();
+
 	private var enemies = new FlxTypedGroup<AbstractEnemy>();
+	private var enemyBullets = new FlxTypedGroup<Bullet>();
+	private var enemyTimer = new FlxTimer();
 
 	override public function create():Void
 	{
@@ -60,6 +63,11 @@ class PlayState extends HelixState
 		{
 			this.addAsteroid().respawn();
 		}
+
+		this.enemyTimer.start(SECONDS_PER_ENEMY, function(timer)
+		{
+			this.addEnemy();
+		}, 0);
 	}
 
 	override public function update(elapsed:Float):Void
@@ -87,6 +95,23 @@ class PlayState extends HelixState
 				{
 					enemy.kill();
 				}
+		});
+
+		FlxG.collide(enemies, asteroids, function(enemy:AbstractEnemy, asteroid:Asteroid)
+		{
+				this.damageAndSplit(asteroid);
+		});
+
+		FlxG.collide(enemyBullets, asteroids, function(enemyBullet:Bullet, asteroid:Asteroid)
+		{
+				enemyBullet.kill();
+				this.damageAndSplit(asteroid);
+		});
+
+		FlxG.collide(enemyBullets, playerShip, function(enemyBullet:Bullet, p:PlayerShip)
+		{
+				enemyBullet.kill();
+				this.killPlayerShip();
 		});
 
 		if (Config.get("features").collideAsteroidsWithAsteroids)
@@ -138,7 +163,7 @@ class PlayState extends HelixState
 				}
 				else
 				{
-					// Small and Backeroid asteroids don't split
+					newAsteroid.kill();
 				}
 
 				// Reset (move) to current destroyed position, offset so they don't
@@ -168,5 +193,17 @@ class PlayState extends HelixState
 	private function addTank():Void
 	{
 		this.enemies.add(new Tank(this.playerShip));		
+	}
+
+	private function addEnemy():Void
+	{
+		if (FlxG.random.float() < 0.5)
+		{
+			this.addShooter();
+		}
+		else
+		{
+			this.addTank();
+		}
 	}
 }
