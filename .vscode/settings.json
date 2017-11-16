@@ -21,7 +21,7 @@
 		["export/ios/haxe/debug.hxml"],
 		["export/ios/haxe/release.hxml"]
 	],
-	"haxe.diagnosticsPathFilter": "${workspaceRoot}/src",
+	"haxe.diagnosticsPathFilter": "${workspaceRoot}/source",
 	"search.exclude": {
 		"export/**/*.hx": true
 	},

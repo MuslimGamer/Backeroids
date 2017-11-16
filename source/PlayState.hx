@@ -2,29 +2,32 @@ package;
 
 import backeroids.model.AsteroidType;
 import backeroids.view.Asteroid;
-import backeroids.view.PlayerShip;
 import backeroids.view.Bullet;
-import flixel.group.FlxGroup;
-import flixel.FlxObject;
-import flixel.util.FlxTimer;
+import backeroids.view.PlayerShip;
+import backeroids.view.enemies.AbstractEnemy;
+import backeroids.view.enemies.Shooter;
+import backeroids.view.enemies.Tank;
 import flixel.FlxG;
+import flixel.FlxObject;
+import flixel.group.FlxGroup;
+import flixel.util.FlxTimer;
 import helix.core.HelixSprite;
+using helix.core.HelixSpriteFluentApi;
 import helix.core.HelixState;
 import helix.data.Config;
-using helix.core.HelixSpriteFluentApi;
 
 class PlayState extends HelixState
 {
-	private var playerShip:PlayerShip;
-
 	private static var NUM_INITIAL_ASTEROIDS:Int = Config.get("asteroids").initialNumber;
 	private static var SECONDS_PER_ASTEROID:Int = Config.get("asteroids").secondsToSpawn;
-	private static var SECONDS_TO_REVIVE:Int = Config.get("ship").secondsToRevive;
 
 	private var asteroids = new FlxTypedGroup<Asteroid>();
 	private var asteroidTimer = new FlxTimer();
 
+	private var playerShip:PlayerShip;
 	private var bullets = new FlxTypedGroup<Bullet>();
+	private var enemyBullets = new FlxTypedGroup<Bullet>();
+	private var enemies = new FlxTypedGroup<AbstractEnemy>();
 
 	override public function create():Void
 	{
@@ -39,12 +42,8 @@ class PlayState extends HelixState
 
 		this.playerShip.collideResolve(this.asteroids, function(player:PlayerShip, asteroid:Asteroid)
 		{
-			// Player hits asteroid. Yay!
-			this.playerShip.kill();
-			new FlxTimer().start(SECONDS_TO_REVIVE, function(timer) {
-				playerShip.revive();
-				resetShip();
-			});
+			// Player hits asteroid.
+			this.killPlayerShip();
 
 			if (asteroid.type != AsteroidType.Backeroid) {
 				this.damageAndSplit(asteroid);
@@ -66,21 +65,43 @@ class PlayState extends HelixState
 	override public function update(elapsed:Float):Void
 	{
 		super.update(elapsed);
+
+		FlxG.collide(enemies, playerShip, function(e:AbstractEnemy, p:PlayerShip)
+		{
+			this.killPlayerShip();
+		});
 		
-		FlxG.collide(bullets, asteroids, function(b:Bullet, asteroid:Asteroid) {
+		FlxG.collide(bullets, asteroids, function(b:Bullet, asteroid:Asteroid)
+		{
 				b.kill();
 				if (asteroid.type != AsteroidType.Backeroid) {
 					this.damageAndSplit(asteroid);
 				}
 		});
 
-		if (Config.get("features").collideAsteroidsWithAsteroids) {
-		FlxG.collide(asteroids, asteroids, function(a1:Asteroid, a2:Asteroid)
-		{			
-			this.damageAndSplit(a1);
-			this.damageAndSplit(a2);
+		FlxG.collide(bullets, enemies, function(bullet:Bullet, enemy:AbstractEnemy)
+		{
+				bullet.kill();
+				enemy.health -= 1;
+				if (enemy.health <= 0)
+				{
+					enemy.kill();
+				}
 		});
+
+		if (Config.get("features").collideAsteroidsWithAsteroids)
+		{
+			FlxG.collide(asteroids, asteroids, function(a1:Asteroid, a2:Asteroid)
+			{			
+				this.damageAndSplit(a1);
+				this.damageAndSplit(a2);
+			});
+		}
 	}
+
+	private function killPlayerShip():Void
+	{
+		this.playerShip.die(this.resetShip);
 	}
 	
 	private function addAsteroid():Asteroid
@@ -134,5 +155,18 @@ class PlayState extends HelixState
 				newAsteroid.y = asteroid.y;
 			}
 		}
+	}
+
+	private function addShooter():Void
+	{
+		this.enemies.add(new Shooter(function(eb:Bullet):Void
+		{
+			enemyBullets.add(eb);
+		}));
+	}
+
+	private function addTank():Void
+	{
+		this.enemies.add(new Tank(this.playerShip));		
 	}
 }

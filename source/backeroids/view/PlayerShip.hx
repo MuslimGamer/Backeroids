@@ -1,12 +1,13 @@
 package backeroids.view;
  
+import backeroids.model.Gun;
 import flixel.FlxG;
+import flixel.group.FlxGroup;
+import flixel.input.FlxInput;
+import flixel.input.keyboard.FlxKey;
 import flixel.math.FlxPoint;
 import flixel.util.FlxSpriteUtil;
-import flixel.input.FlxInput;
-import flixel.group.FlxGroup;
-import flixel.input.keyboard.FlxKey;
-import backeroids.model.Gun;
+import flixel.util.FlxTimer;
 import helix.core.HelixSprite;
 import helix.data.Config;
 using helix.core.HelixSpriteFluentApi;
@@ -14,11 +15,13 @@ using Lambda;
 
 class PlayerShip extends HelixSprite
 {
-    private static var ROTATION_VELOCITY:Int = Config.get("ship").rotationVelocity;
     private static var ACCELERATION:Int = Config.get("ship").acceleration;
     private static var DECELERATION_MULTIPLIER:Float = Config.get("ship").decelerationMultiplier;
+    private static var ROTATION_VELOCITY:Int = Config.get("ship").rotationVelocity;
+    private static var SECONDS_TO_REVIVE:Int = Config.get("ship").secondsToRevive;
 
     private var isTurning:Bool = false;
+    private var recycleBulletCallback:Void->Bullet;
 
     private var gun:Gun;
 
@@ -89,25 +92,29 @@ class PlayerShip extends HelixSprite
 
         if (keys.has(FlxKey.SPACE) && this.gun.canFire())
         {
-            var bullet = this.recycleBullet();
+            var bullet = this.recycleBulletCallback();
             bullet.move(this.x + ((this.width - bullet.width) / 2), this.y + ((this.height - bullet.height) / 2));
             bullet.shoot(this.angle);
         }
     }
 
-    dynamic private function recycleBullet():Bullet 
-    {
-        return null;
-    }
-
     public function setRecycleBulletCallback(callback):Void
     {
-        this.recycleBullet = callback;
+        this.recycleBulletCallback = callback;
     }
 
     private function accelerateForward(acceleration:Int):Void
     {
         this.acceleration.set(0, -acceleration); 
         this.acceleration.rotate(FlxPoint.weak(0, 0), this.angle);
+    }
+
+    public function die(onReviveCallback:Void->Void):Void
+    {
+        this.kill();
+        new FlxTimer().start(SECONDS_TO_REVIVE, function(timer) {
+            this.revive();
+            onReviveCallback();
+        });
     }
 }
