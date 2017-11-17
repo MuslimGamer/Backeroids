@@ -66,6 +66,10 @@
         "tank": {
             "health": 7,
             "velocity": 25
+        },
+        "kamikaze": {
+            "health": 1,
+            "velocity": 200
         }
     }
 }
