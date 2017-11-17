@@ -7,6 +7,7 @@ import backeroids.view.PlayerShip;
 import backeroids.view.enemies.AbstractEnemy;
 import backeroids.view.enemies.Shooter;
 import backeroids.view.enemies.Tank;
+import backeroids.view.enemies.Kamikaze;
 import flixel.FlxG;
 import flixel.FlxObject;
 import flixel.group.FlxGroup;
@@ -195,15 +196,15 @@ class PlayState extends HelixState
 		this.enemies.add(new Tank(this.playerShip));		
 	}
 
+	private function addKamikaze():Void
+	{
+		this.enemies.add(new Kamikaze(this.playerShip));
+	}
+
 	private function addEnemy():Void
 	{
-		if (FlxG.random.float() < 0.5)
-		{
-			this.addShooter();
-		}
-		else
-		{
-			this.addTank();
-		}
+		var callbacks = [this.addTank, this.addShooter, this.addKamikaze];
+		var choice = FlxG.random.int(0, callbacks.length - 1);
+		callbacks[choice]();
 	}
 }
