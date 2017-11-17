@@ -8,7 +8,7 @@ class Kamikaze extends FollowerEnemy
 {
     public function new(player:PlayerShip)
     {
-        super(player, {width: 30, height: 30, colour: 0xFFc10000 });
+        super(null, {width: 30, height: 30, colour: 0xFFc10000 }, player);
 
         var config:Dynamic = Config.get("enemies").kamikaze;
         this.baseVelocity = config.velocity;

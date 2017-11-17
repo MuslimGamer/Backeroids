@@ -8,7 +8,7 @@ class Tank extends FollowerEnemy
 {
     public function new(player:PlayerShip)
     {
-        super(player, {width: 80, height: 80, colour: 0xFFbbbbbb });
+        super(null, {width: 80, height: 80, colour: 0xFFbbbbbb }, player);
 
         var config:Dynamic = Config.get("enemies").tank;   
         // set either component, velocity is rotated later

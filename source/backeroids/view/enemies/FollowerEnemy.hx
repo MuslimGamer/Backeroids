@@ -13,9 +13,9 @@ class FollowerEnemy extends AbstractEnemy
     private var player:PlayerShip;
     private var baseVelocity:Int;
 
-    private function new(player:PlayerShip, colorDetails)
+    private function new(filename, colorDetails, player:PlayerShip)
     {
-        super(null, colorDetails);
+        super(filename, colorDetails);
         this.elasticity = Config.get("enemies").elasticity;
         this.player = player;
 
