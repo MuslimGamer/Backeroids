@@ -1,25 +1,14 @@
 package backeroids.view;
 
+import backeroids.view.Projectile;
 import flixel.util.FlxColor;
-import flixel.math.FlxPoint;
-import helix.core.HelixSprite;
 import helix.data.Config;
 
-class Mine extends HelixSprite
+class Mine extends Projectile
 {
     public function new():Void
     {
-        super(null, {width: 10, height: 10, colour: FlxColor.fromString('red')});
-        this.kill();
-    }
-
-    public function shoot(angle:Float):Void
-    {
-        this.revive();
-        this.angle = angle;
-
-        this.velocity.set(0, -Config.get("enemies").minedropper.mineVelocity);
-        this.velocity.rotate(FlxPoint.weak(0, 0), this.angle);
+        super(null, {width: 10, height: 10, colour: FlxColor.fromString('red')}, Config.get("enemies").minedropper.mineVelocity);
     }
 
     public function explode():Void

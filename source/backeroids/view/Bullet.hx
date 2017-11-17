@@ -1,20 +1,15 @@
 package backeroids.view;
 
+import backeroids.view.Projectile;
 import flixel.util.FlxColor;
 import flixel.util.FlxSpriteUtil;
-import flixel.math.FlxPoint;
-import backeroids.view.Asteroid;
-import backeroids.model.Gun;
-import helix.core.HelixSprite;
 import helix.data.Config;
-using helix.core.HelixSpriteFluentApi;
 
-class Bullet extends HelixSprite
+class Bullet extends Projectile
 {
     public function new():Void
     {
-        super(null, {width: 2, height: 8, colour: FlxColor.fromString('white')});
-        this.kill();
+        super(null, {width: 2, height: 8, colour: FlxColor.fromString('white')}, Config.get("gun").bulletVelocity);
     }
 
     override public function update(elapsedSeconds:Float):Void
@@ -24,14 +19,5 @@ class Bullet extends HelixSprite
         if (Config.get("features").wrapBullets) {
             FlxSpriteUtil.screenWrap(this);
         }
-    }
-
-    public function shoot(angle:Float):Void
-    {
-        this.revive();
-        this.angle = angle;
-
-        this.velocity.set(0, -Config.get("gun").bulletVelocity);
-        this.velocity.rotate(FlxPoint.weak(0, 0), this.angle);
     }
 }

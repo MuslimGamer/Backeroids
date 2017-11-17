@@ -1,6 +1,6 @@
 {
     "asteroids": {
-        "enabled": false,
+        "enabled": true,
         "initialNumber": 3,
         "secondsToSpawn": 3,
         "collisionElasticity": 0.5,
@@ -52,7 +52,7 @@
     },
 
     "enemies": {
-        "enabled": false,
+        "enabled": true,
         "elasticity": 0,
         "secondsToSpawn": 3,
         "shooter": {
