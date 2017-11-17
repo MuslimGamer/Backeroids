@@ -1,5 +1,6 @@
 {
     "asteroids": {
+        "enabled": true,
         "initialNumber": 3,
         "secondsToSpawn": 3,
         "collisionElasticity": 0.5,
@@ -51,9 +52,11 @@
     },
 
     "enemies": {
+        "enabled": true,
         "elasticity": 0,
         "secondsToSpawn": 3,
         "shooter": {
+            "enabled": true,
             "health": 3,
             "fireRatePerSecond": 3, // per second
             "velocity": 
@@ -64,8 +67,24 @@
             "sustainVyForSeconds": 1
         },
         "tank": {
+            "enabled": true,
             "health": 7,
             "velocity": 25
+        },
+        "kamikaze": {
+            "enabled": true,
+            "health": 1,
+            "velocity": 200
+        },
+        "minedropper": {
+            "enabled": true,
+            "health": 5,
+            "fireRatePerSecond": 1,
+            "velocity": {
+                "x": 70,
+                "y": 30
+            },
+            "mineVelocity": 100
         }
     }
 }

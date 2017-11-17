@@ -3,10 +3,13 @@ package;
 import backeroids.model.AsteroidType;
 import backeroids.view.Asteroid;
 import backeroids.view.Bullet;
+import backeroids.view.Mine;
 import backeroids.view.PlayerShip;
 import backeroids.view.enemies.AbstractEnemy;
 import backeroids.view.enemies.Shooter;
 import backeroids.view.enemies.Tank;
+import backeroids.view.enemies.Kamikaze;
+import backeroids.view.enemies.MineDropper;
 import flixel.FlxG;
 import flixel.FlxObject;
 import flixel.group.FlxGroup;
@@ -30,6 +33,7 @@ class PlayState extends HelixState
 
 	private var enemies = new FlxTypedGroup<AbstractEnemy>();
 	private var enemyBullets = new FlxTypedGroup<Bullet>();
+	private var enemyMines = new FlxTypedGroup<Mine>();
 	private var enemyTimer = new FlxTimer();
 
 	override public function create():Void
@@ -53,21 +57,27 @@ class PlayState extends HelixState
 			}
 		});
 
-		this.asteroidTimer.start(SECONDS_PER_ASTEROID, function(timer)
+		if (Config.get("asteroids").enabled)
 		{
-			this.addAsteroid().respawn();
-		}, 0);
+			this.asteroidTimer.start(SECONDS_PER_ASTEROID, function(timer)
+			{
+				this.addAsteroid().respawn();
+			}, 0);
 
-		var asteroidsToCreate = NUM_INITIAL_ASTEROIDS;
-		while (asteroidsToCreate-- > 0)
-		{
-			this.addAsteroid().respawn();
+			var asteroidsToCreate = NUM_INITIAL_ASTEROIDS;
+			while (asteroidsToCreate-- > 0)
+			{
+				this.addAsteroid().respawn();
+			}
 		}
 
-		this.enemyTimer.start(SECONDS_PER_ENEMY, function(timer)
+		if (Config.get("enemies").enabled)
 		{
-			this.addEnemy();
-		}, 0);
+			this.enemyTimer.start(SECONDS_PER_ENEMY, function(timer)
+			{
+				this.addEnemy();
+			}, 0);
+		}
 	}
 
 	override public function update(elapsed:Float):Void
@@ -112,6 +122,22 @@ class PlayState extends HelixState
 		{
 				enemyBullet.kill();
 				this.killPlayerShip();
+		});
+
+		FlxG.collide(enemyMines, asteroids, function(mine:Mine, asteroid:Asteroid)
+		{
+			mine.explode();
+		});
+
+		FlxG.collide(enemyMines, playerShip, function(mine:Mine, p:PlayerShip)
+		{
+			mine.explode();
+		});
+
+		FlxG.collide(enemyMines, bullets, function(mine:Mine, bullet:Bullet)
+		{
+			bullet.kill();
+			mine.explode();
 		});
 
 		if (Config.get("features").collideAsteroidsWithAsteroids)
@@ -184,9 +210,9 @@ class PlayState extends HelixState
 
 	private function addShooter():Void
 	{
-		this.enemies.add(new Shooter(function(eb:Bullet):Void
+		this.enemies.add(new Shooter(function():Bullet
 		{
-			enemyBullets.add(eb);
+			return enemyBullets.recycle(Bullet);
 		}));
 	}
 
@@ -195,15 +221,40 @@ class PlayState extends HelixState
 		this.enemies.add(new Tank(this.playerShip));		
 	}
 
+	private function addKamikaze():Void
+	{
+		this.enemies.add(new Kamikaze(this.playerShip));
+	}
+
+	private function addMineDropper():Void
+	{
+		this.enemies.add(new MineDropper(function():Mine
+		{
+			return enemyMines.recycle(Mine);
+		}));
+	}
+
 	private function addEnemy():Void
 	{
-		if (FlxG.random.float() < 0.5)
+		var callbacks = new Array<Void->Void>();
+		var conf = Config.get("enemies");
+		if (conf.shooter.enabled)
 		{
-			this.addShooter();
+			callbacks.push(this.addShooter);
 		}
-		else
+		if (conf.tank.enabled)
 		{
-			this.addTank();
+			callbacks.push(this.addTank);
 		}
+		if (conf.kamikaze.enabled)
+		{
+			callbacks.push(this.addKamikaze);
+		}
+		if (conf.minedropper.enabled)
+		{
+			callbacks.push(this.addMineDropper);
+		}
+		var choice = FlxG.random.int(0, callbacks.length - 1);
+		callbacks[choice]();
 	}
 }

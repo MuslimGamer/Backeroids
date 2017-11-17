@@ -15,12 +15,12 @@ class Shooter extends AbstractEnemy
     private static var random = new FlxRandom();
     private var lastVyChange:GameTime = GameTime.now();
     private var lastShot:GameTime = GameTime.now();
-    private var onFireCallback:Bullet->Void;
+    private var recycleBulletCallback:Void->Bullet;
 
-    public function new(onFireCallback:Bullet->Void)
+    public function new(recycleBulletCallback:Void->Bullet)
     {
         super(null, {width: 60, height: 30, colour: FlxColor.GREEN });
-        this.onFireCallback = onFireCallback;
+        this.recycleBulletCallback = recycleBulletCallback;
 
         var config:Dynamic = Config.get("enemies").shooter;
         this.elasticity = Config.get("enemies").elasticity;
@@ -59,14 +59,12 @@ class Shooter extends AbstractEnemy
         {
             this.lastShot = now;
             
-            var bullet = new Bullet();            
+            var bullet = this.recycleBulletCallback();            
             bullet.x = this.x + ((this.width - bullet.width) / 2);
             bullet.y = this.y + ((this.height - bullet.height) / 2);
 
             var angle = random.int(30, 150) * (random.bool() == true ? -1 : 1);
             bullet.shoot(angle);
-            
-            this.onFireCallback(bullet);
         }
     }
 }
