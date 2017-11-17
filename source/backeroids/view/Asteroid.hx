@@ -16,6 +16,8 @@ class Asteroid extends HelixSprite
     public var asteroidSize:Int = 0;
     public var type(default, null):AsteroidType = AsteroidType.Large;
 
+    private var shouldWrap:Bool = false;
+
     public function new():Void
     {
         super(null, {width: 60, height: 60, colour: FlxColor.fromString('gray')});
@@ -74,7 +76,15 @@ class Asteroid extends HelixSprite
     override public function update(elapsedSeconds:Float):Void
     {
         super.update(elapsedSeconds);
-        FlxSpriteUtil.screenWrap(this);
+        if (this.shouldWrap)
+        {
+            FlxSpriteUtil.screenWrap(this);
+        }
+
+        if (this.isOnScreen())
+        {
+            this.shouldWrap = true;
+        }
     }
 
     public function respawn():Void
@@ -115,7 +125,7 @@ class Asteroid extends HelixSprite
 
     private function processVelocity():Void
     {
-        if (FlxG.random.float() < 0.5)
+        if (FlxG.random.bool())
 		{
 			this.processVelocityLeftRight();
 		}
@@ -129,7 +139,7 @@ class Asteroid extends HelixSprite
 
     private function processVelocityUpDown():Void
     {
-        if (FlxG.random.float() < 0.5)
+        if (FlxG.random.bool())
         {
             this.y = -this.height;
             this.velocity.y = startingVelocity / 2 + getVelocityRandomPercent();
@@ -146,7 +156,7 @@ class Asteroid extends HelixSprite
 
     private function processVelocityLeftRight():Void
     {
-        if (FlxG.random.float() < 0.5)
+        if (FlxG.random.bool())
         {
             this.x = -this.width;
             this.velocity.x = startingVelocity / 2 + getVelocityRandomPercent();
