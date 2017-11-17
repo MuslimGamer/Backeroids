@@ -70,6 +70,15 @@
         "kamikaze": {
             "health": 1,
             "velocity": 200
+        },
+        "minedropper": {
+            "health": 5,
+            "fireRatePerSecond": 1,
+            "velocity": {
+                "x": 70,
+                "y": 30
+            },
+            "mineVelocity": 100
         }
     }
 }
