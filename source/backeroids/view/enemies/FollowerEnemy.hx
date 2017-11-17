@@ -36,11 +36,14 @@ class FollowerEnemy extends AbstractEnemy
     override public function update(elapsedSeconds:Float):Void
     {
         super.update(elapsedSeconds);
-        var me = FlxPoint.weak(this.x, this.y);
-        var player = FlxPoint.weak(this.player.x, this.player.y);
-        
-        this.angle = me.angleBetween(player);
-        this.velocity.set(0, -this.baseVelocity);
-        this.velocity.rotate(FlxPoint.weak(0, 0), this.angle); 
+        if (this.player.exists) 
+        {
+            var me = FlxPoint.weak(this.x, this.y);
+            var player = FlxPoint.weak(this.player.x, this.player.y);
+            
+            this.angle = me.angleBetween(player);
+            this.velocity.set(0, -this.baseVelocity);
+            this.velocity.rotate(FlxPoint.weak(0, 0), this.angle); 
+        }
     }
 }
