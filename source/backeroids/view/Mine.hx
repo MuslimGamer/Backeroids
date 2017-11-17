@@ -13,11 +13,6 @@ class Mine extends HelixSprite
         this.kill();
     }
 
-    override public function update(elapsedSeconds:Float):Void
-    {
-        super.update(elapsedSeconds);
-    }
-
     public function shoot(angle:Float):Void
     {
         this.revive();
