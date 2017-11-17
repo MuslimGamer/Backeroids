@@ -90,6 +90,7 @@ class Asteroid extends HelixSprite
     public function respawn():Void
     {
         this.revive();
+        this.shouldWrap = false;
 
         if (FlxG.random.float() < Config.get("asteroids").backeroidPercentage / 100)
 		{
