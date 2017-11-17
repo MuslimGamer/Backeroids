@@ -210,9 +210,9 @@ class PlayState extends HelixState
 
 	private function addShooter():Void
 	{
-		this.enemies.add(new Shooter(function(eb:Bullet):Void
+		this.enemies.add(new Shooter(function():Bullet
 		{
-			enemyBullets.add(eb);
+			return enemyBullets.recycle(Bullet);
 		}));
 	}
 
