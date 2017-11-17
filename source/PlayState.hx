@@ -57,21 +57,27 @@ class PlayState extends HelixState
 			}
 		});
 
-		this.asteroidTimer.start(SECONDS_PER_ASTEROID, function(timer)
+		if (Config.get("asteroids").enabled)
 		{
-			this.addAsteroid().respawn();
-		}, 0);
+			this.asteroidTimer.start(SECONDS_PER_ASTEROID, function(timer)
+			{
+				this.addAsteroid().respawn();
+			}, 0);
 
-		var asteroidsToCreate = NUM_INITIAL_ASTEROIDS;
-		while (asteroidsToCreate-- > 0)
-		{
-			this.addAsteroid().respawn();
+			var asteroidsToCreate = NUM_INITIAL_ASTEROIDS;
+			while (asteroidsToCreate-- > 0)
+			{
+				this.addAsteroid().respawn();
+			}
 		}
 
-		this.enemyTimer.start(SECONDS_PER_ENEMY, function(timer)
+		if (Config.get("enemies").enabled)
 		{
-			this.addEnemy();
-		}, 0);
+			this.enemyTimer.start(SECONDS_PER_ENEMY, function(timer)
+			{
+				this.addEnemy();
+			}, 0);
+		}
 	}
 
 	override public function update(elapsed:Float):Void
@@ -230,7 +236,24 @@ class PlayState extends HelixState
 
 	private function addEnemy():Void
 	{
-		var callbacks = [this.addTank, this.addShooter, this.addKamikaze, this.addMineDropper];
+		var callbacks = new Array<Void->Void>();
+		var conf = Config.get("enemies");
+		if (conf.shooter.enabled)
+		{
+			callbacks.push(this.addShooter);
+		}
+		if (conf.tank.enabled)
+		{
+			callbacks.push(this.addTank);
+		}
+		if (conf.kamikaze.enabled)
+		{
+			callbacks.push(this.addKamikaze);
+		}
+		if (conf.minedropper.enabled)
+		{
+			callbacks.push(this.addMineDropper);
+		}
 		var choice = FlxG.random.int(0, callbacks.length - 1);
 		callbacks[choice]();
 	}
