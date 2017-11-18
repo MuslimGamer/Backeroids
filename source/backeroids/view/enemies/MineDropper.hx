@@ -2,9 +2,9 @@ package backeroids.view.enemies;
 
 import backeroids.view.enemies.AbstractEnemy;
 import flixel.math.FlxRandom;
-import flixel.FlxG;
 import helix.data.Config;
 import helix.GameTime;
+using backeroids.view.enemies.AbstractEnemyExtension;
 
 class MineDropper extends AbstractEnemy
 {
@@ -24,20 +24,7 @@ class MineDropper extends AbstractEnemy
         this.velocity.x = config.velocity.x;
         this.health = config.health;
 
-        this.velocity.y = (random.bool() == true ? -1 : 1) * (Config.get("enemies").minedropper.velocity.y);
-
-        var isGoingRight = random.bool();
-        if (isGoingRight)
-        {
-            this.x = -this.width;
-        }
-        else
-        {
-            this.x = FlxG.width;
-            this.velocity.x *= -1;
-        }
-
-        this.y = random.int(Std.int(FlxG.height / 4), Std.int(3 * FlxG.height / 4));
+        this.moveSideways(Config.get("enemies").minedropper.velocity.y, random);
     }
 
      override public function update(elapsedSeconds:Float):Void

@@ -2,13 +2,11 @@ package backeroids.view.enemies;
 
 import backeroids.view.enemies.AbstractEnemy;
 import backeroids.view.Bullet;
-import flixel.FlxG;
 import flixel.math.FlxRandom;
 import flixel.util.FlxColor;
 import helix.GameTime;
-import helix.core.HelixSprite;
-import helix.core.HelixSpriteFluentApi;
 import helix.data.Config;
+using backeroids.view.enemies.AbstractEnemyExtension;
 
 class Shooter extends AbstractEnemy
 {
@@ -27,20 +25,7 @@ class Shooter extends AbstractEnemy
         this.velocity.x = config.velocity.x;
         this.health = config.health;
 
-        this.velocity.y = (random.bool() == true ? -1 : 1) * (Config.get("enemies").shooter.velocity.y);
-
-        var isGoingRight = random.bool();
-        if (isGoingRight)
-        {
-            this.x = -this.width;
-        }
-        else
-        {
-            this.x = FlxG.width;
-            this.velocity.x *= -1;
-        }
-
-        this.y = random.int(Std.int(FlxG.height / 4), Std.int(3 * FlxG.height / 4));
+        this.moveSideways(Config.get("enemies").shooter.velocity.y, random);
     }
 
     override public function update(elapsedSeconds:Float):Void
