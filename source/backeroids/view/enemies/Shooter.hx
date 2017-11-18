@@ -1,8 +1,8 @@
 package backeroids.view.enemies;
 
 import backeroids.view.enemies.AbstractEnemy;
-import backeroids.model.IShooter;
-import backeroids.model.Projectile;
+import backeroids.interfaces.IShooter;
+import backeroids.interfaces.IProjectile;
 import flixel.math.FlxRandom;
 import flixel.util.FlxColor;
 import helix.GameTime;
@@ -15,9 +15,9 @@ class Shooter extends AbstractEnemy implements IShooter
     private static var random = new FlxRandom();
     private var lastVyChange:GameTime = GameTime.now();
     public var lastShot:GameTime = GameTime.now();
-    public var recycleProjectileCallback:Void->Projectile;
+    public var recycleProjectileCallback:Void->IProjectile;
 
-    public function new(recycleBulletCallback:Void->Projectile)
+    public function new(recycleBulletCallback:Void->IProjectile)
     {
         super(null, {width: 60, height: 30, colour: FlxColor.GREEN });
         this.recycleProjectileCallback = recycleBulletCallback;

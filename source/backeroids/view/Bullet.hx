@@ -1,6 +1,6 @@
 package backeroids.view;
 
-import backeroids.model.IProjectile;
+import backeroids.interfaces.IProjectile;
 import flixel.util.FlxColor;
 import flixel.math.FlxPoint;
 import flixel.util.FlxSpriteUtil;

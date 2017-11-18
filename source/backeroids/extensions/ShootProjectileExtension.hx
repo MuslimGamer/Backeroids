@@ -2,7 +2,7 @@ package backeroids.extensions;
 
 import flixel.math.FlxRandom;
 import helix.GameTime;
-import backeroids.model.IShooter;
+import backeroids.interfaces.IShooter;
 
 class ShootProjectileExtension
 {

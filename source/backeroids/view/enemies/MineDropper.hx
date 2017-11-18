@@ -1,8 +1,8 @@
 package backeroids.view.enemies;
 
 import backeroids.view.enemies.AbstractEnemy;
-import backeroids.model.IShooter;
-import backeroids.model.Projectile;
+import backeroids.interfaces.IShooter;
+import backeroids.interfaces.IProjectile;
 import flixel.math.FlxRandom;
 import helix.data.Config;
 import helix.GameTime;
@@ -13,9 +13,9 @@ class MineDropper extends AbstractEnemy implements IShooter
 {
     private static var random = new FlxRandom();
     public var lastShot:GameTime = GameTime.now();
-    public var recycleProjectileCallback:Void->Projectile;
+    public var recycleProjectileCallback:Void->IProjectile;
 
-    public function new(mineCallback:Void->Projectile):Void
+    public function new(mineCallback:Void->IProjectile):Void
     {
         super(null, {{width: 40, height: 50, colour: 0xFF730077 }});
 

@@ -1,4 +1,4 @@
-package backeroids.model;
+package backeroids.interfaces;
 
 import flixel.FlxSprite;
 
