@@ -2,12 +2,10 @@ package backeroids.interfaces;
 
 import helix.GameTime;
 import backeroids.interfaces.IProjectile;
-import flixel.FlxSprite;
+import backeroids.interfaces.ISprite;
 
-interface IShooter extends IFlxSprite
+interface IShooter extends ISprite
 {
-    public var height(get, set):Float;
-    public var width(get, set):Float;
     public var lastShot:GameTime;
     public var recycleProjectileCallback:Void->IProjectile;
 }
