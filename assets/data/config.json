@@ -79,11 +79,12 @@
         "minedropper": {
             "enabled": true,
             "health": 5,
-            "fireRatePerSecond": 1,
+            "fireRatePerSecond": 0.5,
             "velocity": {
                 "x": 70,
                 "y": 30
-            }
+            },
+            "mineFuseSeconds": 8
         }
     }
 }

@@ -1,11 +1,14 @@
 package backeroids.view;
 
+import flixel.util.FlxTimer;
 import flixel.util.FlxColor;
-import helix.data.Config;
 import helix.core.HelixSprite;
+import helix.data.Config;
 
 class Mine extends HelixSprite
 {
+    private var fuseTimer = new FlxTimer();
+
     public function new():Void
     {
         super(null, {width: 20, height: 20, colour: FlxColor.fromString('red')});
@@ -13,12 +16,21 @@ class Mine extends HelixSprite
         this.immovable = true;
     }
 
+    public function lightFuse():Void
+    {
+        this.revive();
+        this.fuseTimer.start(Config.get("enemies").minedropper.mineFuseSeconds, function(timer)
+        {
+            if (this.exists)
+            {
+                this.explode();
+            }
+        }, 1);
+    }
+
     public function explode():Void
     {
-        if (this.exists)
-        {
-            trace("BOOM!");
-            this.kill();
-        }
+        trace("BOOM!");
+        this.kill();
     }
 }

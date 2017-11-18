@@ -53,6 +53,8 @@ class MineDropper extends AbstractEnemy
             var mine = this.recycleMineCallback();
             mine.x = this.x + ((this.width - mine.width) / 2);
             mine.y = this.y + ((this.height - mine.height) / 2);
+
+            mine.lightFuse();
         }
     }
 }
