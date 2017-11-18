@@ -6,12 +6,14 @@ import flixel.FlxG;
 import flixel.math.FlxPoint;
 import flixel.math.FlxRandom;
 import helix.data.Config;
+import helix.GameTime;
 
 class FollowerEnemy extends AbstractEnemy
 {
     private static var random = new FlxRandom();
     private var player:PlayerShip;
     private var baseVelocity:Int;
+    private var lastPinpoint:GameTime = new GameTime(0);
 
     private function new(filename, colorDetails, player:PlayerShip)
     {
@@ -38,10 +40,16 @@ class FollowerEnemy extends AbstractEnemy
         super.update(elapsedSeconds);
         if (this.player.exists) 
         {
-            var me = FlxPoint.weak(this.x, this.y);
-            var player = FlxPoint.weak(this.player.x, this.player.y);
-            
-            this.angle = me.angleBetween(player);
+            var now = GameTime.now();
+
+            if (now.elapsedSeconds - this.lastPinpoint.elapsedSeconds > 1) 
+            {
+                var me = FlxPoint.weak(this.x, this.y);
+                var player = FlxPoint.weak(this.player.x, this.player.y);
+                this.angle = me.angleBetween(player);
+                this.lastPinpoint = now;
+            }
+
             this.velocity.set(0, -this.baseVelocity);
             this.velocity.rotate(FlxPoint.weak(0, 0), this.angle); 
         }

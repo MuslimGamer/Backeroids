@@ -74,17 +74,17 @@
         "kamikaze": {
             "enabled": true,
             "health": 1,
-            "velocity": 200
+            "velocity": 150
         },
         "minedropper": {
             "enabled": true,
             "health": 5,
-            "fireRatePerSecond": 1,
+            "fireRatePerSecond": 0.5,
             "velocity": {
                 "x": 70,
                 "y": 30
             },
-            "mineVelocity": 100
+            "mineFuseSeconds": 8
         }
     }
 }
