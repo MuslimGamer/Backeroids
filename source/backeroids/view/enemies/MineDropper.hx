@@ -1,22 +1,25 @@
 package backeroids.view.enemies;
 
 import backeroids.view.enemies.AbstractEnemy;
+import backeroids.model.IShooter;
+import backeroids.model.Projectile;
 import flixel.math.FlxRandom;
 import helix.data.Config;
 import helix.GameTime;
 using backeroids.extensions.AbstractEnemyExtension;
+using backeroids.extensions.ShootProjectileExtension;
 
-class MineDropper extends AbstractEnemy
+class MineDropper extends AbstractEnemy implements IShooter
 {
     private static var random = new FlxRandom();
-    private var lastShot:GameTime = GameTime.now();
-    private var recycleMineCallback:Void->Mine;
+    public var lastShot:GameTime = GameTime.now();
+    public var recycleProjectileCallback:Void->Projectile;
 
-    public function new(mineCallback:Void->Mine):Void
+    public function new(mineCallback:Void->Projectile):Void
     {
         super(null, {{width: 40, height: 50, colour: 0xFF730077 }});
 
-        this.recycleMineCallback = mineCallback;
+        this.recycleProjectileCallback = mineCallback;
         this.elasticity = Config.get("enemies").elasticity;
 
         var config:Dynamic = Config.get("enemies").minedropper;
@@ -30,18 +33,6 @@ class MineDropper extends AbstractEnemy
      override public function update(elapsedSeconds:Float):Void
     {
         super.update(elapsedSeconds);
-        var now = GameTime.now();
-
-        var timeBetweenBullets:Float = 1 / (Config.get("enemies").minedropper.fireRatePerSecond);
-        if (now.elapsedSeconds - this.lastShot.elapsedSeconds > timeBetweenBullets) 
-        {
-            this.lastShot = now;
-            
-            var mine = this.recycleMineCallback();
-            mine.x = this.x + ((this.width - mine.width) / 2);
-            mine.y = this.y + ((this.height - mine.height) / 2);
-
-            mine.lightFuse();
-        }
+        this.shootPeriodically(Config.get("enemies").minedropper.fireRatePerSecond, random);
     }
 }
