@@ -8,7 +8,7 @@ class Mine extends Projectile
 {
     public function new():Void
     {
-        super(null, {width: 10, height: 10, colour: FlxColor.fromString('red')}, Config.get("enemies").minedropper.mineVelocity);
+        super(null, {width: 20, height: 20, colour: FlxColor.fromString('red')}, Config.get("enemies").minedropper.mineVelocity);
     }
 
     public function explode():Void
