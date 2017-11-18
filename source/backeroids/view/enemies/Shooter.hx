@@ -6,7 +6,7 @@ import flixel.math.FlxRandom;
 import flixel.util.FlxColor;
 import helix.GameTime;
 import helix.data.Config;
-using backeroids.view.enemies.AbstractEnemyExtension;
+using backeroids.extensions.AbstractEnemyExtension;
 
 class Shooter extends AbstractEnemy
 {

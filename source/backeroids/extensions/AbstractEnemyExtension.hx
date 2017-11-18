@@ -1,7 +1,8 @@
-package backeroids.view.enemies;
+package backeroids.extensions;
 
 import flixel.FlxG;
 import flixel.math.FlxRandom;
+import backeroids.view.enemies.AbstractEnemy;
 
 class AbstractEnemyExtension
 {

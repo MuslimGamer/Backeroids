@@ -4,7 +4,7 @@ import backeroids.view.enemies.AbstractEnemy;
 import flixel.math.FlxRandom;
 import helix.data.Config;
 import helix.GameTime;
-using backeroids.view.enemies.AbstractEnemyExtension;
+using backeroids.extensions.AbstractEnemyExtension;
 
 class MineDropper extends AbstractEnemy
 {
