@@ -53,9 +53,6 @@ class MineDropper extends AbstractEnemy
             var mine = this.recycleMineCallback();
             mine.x = this.x + ((this.width - mine.width) / 2);
             mine.y = this.y + ((this.height - mine.height) / 2);
-
-            var angle = random.int(30, 150) * (random.bool() == true ? -1 : 1);
-            mine.shoot(angle);
         }
     }
 }

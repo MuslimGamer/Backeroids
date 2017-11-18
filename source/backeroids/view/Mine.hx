@@ -1,14 +1,16 @@
 package backeroids.view;
 
-import backeroids.view.Projectile;
 import flixel.util.FlxColor;
 import helix.data.Config;
+import helix.core.HelixSprite;
 
-class Mine extends Projectile
+class Mine extends HelixSprite
 {
     public function new():Void
     {
-        super(null, {width: 20, height: 20, colour: FlxColor.fromString('red')}, Config.get("enemies").minedropper.mineVelocity);
+        super(null, {width: 20, height: 20, colour: FlxColor.fromString('red')});
+        this.kill();
+        this.immovable = true;
     }
 
     public function explode():Void

@@ -83,8 +83,7 @@
             "velocity": {
                 "x": 70,
                 "y": 30
-            },
-            "mineVelocity": 100
+            }
         }
     }
 }
