@@ -5,6 +5,7 @@ import backeroids.view.Asteroid;
 import backeroids.view.Bullet;
 import backeroids.view.Mine;
 import backeroids.view.PlayerShip;
+import backeroids.view.Explosion;
 import backeroids.view.enemies.AbstractEnemy;
 import backeroids.view.enemies.Shooter;
 import backeroids.view.enemies.Tank;
@@ -30,6 +31,8 @@ class PlayState extends HelixState
 
 	private var playerShip:PlayerShip;
 	private var bullets = new FlxTypedGroup<Bullet>();
+
+	private var explosions = new FlxTypedGroup<Explosion>();
 
 	private var enemies = new FlxTypedGroup<AbstractEnemy>();
 	private var enemyBullets = new FlxTypedGroup<Bullet>();
@@ -140,6 +143,25 @@ class PlayState extends HelixState
 			mine.explode();
 		});
 
+		FlxG.collide(explosions, playerShip, function(explosion:Explosion, player:PlayerShip)
+		{
+			this.killPlayerShip();
+		});
+
+		FlxG.collide(explosions, asteroids, function(explosion:Explosion, asteroid:Asteroid)
+		{
+			this.damageAndSplit(asteroid);
+		});
+
+		FlxG.collide(explosions, enemies, function(explosion:Explosion, enemy:AbstractEnemy)
+		{
+			enemy.health -= 1;
+			if (enemy.health <= 0)
+			{
+				enemy.kill();
+			}
+		});
+
 		if (Config.get("features").collideAsteroidsWithAsteroids)
 		{
 			FlxG.collide(asteroids, asteroids, function(a1:Asteroid, a2:Asteroid)
@@ -230,7 +252,12 @@ class PlayState extends HelixState
 	{
 		this.enemies.add(new MineDropper(function():Mine
 		{
-			return enemyMines.recycle(Mine);
+			var mine = enemyMines.recycle(Mine);
+			mine.setRecycleExplosion(function():Explosion
+			{
+				return explosions.recycle(Explosion).resetView();
+			});
+			return mine;
 		}));
 	}
 
