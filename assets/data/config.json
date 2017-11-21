@@ -84,7 +84,9 @@
                 "x": 70,
                 "y": 30
             },
-            "mineFuseSeconds": 8
+            "mineFuseSeconds": 8,
+            "explosionWidth": 100,
+            "explosionHeight": 100
         }
     }
 }
