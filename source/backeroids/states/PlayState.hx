@@ -1,4 +1,4 @@
-package;
+package backeroids.states;
 
 import backeroids.model.AsteroidType;
 import backeroids.view.Asteroid;
