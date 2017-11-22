@@ -15,24 +15,10 @@ class FollowerEnemy extends AbstractEnemy
     private var baseVelocity:Int;
     private var lastPinpoint:GameTime = new GameTime(0);
 
-    private function new(filename, colorDetails, player:PlayerShip)
+    public function new(filename, colorDetails, player:PlayerShip)
     {
         super(filename, colorDetails);
-        this.elasticity = Config.get("enemies").elasticity;
         this.player = player;
-
-        if (random.bool() == true)
-        {
-            // Place beside the stage
-            this.x = random.bool() == true ? FlxG.width : -this.width;
-            this.y = random.int(0, Std.int(FlxG.height - this.height));
-        }
-        else
-        {
-            // Place above/below the stage
-            this.x = random.int(0, Std.int(FlxG.width - this.width));
-            this.y = random.bool() == true ? FlxG.height : -this.height;
-        }
     }
 
     override public function update(elapsedSeconds:Float):Void
