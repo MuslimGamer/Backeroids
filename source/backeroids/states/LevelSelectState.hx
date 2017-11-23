@@ -1,5 +1,6 @@
 package backeroids.states;
 
+import backeroids.states.PlayState;
 import flixel.FlxG;
 import flixel.util.FlxSave;
 import helix.core.HelixSprite;
@@ -42,7 +43,15 @@ class LevelSelectState extends HelixState
             
             sprite.x = xOffset + ((i % (numLevels / 2)) * sprite.width * 2);
             sprite.y = selectLevel.y + selectLevel.height + (2 * PADDING) + (i >= numLevels / 2 ? 2 * sprite.height : 0);
-            trace('${sprite.x}, ${sprite.y}');
+
+            sprite.onClick(function()
+            {
+                if (levelNum <= save.data.currentLevel)
+                {
+                    FlxG.switchState(new PlayState());
+                }
+                // else, play "denied" sfx
+            });
         }
     }    
 }
