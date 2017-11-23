@@ -10,6 +10,7 @@ import helix.core.HelixSprite;
 class Bullet extends HelixSprite implements IProjectile
 {
     private var baseVelocity:Float;
+    private var hasAppearedOnscreen:Bool = false;
 
     public function new():Void
     {
@@ -24,6 +25,15 @@ class Bullet extends HelixSprite implements IProjectile
 
         if (Config.get("features").wrapBullets) {
             FlxSpriteUtil.screenWrap(this);
+        }
+        else if (this.hasAppearedOnscreen && !this.isOnScreen())
+        {
+            this.kill();
+        }
+
+        if (this.isOnScreen())
+        {
+            this.hasAppearedOnscreen = true;
         }
     }
 

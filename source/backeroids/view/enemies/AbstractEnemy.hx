@@ -8,9 +8,10 @@ import helix.data.Config;
 
 class AbstractEnemy extends HelixSprite
 {
+    private var hasAppearedOnscreen:Bool = false;
     private static var random = new FlxRandom();
 
-    public function new(filename, colorDetails)
+    private function new(filename, colorDetails)
     {
         super(filename, colorDetails);
         this.elasticity = Config.get("enemies").elasticity;
@@ -27,6 +28,19 @@ class AbstractEnemy extends HelixSprite
             this.x = random.int(0, Std.int(FlxG.width - this.width));
             this.y = random.bool() == true ? FlxG.height : -this.height;
         }
+    }
 
+    override public function update(elapsedSeconds:Float):Void
+    {
+        super.update(elapsedSeconds);
+        if (this.hasAppearedOnscreen && !this.isOnScreen())
+        {
+            this.kill();
+        }
+
+        if (this.isOnScreen())
+        {
+            this.hasAppearedOnscreen = true;
+        }
     }
 }
