@@ -43,4 +43,13 @@ class AbstractEnemy extends HelixSprite
             this.hasAppearedOnscreen = true;
         }
     }
+
+    public function damage():Void
+    {
+        this.health -= 1;
+        if (this.health <= 0)
+        {
+            this.kill();
+        }
+    }
 }

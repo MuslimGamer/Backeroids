@@ -103,11 +103,7 @@ class PlayState extends HelixState
 		FlxG.collide(bullets, enemies, function(bullet:Bullet, enemy:AbstractEnemy)
 		{
 				bullet.kill();
-				enemy.health -= 1;
-				if (enemy.health <= 0)
-				{
-					enemy.kill();
-				}
+				enemy.damage();
 		});
 
 		FlxG.collide(enemies, asteroids, function(enemy:AbstractEnemy, asteroid:Asteroid)
@@ -155,11 +151,7 @@ class PlayState extends HelixState
 
 		FlxG.collide(explosions, enemies, function(explosion:Explosion, enemy:AbstractEnemy)
 		{
-			enemy.health -= 1;
-			if (enemy.health <= 0)
-			{
-				enemy.kill();
-			}
+			enemy.damage();
 		});
 
 		FlxG.collide(enemies);
