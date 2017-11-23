@@ -123,6 +123,12 @@ class PlayState extends HelixState
 				this.killPlayerShip();
 		});
 
+		FlxG.collide(enemyBullets, enemyMines, function(enemyBullet:Bullet, mine:Mine)
+		{
+				enemyBullet.kill();
+				mine.explode();
+		});
+
 		FlxG.collide(enemyMines, asteroids, function(mine:Mine, asteroid:Asteroid)
 		{
 			mine.explode();
