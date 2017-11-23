@@ -162,6 +162,8 @@ class PlayState extends HelixState
 			}
 		});
 
+		FlxG.collide(enemies);
+
 		if (Config.get("features").collideAsteroidsWithAsteroids)
 		{
 			FlxG.collide(asteroids, asteroids, function(a1:Asteroid, a2:Asteroid)
