@@ -2,6 +2,7 @@ package backeroids.states;
 
 import backeroids.states.PlayState;
 import flixel.FlxG;
+import flixel.text.FlxText;
 import flixel.util.FlxSave;
 import helix.core.HelixSprite;
 using helix.core.HelixSpriteFluentApi;
@@ -43,6 +44,13 @@ class LevelSelectState extends HelixState
             
             sprite.x = xOffset + ((i % (numLevels / 2)) * sprite.width * 2);
             sprite.y = selectLevel.y + selectLevel.height + (2 * PADDING) + (i >= numLevels / 2 ? 2 * sprite.height : 0);
+
+            var text = new FlxText();
+            text.text = '${levelNum}';
+            text.size = 32;
+            text.x = sprite.x + (sprite.width / 3);
+            text.y = sprite.y + 10;
+            add(text);
 
             sprite.onClick(function()
             {
