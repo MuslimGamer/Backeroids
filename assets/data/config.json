@@ -1,4 +1,7 @@
 {
+    "totalLevels": 6,
+    "saveSlotName": "BackeroidsMainSave",
+
     "asteroids": {
         "enabled": true,
         "initialNumber": 3,
@@ -67,7 +70,7 @@
             "sustainVyForSeconds": 1
         },
         "tank": {
-            "enabled": true,
+            "enabled": false,
             "health": 7,
             "velocity": 25
         },
