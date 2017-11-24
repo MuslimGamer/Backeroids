@@ -173,16 +173,27 @@ class PlayState extends HelixState
 		}
 
 		return enemyCallbacks;
-		}
+	}
+
+	private function exitState():Void
+	{
+		this.waveTimer.cancel();
+		FlxG.switchState(new LevelSelectState());
+	}
 	
 	private function winLevel():Void
 	{
 		trace("Horray! You won.");
-		this.waveTimer.cancel();
 		var save = FlxG.save;
 		save.data.currentLevel = this.levelNum + 1;
 		save.flush();
-		FlxG.switchState(new LevelSelectState());
+		this.exitState();
+	}
+
+	private function loseLevel():Void
+	{
+		trace('Oh no! You lost.');
+		this.exitState();
 	}
 
 	override public function update(elapsed:Float):Void
@@ -277,6 +288,10 @@ class PlayState extends HelixState
 	private function killPlayerShip():Void
 	{
 		this.playerShip.die(this.resetShip);
+		if (!Config.get('features').infiniteLives)
+		{
+			this.loseLevel();
+		}
 	}
 	
 	private function addAsteroid(?timer):Asteroid

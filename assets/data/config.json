@@ -53,7 +53,8 @@
     "features": {
         "wrapBullets": false,
         "splitAsteroidsOnDeath": true,
-        "collideAsteroidsWithAsteroids": true
+        "collideAsteroidsWithAsteroids": true,
+        "infiniteLives": true
     },
 
     "enemies": {
