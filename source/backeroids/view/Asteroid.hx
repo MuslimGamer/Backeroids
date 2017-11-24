@@ -27,6 +27,7 @@ class Asteroid extends HelixSprite
         this.elasticity = Config.get("asteroids").collisionElasticity;
         this.kill();
 
+        // TODO: Figure out how to deal with this in a non-hacky way.
         this.failSafeTimer.start(3, function(timer) 
         {
             if (!this.isOnScreen())
