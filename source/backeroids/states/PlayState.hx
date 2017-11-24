@@ -41,15 +41,15 @@ class PlayState extends HelixState
 	private var levelNum:Int = 0;
 	private var waveTimer = new FlxTimer();
 
-	private var itemNum = 0;
+	private var itemsLeftToSpawn = 0;
 	private var waveNum = 0;
 
 	override public function new(levelNum):Void
 	{
 		super();
 		this.levelNum = levelNum;
-		this.itemNum = this.levelNum * Config.get('entitiesLevelMult');
-		this.waveNum = this.levelNum * Config.get('entitiesWaveMult');
+		this.itemsLeftToSpawn = this.levelNum * Config.get('entitiesLevelMultiplier');
+		this.waveNum = this.levelNum * Config.get('entitiesWaveMultiplier');
 	}
 
 	override public function create():Void
@@ -73,29 +73,29 @@ class PlayState extends HelixState
 			}
 		});
 
-		this.waveTimer.start(1, this.processWaves, 0);
+		this.waveTimer.start(1, this.spawnMoreItemsIfNeeded, 0);
 	}
 
-	private function processWaves(timer):Void
+	private function spawnMoreItemsIfNeeded(timer):Void
 	{
-		if (!this.isEverythingDead())
+		if (!this.areItemsDead())
 		{
 			return;
 		}
 		
-		if (this.itemNum > 0)
+		if (this.itemsLeftToSpawn > 0)
 		{
 			this.startWave();
 		}
-		else if (this.itemNum <= 0)
+		else if (this.itemsLeftToSpawn <= 0)
 		{
 			this.winLevel();
 		}
 	}
 
-	private function isEverythingDead():Bool
+	private function areItemsDead():Bool
 	{
-		return (this.asteroids.countLiving() == -1 || this.asteroids.countLiving() == 0) && (this.enemies.countLiving() == -1 || this.enemies.countLiving() == 0);
+		return (this.asteroids.countLiving() <= 0) && (this.enemies.countLiving() <= 0);
 	}
 
 	private function startWave():Void
@@ -106,7 +106,7 @@ class PlayState extends HelixState
 		}
 
 		var asteroidNum:Int, enemyNum:Int;
-		var enemiesInWave = (this.itemNum - this.waveNum) >= 0 ? this.waveNum : this.itemNum;
+		var enemiesInWave = this.itemsLeftToSpawn >= this.waveNum ? this.waveNum : this.itemsLeftToSpawn;
 
 		if (Config.get("asteroids").enabled && Config.get("enemies").enabled)
 		{
@@ -120,18 +120,17 @@ class PlayState extends HelixState
 		}
 		else { return; }
 
-		this.itemNum -= asteroidNum + enemyNum;
+		this.itemsLeftToSpawn -= asteroidNum + enemyNum;
 
-		this.spawnEntities(this.addAsteroid, asteroidNum);
-		this.spawnEntities(this.addEnemy, enemyNum);
+		this.spawnEntities(this.addAsteroid, asteroidNum, Config.get("secondsToSpawnAsteroidsOver"));
+		this.spawnEntities(this.addEnemy, enemyNum, Config.get("secondsToSpawnEnemiesOver"));
 	}
 
-	private function spawnEntities(entitySpawner, entityNum):Void
+	private function spawnEntities(entitySpawner, entityNum:Int, secondsToSpawnOver:Int):Void
 	{
-		var sleepSeconds = 1;
 		for (i in 0...entityNum)
 		{
-			new FlxTimer().start(FlxG.random.float(0, sleepSeconds), entitySpawner, 1);
+			new FlxTimer().start(FlxG.random.float(0, secondsToSpawnOver), entitySpawner, 1);
 		}
 	}
 
@@ -140,19 +139,19 @@ class PlayState extends HelixState
 		var enemyConf = Config.get("enemies");
 		var enemyCallbacks = new Array<Void->Void>();
 
-		if (enemyConf.shooter.enabled && enemyConf.shooter.appearsOnLevel <= this.levelNum)
+		if (enemyConf.shooter.enabled && this.levelNum >= enemyConf.shooter.appearsOnLevel)
 		{
 			enemyCallbacks.push(this.addShooter);
 		}
-		if (enemyConf.tank.enabled && enemyConf.tank.appearsOnLevel <= this.levelNum)
+		if (enemyConf.tank.enabled && this.levelNum >= enemyConf.tank.appearsOnLevel)
 		{
 			enemyCallbacks.push(this.addTank);
 		}
-		if (enemyConf.kamikaze.enabled && enemyConf.kamikaze.appearsOnLevel <= this.levelNum)
+		if (enemyConf.kamikaze.enabled && this.levelNum >= enemyConf.kamikaze.appearsOnLevel)
 		{
 			enemyCallbacks.push(this.addKamikaze);
 		}
-		if (enemyConf.minedropper.enabled && enemyConf.minedropper.appearsOnLevel <= this.levelNum)
+		if (enemyConf.minedropper.enabled && this.levelNum >= enemyConf.minedropper.appearsOnLevel)
 		{
 			enemyCallbacks.push(this.addMineDropper);
 		}

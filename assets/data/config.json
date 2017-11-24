@@ -1,7 +1,9 @@
 {
     "totalLevels": 6,
-    "entitiesLevelMult": 15,
-    "entitiesWaveMult": 3,
+    "entitiesLevelMultiplier": 15,
+    "entitiesWaveMultiplier": 3,
+    "secondsToSpawnAsteroidsOver": 1,
+    "secondsToSpawnEnemiesOver": 10,
     "saveSlotName": "BackeroidsMainSave",
 
     "asteroids": {
