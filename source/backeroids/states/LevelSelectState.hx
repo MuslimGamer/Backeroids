@@ -56,7 +56,7 @@ class LevelSelectState extends HelixState
             {
                 if (levelNum <= save.data.currentLevel)
                 {
-                    FlxG.switchState(new PlayState());
+                    FlxG.switchState(new PlayState(levelNum));
                 }
                 // else, play "denied" sfx
             });
