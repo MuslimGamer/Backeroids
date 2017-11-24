@@ -95,12 +95,11 @@ class PlayState extends HelixState
 
 	private function isEverythingDead():Bool
 	{
-		return (this.asteroids.countLiving() == -1 && this.enemies.countLiving() == -1) || (this.asteroids.countLiving() == 0 && this.enemies.countLiving() == 0);
+		return (this.asteroids.countLiving() == -1 || this.asteroids.countLiving() == 0) && (this.enemies.countLiving() == -1 || this.enemies.countLiving() == 0);
 	}
 
 	private function startWave():Void
 	{
-		trace('starting a wave!');
 		if (!Config.get("asteroids").enabled && !Config.get("enemies").enabled)
 		{
 			return;
@@ -129,7 +128,7 @@ class PlayState extends HelixState
 
 	private function spawnAsteroids(asteroidNum:Int):Void
 	{
-		var sleepSeconds = 3;
+		var sleepSeconds = 1;
 		for (i in 0...asteroidNum)
 		{
 			new FlxTimer().start(FlxG.random.float(0, sleepSeconds), this.addAsteroid, 1);
@@ -137,17 +136,12 @@ class PlayState extends HelixState
 	}
 
 	private function spawnEnemies(enemyNum:Int):Void
-		{
-		var sleepSeconds = 3;
+	{
+		var sleepSeconds = 1;
 		for (i in 0...enemyNum)
 		{
 			new FlxTimer().start(FlxG.random.float(0, sleepSeconds), this.addEnemy, 1);
 		}
-	}
-
-	private function enemiesWillSpawn():Bool
-	{
-		return getEnemyCallbacks().length != 0;
 	}
 
 	private function getEnemyCallbacks():Array<Void->Void>
@@ -155,19 +149,19 @@ class PlayState extends HelixState
 		var enemyConf = Config.get("enemies");
 		var enemyCallbacks = new Array<Void->Void>();
 
-		if (enemyConf.shooter.enabled && enemyConf.shooter.appearsOnLevel >= this.levelNum)
+		if (enemyConf.shooter.enabled && enemyConf.shooter.appearsOnLevel <= this.levelNum)
 		{
 			enemyCallbacks.push(this.addShooter);
 		}
-		if (enemyConf.tank.enabled && enemyConf.tank.appearsOnLevel >= this.levelNum)
+		if (enemyConf.tank.enabled && enemyConf.tank.appearsOnLevel <= this.levelNum)
 		{
 			enemyCallbacks.push(this.addTank);
 		}
-		if (enemyConf.kamikaze.enabled && enemyConf.kamikaze.appearsOnLevel >= this.levelNum)
+		if (enemyConf.kamikaze.enabled && enemyConf.kamikaze.appearsOnLevel <= this.levelNum)
 		{
 			enemyCallbacks.push(this.addKamikaze);
 		}
-		if (enemyConf.minedropper.enabled && enemyConf.minedropper.appearsOnLevel >= this.levelNum)
+		if (enemyConf.minedropper.enabled && enemyConf.minedropper.appearsOnLevel <= this.levelNum)
 		{
 			enemyCallbacks.push(this.addMineDropper);
 		}
@@ -185,8 +179,11 @@ class PlayState extends HelixState
 	{
 		trace("Horray! You won.");
 		var save = FlxG.save;
-		save.data.currentLevel = this.levelNum + 1;
-		save.flush();
+		if (save.data.currentLevel < this.levelNum + 1)
+		{
+			save.data.currentLevel = this.levelNum + 1;
+			save.flush();
+		}
 		this.exitState();
 	}
 
@@ -296,7 +293,7 @@ class PlayState extends HelixState
 	
 	private function addAsteroid(?timer):Asteroid
 	{
-		var asteroid = asteroids.recycle(Asteroid);
+		var asteroid = this.recycleAsteroid();
 		asteroid.respawn();
 		return asteroid;
 	}
@@ -388,7 +385,10 @@ class PlayState extends HelixState
 	private function addEnemy(?timer):Void
 	{
 		var callbacks = this.getEnemyCallbacks();
-		var choice = FlxG.random.int(0, callbacks.length - 1);
-		callbacks[choice]();
+		if (callbacks.length > 0)
+		{
+			var choice = FlxG.random.int(0, callbacks.length - 1);
+			callbacks[choice]();
+		}
 	}
 }
