@@ -34,7 +34,9 @@ class PlayState extends HelixState
 
 	private var explosions = new FlxTypedGroup<Explosion>();
 
-	private var enemies = new FlxTypedGroup<AbstractEnemy>();
+	private var knockbackableEnemies = new FlxTypedGroup<AbstractEnemy>();
+	private var headstrongEnemies = new FlxTypedGroup<AbstractEnemy>();
+	private var enemies = new FlxTypedGroup<FlxTypedGroup<AbstractEnemy>>();
 	private var enemyBullets = new FlxTypedGroup<Bullet>();
 	private var enemyMines = new FlxTypedGroup<Mine>();
 
@@ -74,6 +76,8 @@ class PlayState extends HelixState
 		});
 
 		this.waveTimer.start(1, this.spawnMoreItemsIfNeeded, 0);
+		this.enemies.add(this.knockbackableEnemies);
+		this.enemies.add(this.headstrongEnemies);
 	}
 
 	private function spawnMoreItemsIfNeeded(timer):Void
@@ -95,7 +99,7 @@ class PlayState extends HelixState
 
 	private function areItemsDead():Bool
 	{
-		return (this.asteroids.countLiving() <= 0) && (this.enemies.countLiving() <= 0);
+		return (this.asteroids.countLiving() <= 0) && (this.headstrongEnemies.countLiving() <= 0) && (this.knockbackableEnemies.countLiving() <= 0);
 	}
 
 	private function startWave():Void
@@ -200,10 +204,16 @@ class PlayState extends HelixState
 				}
 		});
 
-		FlxG.collide(bullets, enemies, function(bullet:Bullet, enemy:AbstractEnemy)
+		FlxG.collide(bullets, knockbackableEnemies, function(bullet:Bullet, enemy:AbstractEnemy)
 		{
 				bullet.kill();
 				enemy.damage();
+		});
+
+		FlxG.overlap(bullets, headstrongEnemies, function(bullet:Bullet, enemy:AbstractEnemy) 
+		{
+			bullet.kill();
+			enemy.damage();
 		});
 
 		FlxG.collide(enemies, asteroids, function(enemy:AbstractEnemy, asteroid:Asteroid)
@@ -343,7 +353,7 @@ class PlayState extends HelixState
 
 	private function addShooter():Void
 	{
-		this.enemies.add(new Shooter(function():Bullet
+		this.headstrongEnemies.add(new Shooter(function():Bullet
 		{
 			return enemyBullets.recycle(Bullet);
 		}));
@@ -351,17 +361,17 @@ class PlayState extends HelixState
 
 	private function addTank():Void
 	{
-		this.enemies.add(new Tank(this.playerShip));		
+		this.knockbackableEnemies.add(new Tank(this.playerShip));		
 	}
 
 	private function addKamikaze():Void
 	{
-		this.enemies.add(new Kamikaze(this.playerShip));
+		this.knockbackableEnemies.add(new Kamikaze(this.playerShip));
 	}
 
 	private function addMineDropper():Void
 	{
-		this.enemies.add(new MineDropper(function():Mine
+		this.headstrongEnemies.add(new MineDropper(function():Mine
 		{
 			var mine = enemyMines.recycle(Mine);
 			mine.setRecycleExplosion(function():Explosion
