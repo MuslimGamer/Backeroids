@@ -11,6 +11,7 @@ import backeroids.view.enemies.Shooter;
 import backeroids.view.enemies.Tank;
 import backeroids.view.enemies.Kamikaze;
 import backeroids.view.enemies.MineDropper;
+import backeroids.states.LevelSelectState;
 import flixel.FlxG;
 import flixel.FlxObject;
 import flixel.group.FlxGroup;
@@ -27,7 +28,6 @@ class PlayState extends HelixState
 	private static var SECONDS_PER_ENEMY:Int = Config.get("enemies").secondsToSpawn;
 
 	private var asteroids = new FlxTypedGroup<Asteroid>();
-	private var asteroidTimer = new FlxTimer();
 
 	private var playerShip:PlayerShip;
 	private var bullets = new FlxTypedGroup<Bullet>();
@@ -37,7 +37,6 @@ class PlayState extends HelixState
 	private var enemies = new FlxTypedGroup<AbstractEnemy>();
 	private var enemyBullets = new FlxTypedGroup<Bullet>();
 	private var enemyMines = new FlxTypedGroup<Mine>();
-	private var enemyTimer = new FlxTimer();
 
 	private var levelNum:Int = 0;
 	private var waveTimer = new FlxTimer();
@@ -179,6 +178,11 @@ class PlayState extends HelixState
 	private function winLevel():Void
 	{
 		trace("Horray! You won.");
+		this.waveTimer.cancel();
+		var save = FlxG.save;
+		save.data.currentLevel = this.levelNum + 1;
+		save.flush();
+		FlxG.switchState(new LevelSelectState());
 	}
 
 	override public function update(elapsed:Float):Void
