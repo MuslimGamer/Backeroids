@@ -44,7 +44,8 @@
         "rotationVelocity": 200, // pixels per second
         "acceleration": 90,
         "maxVelocity": 200,
-        "decelerationMultiplier": 2 // decelerate n-times faster
+        "decelerationMultiplier": 2, // decelerate n-times faster
+        "deadstopVelocity": 15 // velocity to spontanously stop at, multiplied by above multiplier.
     },
 
     "gun": {

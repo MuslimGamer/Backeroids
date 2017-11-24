@@ -17,6 +17,7 @@ class PlayerShip extends HelixSprite
 {
     private static var ACCELERATION:Int = Config.get("ship").acceleration;
     private static var DECELERATION_MULTIPLIER:Float = Config.get("ship").decelerationMultiplier;
+    private static var DEADSTOP_VELOCITY:Float = Config.get("ship").deadstopVelocity;
     private static var ROTATION_VELOCITY:Int = Config.get("ship").rotationVelocity;
     private static var SECONDS_TO_REVIVE:Int = Config.get("ship").secondsToRevive;
 
@@ -87,7 +88,7 @@ class PlayerShip extends HelixSprite
         }
         else if (keys.has(FlxKey.DOWN) || keys.has(FlxKey.S))
         {
-            this.accelerateForward(Std.int(-ACCELERATION * DECELERATION_MULTIPLIER));
+            this.decelerate();
         }
 
         if (keys.has(FlxKey.SPACE) && this.gun.canFire())
@@ -107,6 +108,31 @@ class PlayerShip extends HelixSprite
     {
         this.acceleration.set(0, -acceleration); 
         this.acceleration.rotate(FlxPoint.weak(0, 0), this.angle);
+    }
+
+    private function decelerate():Void
+    {
+        if (!this.velocity.equals(FlxPoint.weak(0, 0)))
+        {
+            if (Math.abs(this.velocity.x) + Math.abs(this.velocity.y) < DEADSTOP_VELOCITY * DECELERATION_MULTIPLIER)
+            {
+                this.velocity.x = 0;
+                this.velocity.y = 0;
+                return;
+            }
+
+            if (this.velocity.x != 0)
+            {
+                var velocityXDirection = -(Math.abs(this.velocity.x) / this.velocity.x);
+                this.acceleration.x = velocityXDirection * Math.abs(this.velocity.x) * DECELERATION_MULTIPLIER;
+            }
+
+            if (this.velocity.y != 0)
+            {
+                var velocityYDirection = -(Math.abs(this.velocity.y) / this.velocity.y);
+                this.acceleration.y = velocityYDirection * Math.abs(this.velocity.y) * DECELERATION_MULTIPLIER;
+            }
+        }
     }
 
     public function die(onReviveCallback:Void->Void):Void
