@@ -4,6 +4,7 @@ import backeroids.model.AsteroidType;
 import flixel.util.FlxColor;
 import flixel.util.FlxSpriteUtil;
 import flixel.FlxG;
+import flixel.util.FlxTimer;
 import helix.core.HelixSprite;
 import helix.data.Config;
 using helix.core.HelixSpriteFluentApi;
@@ -16,6 +17,8 @@ class Asteroid extends HelixSprite
     public var asteroidSize:Int = 0;
     public var type(default, null):AsteroidType = AsteroidType.Large;
 
+    private var failSafeTimer = new FlxTimer();
+
     private var shouldWrap:Bool = false;
 
     public function new():Void
@@ -23,6 +26,15 @@ class Asteroid extends HelixSprite
         super(null, {width: 60, height: 60, colour: FlxColor.fromString('gray')});
         this.elasticity = Config.get("asteroids").collisionElasticity;
         this.kill();
+
+        this.failSafeTimer.start(3, function(timer) 
+        {
+            if (!this.isOnScreen())
+            {
+                this.kill();
+            } 
+        }, 0);
+        
     }
 
     public function setBackeroid():Asteroid

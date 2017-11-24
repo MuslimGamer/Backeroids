@@ -1,5 +1,7 @@
 {
     "totalLevels": 6,
+    "entitiesLevelMult": 15,
+    "entitiesWaveMult": 3,
     "saveSlotName": "BackeroidsMainSave",
 
     "asteroids": {
@@ -8,7 +10,7 @@
         "secondsToSpawn": 3,
         "collisionElasticity": 0.5,
         "initialVelocity": 90,
-        "backeroidPercentage": 5,
+        "backeroidPercentage": 0,
 
         "backeroid": {
             "initialHealth": 8,
@@ -61,6 +63,7 @@
         "shooter": {
             "enabled": true,
             "health": 3,
+            "appearsOnLevel": 2,
             "fireRatePerSecond": 3, // per second
             "velocity": 
             {
@@ -72,16 +75,19 @@
         "tank": {
             "enabled": false,
             "health": 7,
+            "appearsOnLevel": 4,
             "velocity": 25
         },
         "kamikaze": {
             "enabled": true,
             "health": 1,
+            "appearsOnLevel": 3,
             "velocity": 150
         },
         "minedropper": {
             "enabled": true,
             "health": 5,
+            "appearsOnLevel": 5,
             "fireRatePerSecond": 0.5,
             "velocity": {
                 "x": 70,

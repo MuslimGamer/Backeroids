@@ -39,6 +39,20 @@ class PlayState extends HelixState
 	private var enemyMines = new FlxTypedGroup<Mine>();
 	private var enemyTimer = new FlxTimer();
 
+	private var levelNum:Int = 0;
+	private var waveTimer = new FlxTimer();
+
+	private var itemNum = 0;
+	private var waveNum = 0;
+
+	override public function new(levelNum):Void
+	{
+		super();
+		this.levelNum = levelNum;
+		this.itemNum = this.levelNum * Config.get('entitiesLevelMult');
+		this.waveNum = this.levelNum * Config.get('entitiesWaveMult');
+	}
+
 	override public function create():Void
 	{
 		super.create();
@@ -60,27 +74,111 @@ class PlayState extends HelixState
 			}
 		});
 
-		if (Config.get("asteroids").enabled)
-		{
-			this.asteroidTimer.start(SECONDS_PER_ASTEROID, function(timer)
-			{
-				this.addAsteroid().respawn();
-			}, 0);
+		this.waveTimer.start(1, this.processWaves, 0);
+	}
 
-			var asteroidsToCreate = NUM_INITIAL_ASTEROIDS;
-			while (asteroidsToCreate-- > 0)
-			{
-				this.addAsteroid().respawn();
-			}
+	private function processWaves(timer):Void
+	{
+		if (!this.isEverythingDead())
+		{
+			return;
+		}
+		
+		if (this.itemNum > 0)
+		{
+			this.startWave();
+		}
+		else if (this.itemNum <= 0)
+		{
+			this.winLevel();
+		}
+	}
+
+	private function isEverythingDead():Bool
+	{
+		return (this.asteroids.countLiving() == -1 && this.enemies.countLiving() == -1) || (this.asteroids.countLiving() == 0 && this.enemies.countLiving() == 0);
+	}
+
+	private function startWave():Void
+	{
+		trace('starting a wave!');
+		if (!Config.get("asteroids").enabled && !Config.get("enemies").enabled)
+		{
+			return;
 		}
 
-		if (Config.get("enemies").enabled)
+		var asteroidNum:Int, enemyNum:Int;
+		var enemiesInWave = (this.itemNum - this.waveNum) >= 0 ? this.waveNum : this.itemNum;
+
+		if (Config.get("asteroids").enabled && Config.get("enemies").enabled)
 		{
-			this.enemyTimer.start(SECONDS_PER_ENEMY, function(timer)
-			{
-				this.addEnemy();
-			}, 0);
+			asteroidNum = Math.round(enemiesInWave / 2);
+			enemyNum = enemiesInWave - asteroidNum;
 		}
+		else if (Config.get("asteroids").enabled)
+		{
+			asteroidNum = enemiesInWave;
+			enemyNum = 0;
+		}
+		else { return; }
+
+		this.itemNum -= asteroidNum + enemyNum;
+
+		this.spawnAsteroids(asteroidNum);
+		this.spawnEnemies(enemyNum);
+	}
+
+	private function spawnAsteroids(asteroidNum:Int):Void
+	{
+		var sleepSeconds = 3;
+		for (i in 0...asteroidNum)
+		{
+			new FlxTimer().start(FlxG.random.float(0, sleepSeconds), this.addAsteroid, 1);
+		}
+	}
+
+	private function spawnEnemies(enemyNum:Int):Void
+		{
+		var sleepSeconds = 3;
+		for (i in 0...enemyNum)
+		{
+			new FlxTimer().start(FlxG.random.float(0, sleepSeconds), this.addEnemy, 1);
+		}
+	}
+
+	private function enemiesWillSpawn():Bool
+	{
+		return getEnemyCallbacks().length != 0;
+	}
+
+	private function getEnemyCallbacks():Array<Void->Void>
+	{
+		var enemyConf = Config.get("enemies");
+		var enemyCallbacks = new Array<Void->Void>();
+
+		if (enemyConf.shooter.enabled && enemyConf.shooter.appearsOnLevel >= this.levelNum)
+		{
+			enemyCallbacks.push(this.addShooter);
+		}
+		if (enemyConf.tank.enabled && enemyConf.tank.appearsOnLevel >= this.levelNum)
+		{
+			enemyCallbacks.push(this.addTank);
+		}
+		if (enemyConf.kamikaze.enabled && enemyConf.kamikaze.appearsOnLevel >= this.levelNum)
+		{
+			enemyCallbacks.push(this.addKamikaze);
+		}
+		if (enemyConf.minedropper.enabled && enemyConf.minedropper.appearsOnLevel >= this.levelNum)
+		{
+			enemyCallbacks.push(this.addMineDropper);
+		}
+
+		return enemyCallbacks;
+		}
+	
+	private function winLevel():Void
+	{
+		trace("Horray! You won.");
 	}
 
 	override public function update(elapsed:Float):Void
@@ -177,7 +275,14 @@ class PlayState extends HelixState
 		this.playerShip.die(this.resetShip);
 	}
 	
-	private function addAsteroid():Asteroid
+	private function addAsteroid(?timer):Asteroid
+	{
+		var asteroid = asteroids.recycle(Asteroid);
+		asteroid.respawn();
+		return asteroid;
+	}
+
+	private function recycleAsteroid():Asteroid
 	{
 		var asteroid = asteroids.recycle(Asteroid);
 		return asteroid;
@@ -199,7 +304,7 @@ class PlayState extends HelixState
 			{
 				// Respawn at half health
 				// Sets velocity and position				
-				var newAsteroid = addAsteroid();
+				var newAsteroid = recycleAsteroid();
 
 				if (asteroid.type == AsteroidType.Large)
 				{
@@ -261,26 +366,9 @@ class PlayState extends HelixState
 		}));
 	}
 
-	private function addEnemy():Void
+	private function addEnemy(?timer):Void
 	{
-		var callbacks = new Array<Void->Void>();
-		var conf = Config.get("enemies");
-		if (conf.shooter.enabled)
-		{
-			callbacks.push(this.addShooter);
-		}
-		if (conf.tank.enabled)
-		{
-			callbacks.push(this.addTank);
-		}
-		if (conf.kamikaze.enabled)
-		{
-			callbacks.push(this.addKamikaze);
-		}
-		if (conf.minedropper.enabled)
-		{
-			callbacks.push(this.addMineDropper);
-		}
+		var callbacks = this.getEnemyCallbacks();
 		var choice = FlxG.random.int(0, callbacks.length - 1);
 		callbacks[choice]();
 	}
