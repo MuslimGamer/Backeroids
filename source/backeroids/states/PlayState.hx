@@ -288,10 +288,13 @@ class PlayState extends HelixState
 
 	private function killPlayerShip():Void
 	{
-		this.playerShip.die(this.resetShip);
-		if (!Config.get('features').infiniteLives)
+		if (!this.playerShip.isInvincible())
 		{
-			this.loseLevel();
+			this.playerShip.die(this.resetShip);
+			if (!Config.get('features').infiniteLives)
+			{
+				this.loseLevel();
+			}
 		}
 	}
 	

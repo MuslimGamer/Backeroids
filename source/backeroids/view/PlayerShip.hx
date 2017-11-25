@@ -2,12 +2,14 @@ package backeroids.view;
  
 import backeroids.model.Gun;
 import flixel.FlxG;
+import flixel.effects.FlxFlicker;
 import flixel.group.FlxGroup;
 import flixel.input.FlxInput;
 import flixel.input.keyboard.FlxKey;
 import flixel.math.FlxPoint;
 import flixel.util.FlxSpriteUtil;
 import flixel.util.FlxTimer;
+import helix.GameTime;
 import helix.core.HelixSprite;
 import helix.data.Config;
 using helix.core.HelixSpriteFluentApi;
@@ -20,15 +22,17 @@ class PlayerShip extends HelixSprite
     private static var DEADSTOP_VELOCITY:Float = Config.get("ship").deadstopVelocity;
     private static var ROTATION_VELOCITY:Int = Config.get("ship").rotationVelocity;
     private static var SECONDS_TO_REVIVE:Int = Config.get("ship").secondsToRevive;
+    private static var INVINCIBLE_SECONDS:Float = Config.get("ship").invincibleAfterSpawnSeconds;
 
     private var isTurning:Bool = false;
     private var recycleBulletCallback:Void->Bullet;
-
+    private var spawnedOn:GameTime;
     private var gun:Gun;
 
     public function new():Void
     {
         this.gun = new Gun();
+        this.spawnedOn = GameTime.now();
 
         super("assets/images/ship.png");
         this.onKeyDown(this.processControls);
@@ -59,6 +63,7 @@ class PlayerShip extends HelixSprite
         this.resetAcceleration();
         this.velocity.set(0, 0);
         this.gun = new Gun();
+        this.spawnedOn = GameTime.now();
     }
 
     private function resetAcceleration():Void
@@ -141,6 +146,12 @@ class PlayerShip extends HelixSprite
         new FlxTimer().start(SECONDS_TO_REVIVE, function(timer) {
             this.revive();
             onReviveCallback();
+            FlxFlicker.flicker(this, INVINCIBLE_SECONDS);
         });
+    }
+
+    public function isInvincible():Bool
+    {
+        return (GameTime.now().elapsedSeconds - this.spawnedOn.elapsedSeconds <= INVINCIBLE_SECONDS);
     }
 }

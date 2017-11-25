@@ -45,7 +45,8 @@
         "acceleration": 90,
         "maxVelocity": 200,
         "decelerationMultiplier": 2, // decelerate n-times faster
-        "deadstopVelocity": 15 // velocity to spontanously stop at, multiplied by above multiplier.
+        "deadstopVelocity": 15, // velocity to spontanously stop at, multiplied by above multiplier.
+        "invincibleAfterSpawnSeconds": 3
     },
 
     "gun": {
