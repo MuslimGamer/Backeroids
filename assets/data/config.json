@@ -45,7 +45,8 @@
         "acceleration": 90,
         "maxVelocity": 200,
         "decelerationMultiplier": 2, // decelerate n-times faster
-        "deadstopVelocity": 15 // velocity to spontanously stop at, multiplied by above multiplier.
+        "deadstopVelocity": 15, // velocity to spontanously stop at, multiplied by above multiplier.
+        "invincibleAfterSpawnSeconds": 3
     },
 
     "gun": {
@@ -66,6 +67,7 @@
         "secondsToSpawn": 3,
         "shooter": {
             "enabled": true,
+            "name": "shooter",
             "health": 3,
             "appearsOnLevel": 2,
             "fireRatePerSecond": 3, // per second
@@ -78,18 +80,21 @@
         },
         "tank": {
             "enabled": false,
+            "name": "tank",
             "health": 7,
             "appearsOnLevel": 4,
             "velocity": 25
         },
         "kamikaze": {
             "enabled": true,
+            "name": "kamikaze",
             "health": 1,
             "appearsOnLevel": 3,
             "velocity": 150
         },
         "minedropper": {
             "enabled": true,
+            "name": "mines",
             "health": 5,
             "appearsOnLevel": 5,
             "fireRatePerSecond": 0.5,
