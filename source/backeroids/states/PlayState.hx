@@ -1,6 +1,7 @@
 package backeroids.states;
 
 import backeroids.model.AsteroidType;
+import backeroids.tutorial.TutorialManager;
 import backeroids.view.Asteroid;
 import backeroids.view.Bullet;
 import backeroids.view.Mine;
@@ -45,6 +46,7 @@ class PlayState extends HelixState
 
 	private var itemsLeftToSpawn = 0;
 	private var waveNum = 0;
+	private var showingTutorial:Bool = false;
 
 	override public function new(levelNum):Void
 	{
@@ -78,6 +80,8 @@ class PlayState extends HelixState
 		this.waveTimer.start(1, this.spawnMoreItemsIfNeeded, 0);
 		this.enemies.add(this.knockbackableEnemies);
 		this.enemies.add(this.headstrongEnemies);
+
+		this.showTutorialIfRequired();
 	}
 
 	private function spawnMoreItemsIfNeeded(timer):Void
@@ -389,6 +393,15 @@ class PlayState extends HelixState
 		{
 			var choice = FlxG.random.int(0, callbacks.length - 1);
 			callbacks[choice]();
+		}
+	}
+
+	private function showTutorialIfRequired():Void
+	{
+		var tutorialTag = TutorialManager.isTutorialRequired(this.levelNum);
+		if (tutorialTag != null)
+		{
+			trace(TutorialManager.getTutorialText(tutorialTag));
 		}
 	}
 }
