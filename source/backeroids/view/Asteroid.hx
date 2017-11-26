@@ -4,6 +4,7 @@ import backeroids.model.AsteroidType;
 import flixel.util.FlxColor;
 import flixel.util.FlxSpriteUtil;
 import flixel.FlxG;
+import flixel.system.FlxSound;
 import flixel.util.FlxTimer;
 import helix.core.HelixSprite;
 import helix.data.Config;
@@ -12,6 +13,7 @@ using helix.core.HelixSpriteFluentApi;
 class Asteroid extends HelixSprite
 {
     private static var startingVelocity = Config.get("asteroids").initialVelocity;
+    private static var damageSound = new FlxSound();
     public var totalHealth(default, default):Int = 0;
 
     public var asteroidSize:Int = 0;
@@ -36,6 +38,7 @@ class Asteroid extends HelixSprite
             } 
         }, 0);
         
+        damageSound.loadEmbedded(AssetPaths.Hit_Asteroid__wav);
     }
 
     public function setBackeroid():Asteroid
@@ -131,6 +134,7 @@ class Asteroid extends HelixSprite
     public function damage():Void
     {
         this.health -= 1;
+        damageSound.play();
         if (this.health <= 0)
         {
             this.kill();
