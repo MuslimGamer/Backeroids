@@ -13,6 +13,7 @@ import backeroids.view.enemies.Tank;
 import backeroids.view.enemies.Kamikaze;
 import backeroids.view.enemies.MineDropper;
 import backeroids.states.LevelSelectState;
+import backeroids.extensions.ShootProjectileExtension;
 import flixel.FlxG;
 import flixel.FlxObject;
 import flixel.group.FlxGroup;
@@ -54,6 +55,7 @@ class PlayState extends HelixState
 		this.levelNum = levelNum;
 		this.itemsLeftToSpawn = this.levelNum * Config.get('entitiesLevelMultiplier');
 		this.waveNum = this.levelNum * Config.get('entitiesWaveMultiplier');
+		ShootProjectileExtension.shootSound.loadEmbedded(AssetPaths.Laser_Shoot_1__wav);
 	}
 
 	override public function create():Void

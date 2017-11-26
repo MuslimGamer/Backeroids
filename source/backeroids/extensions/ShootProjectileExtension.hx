@@ -1,11 +1,14 @@
 package backeroids.extensions;
 
 import flixel.math.FlxRandom;
+import flixel.system.FlxSound;
 import helix.GameTime;
 import backeroids.interfaces.IShooter;
 
 class ShootProjectileExtension
 {
+    public static var shootSound = new FlxSound();
+
     public static function shootPeriodically(sprite:IShooter, fireRatePerSecond, random:FlxRandom):Void
     {
         var now = GameTime.now();
@@ -21,6 +24,7 @@ class ShootProjectileExtension
 
             var angle = random.int(30, 150) * (random.bool() == true ? -1 : 1);
             projectile.shoot(angle);
+            shootSound.play();
         }
     }
 }

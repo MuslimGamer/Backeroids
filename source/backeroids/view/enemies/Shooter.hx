@@ -26,7 +26,6 @@ class Shooter extends AbstractEnemy implements IShooter
         this.elasticity = Config.get("enemies").elasticity;
         this.velocity.x = config.velocity.x;
         this.health = config.health;
-
         this.moveSideways(Config.get("enemies").shooter.velocity.y, random);
     }
 
