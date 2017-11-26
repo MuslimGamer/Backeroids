@@ -1,5 +1,6 @@
 package backeroids.view.enemies;
 
+import backeroids.SoundManager;
 import flixel.FlxG;
 import flixel.math.FlxPoint;
 import flixel.math.FlxRandom;
@@ -47,9 +48,11 @@ class AbstractEnemy extends HelixSprite
     public function damage():Void
     {
         this.health -= 1;
+        SoundManager.enemyHit.play(true);
         if (this.health <= 0)
         {
             this.kill();
+            SoundManager.enemyExplode.play(true);
         }
     }
 }

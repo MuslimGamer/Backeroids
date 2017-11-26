@@ -1,6 +1,7 @@
 package backeroids.view;
 
 import backeroids.model.AsteroidType;
+import backeroids.SoundManager;
 import flixel.util.FlxColor;
 import flixel.util.FlxSpriteUtil;
 import flixel.FlxG;
@@ -35,7 +36,6 @@ class Asteroid extends HelixSprite
                 this.kill();
             } 
         }, 0);
-        
     }
 
     public function setBackeroid():Asteroid
@@ -131,6 +131,7 @@ class Asteroid extends HelixSprite
     public function damage():Void
     {
         this.health -= 1;
+        SoundManager.asteroidHit.play();
         if (this.health <= 0)
         {
             this.kill();

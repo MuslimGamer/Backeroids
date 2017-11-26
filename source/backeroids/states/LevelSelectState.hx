@@ -1,6 +1,7 @@
 package backeroids.states;
 
 import backeroids.states.PlayState;
+import backeroids.SoundManager;
 import flixel.FlxG;
 import flixel.text.FlxText;
 import flixel.util.FlxSave;
@@ -54,6 +55,7 @@ class LevelSelectState extends HelixState
 
             sprite.onClick(function()
             {
+                SoundManager.buttonClick.play();
                 if (levelNum <= save.data.currentLevel)
                 {
                     FlxG.switchState(new PlayState(levelNum));
