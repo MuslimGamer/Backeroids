@@ -16,6 +16,8 @@ class SoundManager
     public static var enemyHit = new FlxSound();
     public static var enemyExplode = new FlxSound();
 
+    public static var shooterAmbient = new FlxSound();
+
     public static function init():Void
     {
         playerShoot.loadEmbedded(AssetPaths.Laser_Shoot_0__wav);
@@ -29,5 +31,7 @@ class SoundManager
         enemyExplode.loadEmbedded(AssetPaths.Enemy_Explode__wav);
 
         buttonClick.loadEmbedded(AssetPaths.Button_Click__wav);
+
+        shooterAmbient.loadEmbedded(AssetPaths.Shooter_Ambient__wav);
     }
 }

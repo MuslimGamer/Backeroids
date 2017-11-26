@@ -3,6 +3,7 @@ package backeroids.view.enemies;
 import backeroids.view.enemies.AbstractEnemy;
 import backeroids.interfaces.IShooter;
 import backeroids.interfaces.IProjectile;
+import backeroids.SoundManager;
 import flixel.math.FlxRandom;
 import flixel.util.FlxColor;
 import helix.GameTime;
@@ -32,6 +33,7 @@ class Shooter extends AbstractEnemy implements IShooter
     override public function update(elapsedSeconds:Float):Void
     {
         super.update(elapsedSeconds);
+        SoundManager.shooterAmbient.play();
         var now = GameTime.now();
 
         if (now.elapsedSeconds - lastVyChange.elapsedSeconds >= Config.get("enemies").shooter.sustainVyForSeconds)
