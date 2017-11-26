@@ -22,7 +22,7 @@ class ShootProjectileExtension
 
             var angle = random.int(30, 150) * (random.bool() == true ? -1 : 1);
             projectile.shoot(angle);
-            SoundManager.enemyShootSound.play();
+            SoundManager.enemyShootSound.play(true);
         }
     }
 }

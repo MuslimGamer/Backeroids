@@ -131,7 +131,7 @@ class Asteroid extends HelixSprite
     public function damage():Void
     {
         this.health -= 1;
-        SoundManager.asteroidDamageSound.play();
+        SoundManager.asteroidHitSound.play();
         if (this.health <= 0)
         {
             this.kill();
