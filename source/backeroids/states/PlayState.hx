@@ -14,12 +14,10 @@ import backeroids.view.enemies.Kamikaze;
 import backeroids.view.enemies.MineDropper;
 import backeroids.states.LevelSelectState;
 import backeroids.extensions.ShootProjectileExtension;
+import backeroids.SoundManager;
 import flixel.FlxG;
-import flixel.FlxObject;
 import flixel.group.FlxGroup;
 import flixel.util.FlxTimer;
-import flixel.system.FlxSound;
-import helix.core.HelixSprite;
 using helix.core.HelixSpriteFluentApi;
 import helix.core.HelixState;
 import helix.data.Config;
@@ -29,7 +27,6 @@ class PlayState extends HelixState
 	private static var NUM_INITIAL_ASTEROIDS:Int = Config.get("asteroids").initialNumber;
 	private static var SECONDS_PER_ASTEROID:Int = Config.get("asteroids").secondsToSpawn;
 	private static var SECONDS_PER_ENEMY:Int = Config.get("enemies").secondsToSpawn;
-	private static var asteroidSplitSound = new FlxSound();
 
 	private var asteroids = new FlxTypedGroup<Asteroid>();
 
@@ -57,8 +54,6 @@ class PlayState extends HelixState
 		this.levelNum = levelNum;
 		this.itemsLeftToSpawn = this.levelNum * Config.get('entitiesLevelMultiplier');
 		this.waveNum = this.levelNum * Config.get('entitiesWaveMultiplier');
-		ShootProjectileExtension.shootSound.loadEmbedded(AssetPaths.Laser_Shoot_1__wav);
-		asteroidSplitSound.loadEmbedded(AssetPaths.Asteroid_Split_Explode__wav);
 	}
 
 	override public function create():Void
@@ -328,7 +323,7 @@ class PlayState extends HelixState
 		if (Config.get("features").splitAsteroidsOnDeath == true && asteroid.health <= 0 &&
 			 asteroid.totalHealth > 1 && (asteroid.type == AsteroidType.Large || asteroid.type == AsteroidType.Medium))
 		{
-			asteroidSplitSound.play();
+			SoundManager.asteroidSplitSound.play();
 			for (i in 0 ... 2)
 			{
 				// Respawn at half health

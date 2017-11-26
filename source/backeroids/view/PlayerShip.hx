@@ -1,15 +1,12 @@
 package backeroids.view;
  
 import backeroids.model.Gun;
-import flixel.FlxG;
+import backeroids.SoundManager;
 import flixel.effects.FlxFlicker;
-import flixel.group.FlxGroup;
-import flixel.input.FlxInput;
 import flixel.input.keyboard.FlxKey;
 import flixel.math.FlxPoint;
 import flixel.util.FlxSpriteUtil;
 import flixel.util.FlxTimer;
-import flixel.system.FlxSound;
 import helix.GameTime;
 import helix.core.HelixSprite;
 import helix.data.Config;
@@ -24,9 +21,6 @@ class PlayerShip extends HelixSprite
     private static var ROTATION_VELOCITY:Int = Config.get("ship").rotationVelocity;
     private static var SECONDS_TO_REVIVE:Int = Config.get("ship").secondsToRevive;
     private static var INVINCIBLE_SECONDS:Float = Config.get("ship").invincibleAfterSpawnSeconds;
-
-    private static var shootSound:FlxSound = new FlxSound();
-    private static var explodeSound:FlxSound = new FlxSound();
 
     private var isTurning:Bool = false;
     private var recycleBulletCallback:Void->Bullet;
@@ -46,8 +40,6 @@ class PlayerShip extends HelixSprite
         // work quite as well, since your max is (200, 200) if you're going diagonally.
         var maxVelocity:Int = Config.get("ship").maxVelocity;
         this.maxVelocity.set(maxVelocity, maxVelocity);
-        shootSound.loadEmbedded(AssetPaths.Laser_Shoot_0__wav);
-        explodeSound.loadEmbedded(AssetPaths.Explosion__wav);
     }
 
     override public function update(elapsedSeconds:Float):Void
@@ -107,7 +99,7 @@ class PlayerShip extends HelixSprite
             var bullet = this.recycleBulletCallback();
             bullet.move(this.x + ((this.width - bullet.width) / 2), this.y + ((this.height - bullet.height) / 2));
             bullet.shoot(this.angle);
-            shootSound.play(true);
+            SoundManager.playerShootSound.play(true);
         }
     }
 
@@ -150,7 +142,7 @@ class PlayerShip extends HelixSprite
     public function die(onReviveCallback:Void->Void):Void
     {
         this.kill();
-        explodeSound.play();
+        SoundManager.playerExplodeSound.play();
         new FlxTimer().start(SECONDS_TO_REVIVE, function(timer) {
             this.revive();
             onReviveCallback();
