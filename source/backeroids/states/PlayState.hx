@@ -323,7 +323,7 @@ class PlayState extends HelixState
 		if (Config.get("features").splitAsteroidsOnDeath == true && asteroid.health <= 0 &&
 			 asteroid.totalHealth > 1 && (asteroid.type == AsteroidType.Large || asteroid.type == AsteroidType.Medium))
 		{
-			SoundManager.asteroidSplitSound.play();
+			SoundManager.asteroidSplit.play();
 			for (i in 0 ... 2)
 			{
 				// Respawn at half health

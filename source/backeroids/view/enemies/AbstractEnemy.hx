@@ -48,11 +48,11 @@ class AbstractEnemy extends HelixSprite
     public function damage():Void
     {
         this.health -= 1;
-        SoundManager.enemyHitSound.play(true);
+        SoundManager.enemyHit.play(true);
         if (this.health <= 0)
         {
             this.kill();
-            SoundManager.enemyExplodeSound.play(true);
+            SoundManager.enemyExplode.play(true);
         }
     }
 }

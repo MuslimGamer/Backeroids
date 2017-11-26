@@ -99,7 +99,7 @@ class PlayerShip extends HelixSprite
             var bullet = this.recycleBulletCallback();
             bullet.move(this.x + ((this.width - bullet.width) / 2), this.y + ((this.height - bullet.height) / 2));
             bullet.shoot(this.angle);
-            SoundManager.playerShootSound.play(true);
+            SoundManager.playerShoot.play(true);
         }
     }
 
@@ -142,7 +142,7 @@ class PlayerShip extends HelixSprite
     public function die(onReviveCallback:Void->Void):Void
     {
         this.kill();
-        SoundManager.playerExplodeSound.play();
+        SoundManager.playerExplode.play();
         new FlxTimer().start(SECONDS_TO_REVIVE, function(timer) {
             this.revive();
             onReviveCallback();
