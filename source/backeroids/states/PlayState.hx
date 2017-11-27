@@ -6,6 +6,7 @@ import backeroids.view.Asteroid;
 import backeroids.view.Bullet;
 import backeroids.view.Mine;
 import backeroids.view.PlayerShip;
+import backeroids.view.Shield;
 import backeroids.view.Explosion;
 import backeroids.view.enemies.AbstractEnemy;
 import backeroids.view.enemies.Shooter;
@@ -13,7 +14,6 @@ import backeroids.view.enemies.Tank;
 import backeroids.view.enemies.Kamikaze;
 import backeroids.view.enemies.MineDropper;
 import backeroids.states.LevelSelectState;
-import backeroids.extensions.ShootProjectileExtension;
 import backeroids.SoundManager;
 import flixel.FlxG;
 import flixel.addons.ui.FlxUI9SliceSprite;
@@ -26,6 +26,7 @@ using helix.core.HelixSpriteFluentApi;
 import helix.core.HelixState;
 import helix.core.HelixSprite;
 import helix.data.Config;
+import helix.core.HelixSprite;
 
 class PlayState extends HelixState
 {
@@ -37,6 +38,7 @@ class PlayState extends HelixState
 	private var asteroids = new FlxTypedGroup<Asteroid>();
 
 	private var playerShip:PlayerShip;
+	private var playerShield:Shield;
 	private var bullets = new FlxTypedGroup<Bullet>();
 
 	private var explosions = new FlxTypedGroup<Explosion>();
@@ -77,15 +79,28 @@ class PlayState extends HelixState
 		});
 		resetShip();
 
-		this.playerShip.collideResolve(this.asteroids, function(player:PlayerShip, asteroid:Asteroid)
-		{
-			// Player hits asteroid.
-			this.killPlayerShip();
+		this.playerShip.collideResolve(this.asteroids, this.collidePlayerShipWithAnything);
+		this.playerShip.collideResolve(this.enemies, this.collidePlayerShipWithAnything);
+		this.playerShip.collideResolve(this.enemyMines, this.collidePlayerShipWithAnything);
+		this.playerShip.collideResolve(this.enemyBullets, this.collidePlayerShipWithAnything);
+		this.playerShip.collideResolve(this.explosions, this.collidePlayerShipWithAnything);
 
-			if (asteroid.type != AsteroidType.Backeroid) {
-				this.damageAndSplit(asteroid);
+		if (Config.get('ship').shield.enabled)
+		{
+			this.playerShield = new Shield();
+			var damageShieldCallback = function(shield:Shield, thing:HelixSprite)
+			{
+				shield.damage();
+				this.collidePlayerShipWithAnything(this.playerShip, thing);
 			}
-		});
+			this.playerShield.collideResolve(this.asteroids, damageShieldCallback);
+			this.playerShield.collideResolve(this.enemies, damageShieldCallback);
+			this.playerShield.collideResolve(this.enemyMines, damageShieldCallback);
+			this.playerShield.collideResolve(this.explosions, damageShieldCallback);
+			this.playerShield.collide(this.enemyBullets, damageShieldCallback);
+
+			this.playerShip.setShield(this.playerShield);
+		}
 
 		this.enemies.add(this.knockbackableEnemies);
 		this.enemies.add(this.headstrongEnemies);
@@ -100,6 +115,35 @@ class PlayState extends HelixState
 		this.livesCounter.x = FlxG.width - this.livesCounter.width - 75;
 
 		this.showTutorialIfRequired();
+	}
+
+	private function collidePlayerShipWithAnything(player:PlayerShip, thing:HelixSprite):Void
+	{
+		var thingType = Type.getClassName(Type.getClass(thing));
+		if (thingType == 'backeroids.view.Bullet')
+		{
+			thing.kill();
+		}
+		else if (thingType == 'backeroids.view.Mine')
+		{
+			var mine:Mine = cast thing;
+			mine.explode();
+		}
+		else if (thingType == 'backeroids.view.Asteroid')
+		{
+			var asteroid:Asteroid = cast(thing, Asteroid);
+
+			if (asteroid.type != AsteroidType.Backeroid) 
+			{
+				this.damageAndSplit(asteroid);
+			}
+		}
+
+		if (Config.get('ship').shield.enabled && this.playerShield.exists)
+		{
+			return;
+		}
+		this.killPlayerShip();
 	}
 
 	private function spawnMoreItemsIfNeeded(timer):Void
@@ -239,11 +283,6 @@ class PlayState extends HelixState
 	override public function update(elapsed:Float):Void
 	{
 		super.update(elapsed);
-
-		FlxG.collide(enemies, playerShip, function(e:AbstractEnemy, p:PlayerShip)
-		{
-			this.killPlayerShip();
-		});
 		
 		FlxG.collide(bullets, asteroids, function(b:Bullet, asteroid:Asteroid)
 		{
@@ -276,12 +315,6 @@ class PlayState extends HelixState
 				this.damageAndSplit(asteroid);
 		});
 
-		FlxG.collide(enemyBullets, playerShip, function(enemyBullet:Bullet, p:PlayerShip)
-		{
-				enemyBullet.kill();
-				this.killPlayerShip();
-		});
-
 		FlxG.collide(enemyBullets, enemyMines, function(enemyBullet:Bullet, mine:Mine)
 		{
 				enemyBullet.kill();
@@ -293,20 +326,10 @@ class PlayState extends HelixState
 			mine.explode();
 		});
 
-		FlxG.collide(enemyMines, playerShip, function(mine:Mine, p:PlayerShip)
-		{
-			mine.explode();
-		});
-
 		FlxG.collide(enemyMines, bullets, function(mine:Mine, bullet:Bullet)
 		{
 			bullet.kill();
 			mine.explode();
-		});
-
-		FlxG.collide(explosions, playerShip, function(explosion:Explosion, player:PlayerShip)
-		{
-			this.killPlayerShip();
 		});
 
 		FlxG.collide(explosions, asteroids, function(explosion:Explosion, asteroid:Asteroid)

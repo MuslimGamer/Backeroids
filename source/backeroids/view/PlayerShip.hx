@@ -31,6 +31,7 @@ class PlayerShip extends HelixSprite
     private var recycleBulletCallback:Void->Bullet;
     private var spawnedOn:GameTime;
     private var gun:Gun;
+    private var shield:Shield;
 
     public function new(currentState:PlayState):Void
     {
@@ -51,14 +52,7 @@ class PlayerShip extends HelixSprite
     override public function update(elapsedSeconds:Float):Void
     {
         super.update(elapsedSeconds);
-
-        if (!this.isTurning)
-        {
-            this.angularVelocity = 0;
-        }
-
         FlxSpriteUtil.screenWrap(this);
-        isTurning = false;
     }
 
     override public function revive():Void
@@ -68,6 +62,7 @@ class PlayerShip extends HelixSprite
         this.velocity.set(0, 0);
         this.gun = new Gun();
         this.spawnedOn = GameTime.now();
+        this.shield.resetShield();
     }
 
     private function resetAcceleration():Void
@@ -81,6 +76,10 @@ class PlayerShip extends HelixSprite
         if (!this.currentState.isShowingTutorial)
         {
             this.resetAcceleration();
+            if (Config.get('ship').shield.enabled)
+            {
+                this.shield.deactivate();
+            }
 
             if (keys.has(FlxKey.LEFT) || keys.has(FlxKey.A))
             { 
@@ -109,6 +108,12 @@ class PlayerShip extends HelixSprite
                 bullet.shoot(this.angle);
                 SoundManager.playerShoot.play(true);
             }
+        }
+
+        if (keys.has(FlxKey.SHIFT) && Config.get('ship').shield.enabled && this.shield.working)
+        {
+            this.shield.activate();
+            this.shield.move(this.x - this.width/2, this.y - this.height/2);
         }
     }
 
@@ -166,5 +171,10 @@ class PlayerShip extends HelixSprite
     public function isInvincible():Bool
     {
         return (GameTime.now().elapsedSeconds - this.spawnedOn.elapsedSeconds <= INVINCIBLE_SECONDS);
+    }
+
+    public function setShield(shield:Shield):Void
+    {
+        this.shield = shield;
     }
 }
