@@ -41,7 +41,7 @@
 
     "ship": {
         "secondsToRevive": 3,
-        "rotationVelocity": 200, // pixels per second
+        "rotationVelocity": 350, // pixels per second
         "acceleration": 90,
         "maxVelocity": 200,
         "decelerationMultiplier": 2, // decelerate n-times faster
@@ -90,7 +90,7 @@
             "name": "kamikaze",
             "health": 1,
             "appearsOnLevel": 3,
-            "velocity": 150
+            "velocity": 250
         },
         "minedropper": {
             "enabled": true,
