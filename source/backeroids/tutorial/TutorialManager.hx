@@ -1,6 +1,8 @@
 package backeroids.tutorial;
 
+import backeroids.view.controls.MessageWindow;
 import helix.data.Config;
+
 // static class
 class TutorialManager
 {
@@ -34,8 +36,11 @@ class TutorialManager
         return null;
     }
 
-    public static function getTutorialText(tutorialName):String
+    public static function createTutorialWindow(tutorialName:String):MessageWindow
     {
-        return tutorialData[tutorialName];
+        var tutorialText:String = tutorialData[tutorialName];
+		var messageWindow:MessageWindow = new MessageWindow(tutorialText);
+        messageWindow.updateTextFieldSize();
+        return messageWindow;
     }
 }

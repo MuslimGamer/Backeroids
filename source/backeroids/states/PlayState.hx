@@ -16,6 +16,8 @@ import backeroids.states.LevelSelectState;
 import backeroids.extensions.ShootProjectileExtension;
 import backeroids.SoundManager;
 import flixel.FlxG;
+import flixel.addons.ui.FlxUI9SliceSprite;
+import flash.geom.Rectangle;
 import flixel.group.FlxGroup;
 import flixel.util.FlxTimer;
 using helix.core.HelixSpriteFluentApi;
@@ -405,7 +407,15 @@ class PlayState extends HelixState
 		var tutorialTag = TutorialManager.isTutorialRequired(this.levelNum);
 		if (tutorialTag != null)
 		{
-			trace(TutorialManager.getTutorialText(tutorialTag));
-		}
+			var messageWindow = TutorialManager.createTutorialWindow(tutorialTag);
+			messageWindow.x = (FlxG.width - messageWindow.width) / 2;
+			messageWindow.y = (FlxG.height - messageWindow.height) / 2;
+
+			var group = new FlxGroup();
+			group.add(messageWindow);
+			group.add(messageWindow.avatar);
+			group.add(messageWindow.textField);
+			add(group);
+		}	
 	}
 }
