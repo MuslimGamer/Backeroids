@@ -42,7 +42,7 @@
     "ship": {
         "secondsToRevive": 3,
         "rotationVelocity": 350, // pixels per second
-        "acceleration": 90,
+        "acceleration": 150,
         "maxVelocity": 200,
         "decelerationMultiplier": 2, // decelerate n-times faster
         "deadstopVelocity": 15, // velocity to spontanously stop at, multiplied by above multiplier.
@@ -97,7 +97,7 @@
             "name": "mines",
             "health": 5,
             "appearsOnLevel": 5,
-            "fireRatePerSecond": 0.5,
+            "fireRatePerSecond": 0.3,
             "velocity": {
                 "x": 70,
                 "y": 30
