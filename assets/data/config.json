@@ -46,7 +46,8 @@
         "maxVelocity": 200,
         "decelerationMultiplier": 2, // decelerate n-times faster
         "deadstopVelocity": 15, // velocity to spontanously stop at, multiplied by above multiplier.
-        "invincibleAfterSpawnSeconds": 3
+        "invincibleAfterSpawnSeconds": 3,
+        "lives": 3
     },
 
     "gun": {
@@ -58,7 +59,7 @@
         "wrapBullets": false,
         "splitAsteroidsOnDeath": true,
         "collideAsteroidsWithAsteroids": true,
-        "infiniteLives": true
+        "infiniteLives": false
     },
 
     "enemies": {
