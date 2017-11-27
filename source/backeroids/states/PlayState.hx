@@ -86,7 +86,6 @@ class PlayState extends HelixState
 			}
 		});
 
-		this.waveTimer.start(1, this.spawnMoreItemsIfNeeded, 0);
 		this.enemies.add(this.knockbackableEnemies);
 		this.enemies.add(this.headstrongEnemies);
 
@@ -447,9 +446,16 @@ class PlayState extends HelixState
 			var messageWindow = TutorialManager.createTutorialWindow(tutorialTag);
 			messageWindow.x = (FlxG.width - messageWindow.width) / 2;
 			messageWindow.y = (FlxG.height - messageWindow.height) / 2;
+			messageWindow.setFinishCallback(function() {
+				this.waveTimer.start(1, this.spawnMoreItemsIfNeeded, 0);
+			});
 
 			var group = messageWindow.getDrawables();
 			add(group);
-		}	
+		}
+		else
+		{
+			this.waveTimer.start(1, this.spawnMoreItemsIfNeeded, 0);
+		}
 	}
 }

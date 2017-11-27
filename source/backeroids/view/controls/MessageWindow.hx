@@ -5,7 +5,10 @@ import flixel.effects.FlxFlicker;
 import flash.geom.Rectangle;
 import flixel.group.FlxGroup;
 import flixel.text.FlxText;
+import flixel.input.keyboard.FlxKey;
 import helix.core.HelixSprite;
+import helix.GameTime;
+using helix.core.HelixSpriteFluentApi;
 
 class MessageWindow extends FlxUI9SliceSprite
 {
@@ -18,11 +21,38 @@ class MessageWindow extends FlxUI9SliceSprite
     private var avatar:HelixSprite;
     private var halfAvatar:HelixSprite;
     private var textField:FlxText;
+    private var currentTextMessage:Int = 0;
 
-    public function new(message:String)
+    private var textArray:Array<String>;
+    private var finishCallback:Void->Void;
+    private var lastDialogSkip:GameTime = new GameTime(0);
+
+    public function new(messages:Array<String>)
     {
+        this.textArray = messages;
+        var message = this.textArray[this.currentTextMessage];
         this.textField = new FlxText(0, 0, 0, message, FONT_SIZE);
         this.avatar = new HelixSprite("assets/images/ahmad-from-hq.png");
+        this.avatar.onKeyDown(function(keys:Array<FlxKey>)
+        {
+            var now = GameTime.now();
+            if (keys.length <= 0 || now.elapsedSeconds - this.lastDialogSkip.elapsedSeconds < 1)
+            {
+                return;
+            }
+
+            this.currentTextMessage += 1;
+            if (this.currentTextMessage < this.textArray.length)
+            {
+                this.textField.text = this.textArray[this.currentTextMessage];
+                this.lastDialogSkip = now;
+            }
+            else
+            {
+                this.kill();
+                this.finishCallback();
+            }
+        });
         
         // Make the flickering intensity less ... we can't. But we can make a half-transparent
         // clone of the sprite underneath that looks like less.
@@ -61,6 +91,19 @@ class MessageWindow extends FlxUI9SliceSprite
         this.halfAvatar.y = this.avatar.y;
         this.textField.y = this.avatar.y;
         return y;
+    }
+
+    override public function kill():Void
+    {
+        super.kill();
+        this.avatar.kill();
+        this.halfAvatar.kill();
+        this.textField.kill();
+    }
+
+    public function setFinishCallback(callback:Void->Void):Void
+    {
+        this.finishCallback = callback;
     }
 
     public function getDrawables():FlxGroup

@@ -6,13 +6,25 @@ import helix.data.Config;
 // static class
 class TutorialManager
 {
-    private static var tutorialData:Map<String, String> = [
-        "introduction" => "WASD",
-        "shooter" => "shoot the shooter!",
-        "kamikaze" => "KAMIKAZE!!!",
-        "tank" => "TANKY!!!",
-        "mines" => "MINE?!!?!?!"
-    ];
+    private static var tutorialData:Map<String, String> = getTutorialMap();
+
+    private static function getTutorialMap():Map<String, String>
+    {
+        var values = new Map<String, String>();
+        var text = openfl.Assets.getText(AssetPaths.tutorial__json);
+        var regex = new EReg("//.*", "g");
+        text = regex.replace(text, "");
+
+        var json = haxe.Json.parse(text);
+        var fields = Reflect.fields(json);
+        for (i in 0 ... fields.length)
+        {
+            var name:String = fields[i];
+			var value = Reflect.field(json, name);
+            values.set(name, value);
+        }
+        return values;
+    }
 
     // Returns the enemy name, or "introduction" for level 1
     public static function isTutorialRequired(levelNum:Int):String
@@ -39,7 +51,8 @@ class TutorialManager
     public static function createTutorialWindow(tutorialName:String):MessageWindow
     {
         var tutorialText:String = tutorialData[tutorialName];
-		var messageWindow:MessageWindow = new MessageWindow(tutorialText);
+        var tutorialTextArray:Array<String> = tutorialText.split('@@@');
+		var messageWindow:MessageWindow = new MessageWindow(tutorialTextArray);
         messageWindow.updateTextFieldSize();
         return messageWindow;
     }
