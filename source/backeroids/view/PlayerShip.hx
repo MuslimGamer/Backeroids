@@ -21,6 +21,7 @@ class PlayerShip extends HelixSprite
     private static var ROTATION_VELOCITY:Int = Config.get("ship").rotationVelocity;
     private static var SECONDS_TO_REVIVE:Int = Config.get("ship").secondsToRevive;
     private static var INVINCIBLE_SECONDS:Float = Config.get("ship").invincibleAfterSpawnSeconds;
+    public var lives = Config.get('ship').lives;
 
     private var isTurning:Bool = false;
     private var recycleBulletCallback:Void->Bullet;
@@ -141,13 +142,17 @@ class PlayerShip extends HelixSprite
 
     public function die(onReviveCallback:Void->Void):Void
     {
+        this.lives -= 1;
         this.kill();
         SoundManager.playerExplode.play();
-        new FlxTimer().start(SECONDS_TO_REVIVE, function(timer) {
-            this.revive();
-            onReviveCallback();
-            FlxFlicker.flicker(this, INVINCIBLE_SECONDS);
-        });
+        if (this.lives > 0)
+        {
+            new FlxTimer().start(SECONDS_TO_REVIVE, function(timer) {
+                this.revive();
+                onReviveCallback();
+                FlxFlicker.flicker(this, INVINCIBLE_SECONDS);
+            });
+        }
     }
 
     public function isInvincible():Bool

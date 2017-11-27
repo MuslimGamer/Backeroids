@@ -18,8 +18,11 @@ import backeroids.SoundManager;
 import flixel.FlxG;
 import flixel.group.FlxGroup;
 import flixel.util.FlxTimer;
+import flixel.math.FlxPoint;
+import flixel.input.keyboard.FlxKey;
 using helix.core.HelixSpriteFluentApi;
 import helix.core.HelixState;
+import helix.core.HelixSprite;
 import helix.data.Config;
 
 class PlayState extends HelixState
@@ -187,8 +190,20 @@ class PlayState extends HelixState
 
 	private function loseLevel():Void
 	{
-		trace('Oh no! You lost.');
-		this.exitState();
+		var gameOverText = new HelixSprite(null, {height: 1, width: 1, colour: 0xFF000000});
+		gameOverText.alpha = 0;
+		gameOverText.text('GAME OVER!\nPress anything to exit');
+		gameOverText.move((FlxG.width / 2) - (gameOverText.textField.textField.textWidth / 2), (FlxG.height / 2) - (gameOverText.textField.textField.textHeight / 2));
+		new FlxTimer().start(1, function(timer)
+		{
+			gameOverText.onKeyDown(function (keys:Array<FlxKey>)
+			{
+				if (keys.length != 0)
+				{
+					this.exitState();
+				}
+			});
+		});
 	}
 
 	override public function update(elapsed:Float):Void
@@ -291,7 +306,7 @@ class PlayState extends HelixState
 		if (!this.playerShip.isInvincible())
 		{
 			this.playerShip.die(this.resetShip);
-			if (!Config.get('features').infiniteLives)
+			if (!Config.get('features').infiniteLives && this.playerShip.lives <= 0)
 			{
 				this.loseLevel();
 			}
