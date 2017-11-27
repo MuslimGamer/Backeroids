@@ -48,7 +48,10 @@ class PlayState extends HelixState
 	private var waveTimer = new FlxTimer();
 
 	private var itemsLeftToSpawn = 0;
+	private var itemsPerWave = 0;
 	private var waveNum = 0;
+	private var currentWave = 0;
+	private var waveCounter:HelixSprite;
 	private var showingTutorial:Bool = false;
 
 	override public function new(levelNum):Void
@@ -56,7 +59,8 @@ class PlayState extends HelixState
 		super();
 		this.levelNum = levelNum;
 		this.itemsLeftToSpawn = this.levelNum * Config.get('entitiesLevelMultiplier');
-		this.waveNum = this.levelNum * Config.get('entitiesWaveMultiplier');
+		this.itemsPerWave = this.levelNum * Config.get('entitiesWaveMultiplier');
+		this.waveNum = Math.floor(this.itemsLeftToSpawn / this.itemsPerWave);
 	}
 
 	override public function create():Void
@@ -83,6 +87,10 @@ class PlayState extends HelixState
 		this.waveTimer.start(1, this.spawnMoreItemsIfNeeded, 0);
 		this.enemies.add(this.knockbackableEnemies);
 		this.enemies.add(this.headstrongEnemies);
+
+		this.waveCounter = new HelixSprite(null, {width: 1, height: 1, colour: 0xFF000000});
+		this.waveCounter.alpha = 0;
+		this.waveCounter.text('Wave: 0/${this.waveNum}');
 
 		this.showTutorialIfRequired();
 	}
@@ -115,9 +123,11 @@ class PlayState extends HelixState
 		{
 			return;
 		}
+		this.currentWave += 1;
+		this.waveCounter.text('Wave: ${this.currentWave}/${this.waveNum}');
 
 		var asteroidNum:Int, enemyNum:Int;
-		var enemiesInWave = this.itemsLeftToSpawn >= this.waveNum ? this.waveNum : this.itemsLeftToSpawn;
+		var enemiesInWave = this.itemsLeftToSpawn >= this.itemsPerWave ? this.itemsPerWave : this.itemsLeftToSpawn;
 
 		if (Config.get("asteroids").enabled && Config.get("enemies").enabled)
 		{
@@ -178,25 +188,37 @@ class PlayState extends HelixState
 	
 	private function winLevel():Void
 	{
-		trace("Horray! You won.");
-		var save = FlxG.save;
-		if (save.data.currentLevel < this.levelNum + 1)
+		var gameWinText = new HelixSprite(null, {height: 1, width: 1, colour: 0xFF000000});
+		gameWinText.alpha = 0;
+		gameWinText.text('YOU WIN!\nPress anything to exit');
+		gameWinText.move((FlxG.width / 2) - (gameWinText.textField.textField.textWidth / 2), (FlxG.height / 2) - (gameWinText.textField.textField.textHeight / 2));
+		new FlxTimer().start(1, function(timer)
 		{
-			save.data.currentLevel = this.levelNum + 1;
-			save.flush();
-		}
-		this.exitState();
+			gameWinText.onKeyDown(function (keys:Array<FlxKey>)
+			{
+				if (keys.length != 0)
+				{
+					var save = FlxG.save;
+					if (save.data.currentLevel < this.levelNum + 1)
+					{
+						save.data.currentLevel = this.levelNum + 1;
+						save.flush();
+					}
+					this.exitState();
+				}
+			});
+		});
 	}
 
 	private function loseLevel():Void
 	{
-		var gameOverText = new HelixSprite(null, {height: 1, width: 1, colour: 0xFF000000});
-		gameOverText.alpha = 0;
-		gameOverText.text('GAME OVER!\nPress anything to exit');
-		gameOverText.move((FlxG.width / 2) - (gameOverText.textField.textField.textWidth / 2), (FlxG.height / 2) - (gameOverText.textField.textField.textHeight / 2));
+		var gameWinText = new HelixSprite(null, {height: 1, width: 1, colour: 0xFF000000});
+		gameWinText.alpha = 0;
+		gameWinText.text('GAME OVER!\nPress anything to exit');
+		gameWinText.move((FlxG.width / 2) - (gameWinText.textField.textField.textWidth / 2), (FlxG.height / 2) - (gameWinText.textField.textField.textHeight / 2));
 		new FlxTimer().start(1, function(timer)
 		{
-			gameOverText.onKeyDown(function (keys:Array<FlxKey>)
+			gameWinText.onKeyDown(function (keys:Array<FlxKey>)
 			{
 				if (keys.length != 0)
 				{
