@@ -70,7 +70,7 @@
             "name": "shooter",
             "health": 3,
             "appearsOnLevel": 2,
-            "fireRatePerSecond": 3, // per second
+            "fireRatePerSecond": 0.5, // per second
             "velocity": 
             {
                 "x": 100,
