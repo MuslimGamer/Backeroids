@@ -188,6 +188,12 @@ class PlayState extends HelixState
 	
 	private function winLevel():Void
 	{
+		var save = FlxG.save;
+		if (save.data.currentLevel < this.levelNum + 1)
+		{
+			save.data.currentLevel = this.levelNum + 1;
+			save.flush();
+		}
 		var gameWinText = new HelixSprite(null, {height: 1, width: 1, colour: 0xFF000000});
 		gameWinText.alpha = 0;
 		gameWinText.text('YOU WIN!\nPress anything to exit');
@@ -198,12 +204,6 @@ class PlayState extends HelixState
 			{
 				if (keys.length != 0)
 				{
-					var save = FlxG.save;
-					if (save.data.currentLevel < this.levelNum + 1)
-					{
-						save.data.currentLevel = this.levelNum + 1;
-						save.flush();
-					}
 					this.exitState();
 				}
 			});
