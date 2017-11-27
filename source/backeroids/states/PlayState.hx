@@ -16,6 +16,8 @@ import backeroids.states.LevelSelectState;
 import backeroids.extensions.ShootProjectileExtension;
 import backeroids.SoundManager;
 import flixel.FlxG;
+import flixel.addons.ui.FlxUI9SliceSprite;
+import flash.geom.Rectangle;
 import flixel.group.FlxGroup;
 import flixel.util.FlxTimer;
 import flixel.math.FlxPoint;
@@ -84,7 +86,6 @@ class PlayState extends HelixState
 			}
 		});
 
-		this.waveTimer.start(1, this.spawnMoreItemsIfNeeded, 0);
 		this.enemies.add(this.knockbackableEnemies);
 		this.enemies.add(this.headstrongEnemies);
 
@@ -442,7 +443,19 @@ class PlayState extends HelixState
 		var tutorialTag = TutorialManager.isTutorialRequired(this.levelNum);
 		if (tutorialTag != null)
 		{
-			trace(TutorialManager.getTutorialText(tutorialTag));
+			var messageWindow = TutorialManager.createTutorialWindow(tutorialTag);
+			messageWindow.x = (FlxG.width - messageWindow.width) / 2;
+			messageWindow.y = (FlxG.height - messageWindow.height) / 2;
+			messageWindow.setFinishCallback(function() {
+				this.waveTimer.start(1, this.spawnMoreItemsIfNeeded, 0);
+			});
+
+			var group = messageWindow.getDrawables();
+			add(group);
+		}
+		else
+		{
+			this.waveTimer.start(1, this.spawnMoreItemsIfNeeded, 0);
 		}
 	}
 }
