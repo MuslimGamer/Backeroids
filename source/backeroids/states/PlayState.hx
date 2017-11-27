@@ -411,10 +411,7 @@ class PlayState extends HelixState
 			messageWindow.x = (FlxG.width - messageWindow.width) / 2;
 			messageWindow.y = (FlxG.height - messageWindow.height) / 2;
 
-			var group = new FlxGroup();
-			group.add(messageWindow);
-			group.add(messageWindow.avatar);
-			group.add(messageWindow.textField);
+			var group = messageWindow.getDrawables();
 			add(group);
 		}	
 	}
