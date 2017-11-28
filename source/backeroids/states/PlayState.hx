@@ -33,6 +33,7 @@ class PlayState extends HelixState
 	private static var SECONDS_PER_ASTEROID:Int = Config.get("asteroids").secondsToSpawn;
 	private static var SECONDS_PER_ENEMY:Int = Config.get("enemies").secondsToSpawn;
 
+	public var isShowingTutorial(default, null):Bool = false;
 	private var asteroids = new FlxTypedGroup<Asteroid>();
 
 	private var playerShip:PlayerShip;
@@ -54,7 +55,6 @@ class PlayState extends HelixState
 	private var waveNum = 0;
 	private var currentWave = 0;
 	private var waveCounter:HelixSprite;
-	private var showingTutorial:Bool = false;
 
 	override public function new(levelNum):Void
 	{
@@ -69,7 +69,7 @@ class PlayState extends HelixState
 	{
 		super.create();
 		
-		this.playerShip = new PlayerShip();
+		this.playerShip = new PlayerShip(this);
 		this.playerShip.setRecycleBulletCallback(function():Bullet
 		{
 			return bullets.recycle(Bullet);
@@ -443,10 +443,12 @@ class PlayState extends HelixState
 		var tutorialTag = TutorialManager.isTutorialRequired(this.levelNum);
 		if (tutorialTag != null)
 		{
+			this.isShowingTutorial = true;
 			var messageWindow = TutorialManager.createTutorialWindow(tutorialTag);
 			messageWindow.x = (FlxG.width - messageWindow.width) / 2;
 			messageWindow.y = (FlxG.height - messageWindow.height) / 2;
 			messageWindow.setFinishCallback(function() {
+				this.isShowingTutorial = false;
 				this.waveTimer.start(1, this.spawnMoreItemsIfNeeded, 0);
 			});
 

@@ -36,7 +36,7 @@ class MessageWindow extends FlxUI9SliceSprite
         this.avatar.onKeyDown(function(keys:Array<FlxKey>)
         {
             var now = GameTime.now();
-            if (keys.length <= 0 || now.elapsedSeconds - this.lastDialogSkip.elapsedSeconds < 1)
+            if (keys.length <= 0 || now.elapsedSeconds - this.lastDialogSkip.elapsedSeconds < 0.5)
             {
                 return;
             }

@@ -1,7 +1,9 @@
 package backeroids.view;
  
-import backeroids.model.Gun;
 import backeroids.SoundManager;
+import backeroids.model.Gun;
+import backeroids.states.PlayState;
+import backeroids.states.PlayState;
 import flixel.effects.FlxFlicker;
 import flixel.input.keyboard.FlxKey;
 import flixel.math.FlxPoint;
@@ -15,21 +17,24 @@ using Lambda;
 
 class PlayerShip extends HelixSprite
 {
+    public var lives = Config.get('ship').lives;
+    
     private static var ACCELERATION:Int = Config.get("ship").acceleration;
     private static var DECELERATION_MULTIPLIER:Float = Config.get("ship").decelerationMultiplier;
     private static var DEADSTOP_VELOCITY:Float = Config.get("ship").deadstopVelocity;
     private static var ROTATION_VELOCITY:Int = Config.get("ship").rotationVelocity;
     private static var SECONDS_TO_REVIVE:Int = Config.get("ship").secondsToRevive;
     private static var INVINCIBLE_SECONDS:Float = Config.get("ship").invincibleAfterSpawnSeconds;
-    public var lives = Config.get('ship').lives;
 
+    private var currentState:PlayState;
     private var isTurning:Bool = false;
     private var recycleBulletCallback:Void->Bullet;
     private var spawnedOn:GameTime;
     private var gun:Gun;
 
-    public function new():Void
+    public function new(currentState:PlayState):Void
     {
+        this.currentState = currentState;
         this.gun = new Gun();
         this.spawnedOn = GameTime.now();
 
@@ -73,34 +78,37 @@ class PlayerShip extends HelixSprite
 
     private function processControls(keys:Array<FlxKey>):Void
     {
-        this.resetAcceleration();
-
-        if (keys.has(FlxKey.LEFT) || keys.has(FlxKey.A))
-        { 
-            this.angularVelocity = -ROTATION_VELOCITY;
-            isTurning = true;
-        }
-        else if (keys.has(FlxKey.RIGHT) || keys.has(FlxKey.D))
-        { 
-            this.angularVelocity = ROTATION_VELOCITY;
-            isTurning = true;
-        }
-
-        if (keys.has(FlxKey.UP) || keys.has(FlxKey.W))
-        { 
-            this.accelerateForward(ACCELERATION); 
-        }
-        else if (keys.has(FlxKey.DOWN) || keys.has(FlxKey.S))
+        if (!this.currentState.isShowingTutorial)
         {
-            this.decelerate();
-        }
+            this.resetAcceleration();
 
-        if (keys.has(FlxKey.SPACE) && this.gun.canFire())
-        {
-            var bullet = this.recycleBulletCallback();
-            bullet.move(this.x + ((this.width - bullet.width) / 2), this.y + ((this.height - bullet.height) / 2));
-            bullet.shoot(this.angle);
-            SoundManager.playerShoot.play(true);
+            if (keys.has(FlxKey.LEFT) || keys.has(FlxKey.A))
+            { 
+                this.angularVelocity = -ROTATION_VELOCITY;
+                isTurning = true;
+            }
+            else if (keys.has(FlxKey.RIGHT) || keys.has(FlxKey.D))
+            { 
+                this.angularVelocity = ROTATION_VELOCITY;
+                isTurning = true;
+            }
+
+            if (keys.has(FlxKey.UP) || keys.has(FlxKey.W))
+            { 
+                this.accelerateForward(ACCELERATION); 
+            }
+            else if (keys.has(FlxKey.DOWN) || keys.has(FlxKey.S))
+            {
+                this.decelerate();
+            }
+
+            if (keys.has(FlxKey.SPACE) && this.gun.canFire())
+            {
+                var bullet = this.recycleBulletCallback();
+                bullet.move(this.x + ((this.width - bullet.width) / 2), this.y + ((this.height - bullet.height) / 2));
+                bullet.shoot(this.angle);
+                SoundManager.playerShoot.play(true);
+            }
         }
     }
 

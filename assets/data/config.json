@@ -1,4 +1,6 @@
 {
+    "splashDisplayTimeSeconds": 3,
+    "splashFadeTimeSeconds": 1,
     "totalLevels": 6,
     "entitiesLevelMultiplier": 15,
     "entitiesWaveMultiplier": 3,
