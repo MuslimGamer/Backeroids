@@ -1,6 +1,6 @@
 {
-    "introduction": "Pilot, come in. This is Ahmad from HQ. Your ship is in an asteroid field. Excercise caution.@@@Use spacebar to shoot, and the arrow keys or the WASD keys to move.@@@Be advised, they may split into smaller, faster fragments.",
-    "shooter": "Unknown spaceships are in pursuit. They seem to be adorned with powerful space-cannons.@@@You're only a scouting ship, but you should be able to defend yourself.@@@Good luck.",
+    "introduction": "Pilot, come in. This is Ahmad from HQ. Your ship is in an asteroid field. Exercise caution. (Press enter.)@@@Use spacebar to shoot, and the arrow keys or the WASD keys to move.@@@Be advised, they may split into smaller, faster fragments.",
+    "shooter": "Unknown spaceships are in pursuit. They seem to be armed with powerful space-cannons.@@@You're only a scouting ship, but you should be able to defend yourself.@@@Good luck.",
     "kamikaze": "It seems that you have been detected by some Dartfighter type enemies.@@@They're very fast, and can easily crush a ship like yours.@@@However, they're relatively weak to your weapons.@@@Stay alert and watch your back.",
     "tank": "Heavily armored ships in your vicinity.@@@Looks like they'll be quite the bullet sink.@@@Use your superiour speed to outmaneuver them.",
     "mines": "We've detected a number of cargo holder ships, and it seems like they aren't holding anything pleasant.@@@They're deploying interstellar mines.@@@Stay safe. These mines are incredibly destructive.@@@Try shooting at them from a distance."
