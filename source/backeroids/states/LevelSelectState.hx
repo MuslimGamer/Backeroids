@@ -25,10 +25,14 @@ class LevelSelectState extends HelixState
             save.data.currentLevel = 1;
             save.flush();
         }
+        
+        var title = new HelixSprite("assets/images/ui/title.png");
+        title.x = (FlxG.width - title.width) / 2;
+        title.y = PADDING;
 
         var selectLevel  = new HelixSprite("assets/images/ui/select-level.png");
         selectLevel.x = (FlxG.width - selectLevel.width) / 2;
-        selectLevel.y = PADDING;
+        selectLevel.y = title.y + title.height + PADDING;
 
         for (i in 0 ... numLevels)
         {
@@ -44,7 +48,7 @@ class LevelSelectState extends HelixState
             var xOffset = (FlxG.width - (2 * PADDING) - (numLevels / 2 * sprite.width)) / 2;
             
             sprite.x = xOffset + ((i % (numLevels / 2)) * sprite.width * 2);
-            sprite.y = selectLevel.y + selectLevel.height + (2 * PADDING) + (i >= numLevels / 2 ? 2 * sprite.height : 0);
+            sprite.y = selectLevel.y + selectLevel.height + PADDING + (i >= numLevels / 2 ? 2 * sprite.height : 0);
 
             var text = new FlxText();
             text.text = '${levelNum}';
