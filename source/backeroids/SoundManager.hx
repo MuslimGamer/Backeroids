@@ -24,22 +24,22 @@ class SoundManager
 
     public static function init():Void
     {
-        playerShoot.loadEmbedded(AssetPaths.Laser_Shoot_0__wav);
-        playerExplode.loadEmbedded(AssetPaths.Player_Explode__wav);
+        playerShoot.loadEmbedded(AssetPaths.Laser_Shoot_0__ogg);
+        playerExplode.loadEmbedded(AssetPaths.Player_Explode__ogg);
 
-        asteroidHit.loadEmbedded(AssetPaths.Hit_Asteroid__wav);
-        asteroidSplit.loadEmbedded(AssetPaths.Asteroid_Split_Explode__wav);
+        asteroidHit.loadEmbedded(AssetPaths.Hit_Asteroid__ogg);
+        asteroidSplit.loadEmbedded(AssetPaths.Asteroid_Split_Explode__ogg);
 
-        enemyShoot.loadEmbedded(AssetPaths.Laser_Shoot_1__wav);
-        enemyHit.loadEmbedded(AssetPaths.Hit_Enemy__wav);
-        enemyExplode.loadEmbedded(AssetPaths.Enemy_Explode__wav);
+        enemyShoot.loadEmbedded(AssetPaths.Laser_Shoot_1__ogg);
+        enemyHit.loadEmbedded(AssetPaths.Hit_Enemy__ogg);
+        enemyExplode.loadEmbedded(AssetPaths.Enemy_Explode__ogg);
 
-        buttonClick.loadEmbedded(AssetPaths.Button_Click__wav);
+        buttonClick.loadEmbedded(AssetPaths.Button_Click__ogg);
 
-        shooterAmbient.loadEmbedded(AssetPaths.Shooter_Ambient__wav);
-        mineExplode.loadEmbedded(AssetPaths.Explosion__wav);
+        shooterAmbient.loadEmbedded(AssetPaths.Shooter_Ambient__ogg);
+        mineExplode.loadEmbedded(AssetPaths.Explosion__ogg);
 
-        heartBeatLogoSound.loadEmbedded(AssetPaths.heartbeat__wav);
-        nightingaleLogoSound.loadEmbedded(AssetPaths.nightingale__wav);
+        heartBeatLogoSound.loadEmbedded(AssetPaths.heartbeat__ogg);
+        nightingaleLogoSound.loadEmbedded(AssetPaths.nightingale__ogg);
     }
 }
