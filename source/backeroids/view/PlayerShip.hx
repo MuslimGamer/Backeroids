@@ -120,7 +120,7 @@ class PlayerShip extends HelixSprite
             }
         }
 
-        if (keys.has(FlxKey.SHIFT) && Config.get('ship').shield.enabled && this.shield.functional)
+        if (Config.get('ship').shield.enabled && this.shield.functional)
         {
             this.shield.activate();
             this.shield.move(this.x - this.width/2, this.y - this.height/2);
