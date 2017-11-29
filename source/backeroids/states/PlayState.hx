@@ -156,7 +156,7 @@ class PlayState extends HelixState
 			}
 		}
 
-		if (Config.get('ship').shield.enabled && this.playerShield.isOn)
+		if (Config.get('ship').shield.enabled && this.playerShield.isActivated)
 		{
 			return;
 		}
@@ -299,6 +299,12 @@ class PlayState extends HelixState
 
 	override public function update(elapsed:Float):Void
 	{
+		if (this.isKeyPressed(FlxKey.ESCAPE))
+		{
+			this.exitState();
+			return;
+		}
+
 		super.update(elapsed);
 		
 		FlxG.collide(bullets, asteroids, function(b:Bullet, asteroid:Asteroid)
