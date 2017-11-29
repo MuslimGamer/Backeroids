@@ -17,11 +17,12 @@ class SoundManager
     public static var enemyExplode = new FlxSound();
 
     public static var shooterAmbient = new FlxSound();
+    public static var mineExplode = new FlxSound();
 
     public static function init():Void
     {
         playerShoot.loadEmbedded(AssetPaths.Laser_Shoot_0__wav);
-        playerExplode.loadEmbedded(AssetPaths.Explosion__wav);
+        playerExplode.loadEmbedded(AssetPaths.Player_Explode__wav);
 
         asteroidHit.loadEmbedded(AssetPaths.Hit_Asteroid__wav);
         asteroidSplit.loadEmbedded(AssetPaths.Asteroid_Split_Explode__wav);
@@ -33,5 +34,6 @@ class SoundManager
         buttonClick.loadEmbedded(AssetPaths.Button_Click__wav);
 
         shooterAmbient.loadEmbedded(AssetPaths.Shooter_Ambient__wav);
+        mineExplode.loadEmbedded(AssetPaths.Explosion__wav);
     }
 }
