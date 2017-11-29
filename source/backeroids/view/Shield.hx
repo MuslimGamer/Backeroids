@@ -22,6 +22,8 @@ class Shield extends HelixSprite
         var conf = Config.get('ship').shield;
         this.shieldHealth = conf.health;
         this.totalShieldHealth = conf.health;
+
+        this.deactivate();
     }
 
     override public function update(elapsedSeconds:Float):Void
