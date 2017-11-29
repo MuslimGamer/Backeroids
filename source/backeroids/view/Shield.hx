@@ -52,9 +52,9 @@ class Shield extends HelixSprite
         {
             this.shieldHealth -= 1;
             if (this.indicatorCallback != null)
-                {
-                    this.indicatorCallback();
-                }
+            {
+                this.indicatorCallback();
+            }
             if (this.shieldHealth <= 0)
             {
                 this.kill();
@@ -81,6 +81,10 @@ class Shield extends HelixSprite
     {
         this.revive();
         this.shieldHealth = Config.get('ship').shield.health;
+        if (this.indicatorCallback != null)
+        {
+            this.indicatorCallback();
+        }
         this.functional = true;
     }
 
