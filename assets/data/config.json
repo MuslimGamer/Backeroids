@@ -51,7 +51,7 @@
         "invincibleAfterSpawnSeconds": 3,
         "lives": 3,
         "shield": {
-            "enabled": false,
+            "enabled": true,
             "health": 5,
             "secondsPerRecharge": 3
         }

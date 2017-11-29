@@ -8,12 +8,12 @@ class Shield extends HelixSprite
 {
     private var shieldHealth:Int = Config.get('ship').shield.health;
     public var working:Bool = true;
+    public var isOn = false;
     private var lastRecharge:GameTime = new GameTime(0);
 
     override public function new():Void
     {
-        super(null, {height: 40, width: 40, colour: 0xFFa6ffff});
-        this.alpha = 0.3;
+        super("assets/images/shield.png");
         this.immovable = true;
     }
 
@@ -41,12 +41,14 @@ class Shield extends HelixSprite
 
     public function activate():Void
     {
-        this.revive();
+        this.isOn = true;
+        this.visible = true;
     }
 
     public function deactivate():Void
     {
-        this.kill();
+        this.isOn = false;
+        this.visible = false;
     }
 
     public function resetShield():Void
