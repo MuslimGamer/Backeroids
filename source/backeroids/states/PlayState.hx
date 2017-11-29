@@ -156,7 +156,7 @@ class PlayState extends HelixState
 			}
 		}
 
-		if (Config.get('ship').shield.enabled && this.playerShield.isOn)
+		if (Config.get('ship').shield.enabled && this.playerShield.isActivated)
 		{
 			return;
 		}

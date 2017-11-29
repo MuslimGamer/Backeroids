@@ -8,8 +8,8 @@ class Shield extends HelixSprite
 {
     public var shieldHealth:Int;
     private var totalShieldHealth:Int;
-    public var working:Bool = true;
-    public var isOn = false;
+    public var functional:Bool = true;
+    public var isActivated = false;
     private var lastRecharge:GameTime = new GameTime(0);
     private var lastDamage:GameTime = new GameTime(0);
     private var indicatorCallback:Void->Void = null;
@@ -58,7 +58,7 @@ class Shield extends HelixSprite
             if (this.shieldHealth <= 0)
             {
                 this.kill();
-                this.working = false;
+                this.functional = false;
                 this.deactivate();
             }
             this.lastDamage = now;
@@ -67,13 +67,13 @@ class Shield extends HelixSprite
 
     public function activate():Void
     {
-        this.isOn = true;
+        this.isActivated = true;
         this.visible = true;
     }
 
     public function deactivate():Void
     {
-        this.isOn = false;
+        this.isActivated = false;
         this.visible = false;
     }
 
@@ -81,7 +81,7 @@ class Shield extends HelixSprite
     {
         this.revive();
         this.shieldHealth = Config.get('ship').shield.health;
-        this.working = true;
+        this.functional = true;
     }
 
     public function setIndicatorCallback(callback):Void
