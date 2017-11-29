@@ -12,7 +12,7 @@ class AbstractEnemy extends HelixSprite
     private var hasAppearedOnscreen:Bool = false;
     private static var random = new FlxRandom();
 
-    private function new(filename, colorDetails)
+    private function new(?filename, ?colorDetails)
     {
         super(filename, colorDetails);
         this.elasticity = Config.get("enemies").elasticity;
