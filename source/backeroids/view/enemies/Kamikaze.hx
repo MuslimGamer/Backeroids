@@ -9,11 +9,12 @@ class Kamikaze extends AbstractEnemy
 {
     public function new(player:PlayerShip)
     {
-        super(null, {width: 30, height: 30, colour: 0xFFc10000 });
+        super("assets/images/kamikaze.png");
 
         var config:Dynamic = Config.get("enemies").kamikaze;
         var baseVelocity = config.velocity;
         this.health = config.health;
+        this.angularVelocity = 360 * 2; // spin 2x/s
 
         // Aim toward the player
         var me = FlxPoint.weak(this.x, this.y);
