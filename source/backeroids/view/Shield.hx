@@ -7,6 +7,7 @@ import helix.GameTime;
 class Shield extends HelixSprite
 {
     private var shieldHealth:Int = Config.get('ship').shield.health;
+    private var totalShieldHealth:Int = Config.get('ship').shield.health;
     public var working:Bool = true;
     public var isOn = false;
     private var lastRecharge:GameTime = new GameTime(0);
@@ -25,19 +26,22 @@ class Shield extends HelixSprite
         var now = GameTime.now();
         if (now.elapsedSeconds - this.lastRecharge.elapsedSeconds > Config.get('ship').shield.secondsPerRecharge)
         {
-            this.shieldHealth += 1;
+            if (this.shieldHealth < this.totalShieldHealth)
+            {
+                this.shieldHealth += 1;
+                trace('shield rechared: ${this.shieldHealth}');
+            }
             this.lastRecharge = now;
         }
     }
 
     public function damage():Void
     {
-        trace('attempting to damage shield');
         var now = GameTime.now();
-        if (now.elapsedSeconds - this.lastDamage.elapsedSeconds > 1)
+        if (now.elapsedSeconds - this.lastDamage.elapsedSeconds > 0.4)
         {
             this.shieldHealth -= 1;
-            trace('shield damaged');
+            trace('shield damaged: ${this.shieldHealth}');
             if (this.shieldHealth <= 0)
             {
                 this.kill();
@@ -63,6 +67,7 @@ class Shield extends HelixSprite
 
     public function resetShield():Void
     {
+        this.revive();
         this.shieldHealth = Config.get('ship').shield.health;
         this.working = true;
     }

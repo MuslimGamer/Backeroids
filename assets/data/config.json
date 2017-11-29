@@ -52,7 +52,7 @@
         "lives": 3,
         "shield": {
             "enabled": true,
-            "health": 5,
+            "health": 3,
             "secondsPerRecharge": 3
         }
     },
