@@ -10,6 +10,7 @@ class Shield extends HelixSprite
     public var working:Bool = true;
     public var isOn = false;
     private var lastRecharge:GameTime = new GameTime(0);
+    private var lastDamage:GameTime = new GameTime(0);
 
     override public function new():Void
     {
@@ -31,11 +32,20 @@ class Shield extends HelixSprite
 
     public function damage():Void
     {
-        this.shieldHealth -= 1;
-        if (this.shieldHealth <= 0)
+        trace('attempting to damage shield');
+        var now = GameTime.now();
+        if (now.elapsedSeconds - this.lastDamage.elapsedSeconds > 1)
         {
-            this.kill();
-            this.working = false;
+            this.shieldHealth -= 1;
+            trace('shield damaged');
+            if (this.shieldHealth <= 0)
+            {
+                this.kill();
+                this.working = false;
+                this.deactivate();
+                trace('shield killed');
+            }
+            this.lastDamage = now;
         }
     }
 
