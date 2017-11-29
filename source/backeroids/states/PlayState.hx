@@ -58,6 +58,7 @@ class PlayState extends HelixState
 	private var currentWave = 0;
 	private var waveCounter:HelixSprite;
 	private var livesCounter:HelixSprite;
+	private var shieldCounter:HelixSprite;
 
 	override public function new(levelNum):Void
 	{
@@ -85,9 +86,33 @@ class PlayState extends HelixState
 		this.playerShip.collideResolve(this.enemyBullets, this.collidePlayerShipWithAnything);
 		this.playerShip.collideResolve(this.explosions, this.collidePlayerShipWithAnything);
 
+		this.enemies.add(this.knockbackableEnemies);
+		this.enemies.add(this.headstrongEnemies);
+
+		this.waveCounter = new HelixSprite(null, {width: 1, height: 1, colour: 0xFF000000});
+		this.waveCounter.alpha = 0;
+		this.waveCounter.text('Wave: 0/${this.waveNum}');
+
+		this.livesCounter = new HelixSprite(null, {width: 1, height: 1, colour: 0xFF000000});
+		this.livesCounter.alpha = 0;
+		this.livesCounter.text('Lives: ${this.playerShip.lives}');
+		this.livesCounter.x = FlxG.width - this.livesCounter.width - this.livesCounter.textField.textField.textWidth;
+
 		if (Config.get('ship').shield.enabled)
 		{
 			this.playerShield = new Shield();
+	
+			this.shieldCounter = new HelixSprite(null, {width: 1, height: 1, colour: 0xFF000000});
+			this.shieldCounter.alpha = 0;
+			this.shieldCounter.text('Shield: ${this.playerShield.shieldHealth}');
+			this.shieldCounter.x = FlxG.width - this.shieldCounter.width - this.shieldCounter.textField.textField.textWidth;
+			this.shieldCounter.y = this.livesCounter.textField.textField.textHeight;
+
+			this.playerShield.setIndicatorCallback(function():Void
+			{
+				this.shieldCounter.text('Shield: ${this.playerShield.shieldHealth}');
+			});
+
 			var damageShieldCallback = function(shield:Shield, thing:HelixSprite)
 			{
 				shield.damage();
@@ -101,18 +126,6 @@ class PlayState extends HelixState
 
 			this.playerShip.setShield(this.playerShield);
 		}
-
-		this.enemies.add(this.knockbackableEnemies);
-		this.enemies.add(this.headstrongEnemies);
-
-		this.waveCounter = new HelixSprite(null, {width: 1, height: 1, colour: 0xFF000000});
-		this.waveCounter.alpha = 0;
-		this.waveCounter.text('Wave: 0/${this.waveNum}');
-
-		this.livesCounter = new HelixSprite(null, {width: 1, height: 1, colour: 0xFF000000});
-		this.livesCounter.alpha = 0;
-		this.livesCounter.text('Lives: ${this.playerShip.lives}');
-		this.livesCounter.x = FlxG.width - this.livesCounter.width - 75;
 
 		this.showTutorialIfRequired();
 	}

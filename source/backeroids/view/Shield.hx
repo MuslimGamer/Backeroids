@@ -6,12 +6,13 @@ import helix.GameTime;
 
 class Shield extends HelixSprite
 {
-    private var shieldHealth:Int = Config.get('ship').shield.health;
+    public var shieldHealth:Int = Config.get('ship').shield.health;
     private var totalShieldHealth:Int = Config.get('ship').shield.health;
     public var working:Bool = true;
     public var isOn = false;
     private var lastRecharge:GameTime = new GameTime(0);
     private var lastDamage:GameTime = new GameTime(0);
+    private var indicatorCallback:Void->Void = null;
 
     override public function new():Void
     {
@@ -29,7 +30,10 @@ class Shield extends HelixSprite
             if (this.shieldHealth < this.totalShieldHealth)
             {
                 this.shieldHealth += 1;
-                trace('shield rechared: ${this.shieldHealth}');
+                if (this.indicatorCallback != null)
+                {
+                    this.indicatorCallback();
+                }
             }
             this.lastRecharge = now;
         }
@@ -41,13 +45,15 @@ class Shield extends HelixSprite
         if (now.elapsedSeconds - this.lastDamage.elapsedSeconds > 0.4)
         {
             this.shieldHealth -= 1;
-            trace('shield damaged: ${this.shieldHealth}');
+            if (this.indicatorCallback != null)
+                {
+                    this.indicatorCallback();
+                }
             if (this.shieldHealth <= 0)
             {
                 this.kill();
                 this.working = false;
                 this.deactivate();
-                trace('shield killed');
             }
             this.lastDamage = now;
         }
@@ -70,5 +76,10 @@ class Shield extends HelixSprite
         this.revive();
         this.shieldHealth = Config.get('ship').shield.health;
         this.working = true;
+    }
+
+    public function setIndicatorCallback(callback):Void
+    {
+        this.indicatorCallback = callback;
     }
 }
