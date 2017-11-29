@@ -55,6 +55,7 @@ class PlayState extends HelixState
 	private var waveNum = 0;
 	private var currentWave = 0;
 	private var waveCounter:HelixSprite;
+	private var livesCounter:HelixSprite;
 
 	override public function new(levelNum):Void
 	{
@@ -93,6 +94,11 @@ class PlayState extends HelixState
 		this.waveCounter.alpha = 0;
 		this.waveCounter.text('Wave: 0/${this.waveNum}');
 
+		this.livesCounter = new HelixSprite(null, {width: 1, height: 1, colour: 0xFF000000});
+		this.livesCounter.alpha = 0;
+		this.livesCounter.text('Lives: ${this.playerShip.lives}');
+		this.livesCounter.x = FlxG.width - this.livesCounter.width - 75;
+
 		this.showTutorialIfRequired();
 	}
 
@@ -124,6 +130,7 @@ class PlayState extends HelixState
 		{
 			return;
 		}
+
 		this.currentWave += 1;
 		this.waveCounter.text('Wave: ${this.currentWave}/${this.waveNum}');
 
@@ -197,7 +204,7 @@ class PlayState extends HelixState
 		}
 		var gameWinText = new HelixSprite(null, {height: 1, width: 1, colour: 0xFF000000});
 		gameWinText.alpha = 0;
-		gameWinText.text('YOU WIN!\nPress anything to exit');
+		gameWinText.text('YOU WIN!\nPress anything to exit.');
 		gameWinText.move((FlxG.width / 2) - (gameWinText.textField.textField.textWidth / 2), (FlxG.height / 2) - (gameWinText.textField.textField.textHeight / 2));
 		new FlxTimer().start(1, function(timer)
 		{
@@ -215,7 +222,7 @@ class PlayState extends HelixState
 	{
 		var gameWinText = new HelixSprite(null, {height: 1, width: 1, colour: 0xFF000000});
 		gameWinText.alpha = 0;
-		gameWinText.text('GAME OVER!\nPress anything to exit');
+		gameWinText.text('GAME OVER!\nPress anything to exit.');
 		gameWinText.move((FlxG.width / 2) - (gameWinText.textField.textField.textWidth / 2), (FlxG.height / 2) - (gameWinText.textField.textField.textHeight / 2));
 		new FlxTimer().start(1, function(timer)
 		{
@@ -329,6 +336,7 @@ class PlayState extends HelixState
 		if (!this.playerShip.isInvincible())
 		{
 			this.playerShip.die(this.resetShip);
+			this.livesCounter.text('Lives: ${this.playerShip.lives}');
 			if (!Config.get('features').infiniteLives && this.playerShip.lives <= 0)
 			{
 				this.loseLevel();
