@@ -17,7 +17,7 @@ class MineDropper extends AbstractEnemy implements IShooter
 
     public function new(mineCallback:Void->IProjectile):Void
     {
-        super(null, {{width: 40, height: 50, colour: 0xFF730077 }});
+        super("assets/images/mine-dropper.png");
 
         this.recycleProjectileCallback = mineCallback;
         this.elasticity = Config.get("enemies").elasticity;

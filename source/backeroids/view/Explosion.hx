@@ -11,7 +11,7 @@ class Explosion extends HelixSprite
 
     public function new():Void
     {
-        super(null, {width: Config.get("enemies").minedropper.explosionWidth, height: Config.get("enemies").minedropper.explosionHeight, colour: 0xFFff8000});
+        super("assets/images/explosion.png");
         this.immovable = true;
         this.kill();
     }

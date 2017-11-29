@@ -106,8 +106,8 @@
                 "y": 30
             },
             "mineFuseSeconds": 8,
-            "explosionWidth": 100,
-            "explosionHeight": 100
+            "explosionWidth": 99,
+            "explosionHeight": 99
         }
     }
 }

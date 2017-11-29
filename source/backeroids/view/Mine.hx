@@ -14,7 +14,7 @@ class Mine extends HelixSprite implements IProjectile
 
     public function new():Void
     {
-        super(null, {width: 20, height: 20, colour: FlxColor.fromString('red')});
+        super("assets/images/mine.png");
         this.kill();
         this.immovable = true;
     }
