@@ -6,7 +6,7 @@ import helix.data.Config;
 // static class
 class TutorialManager
 {
-    private static var tutorialData:Map<String, String> = getTutorialMap();
+    private static var tutorialData:Map<String, String> = null;
 
     private static function getTutorialMap():Map<String, String>
     {
@@ -29,6 +29,11 @@ class TutorialManager
     // Returns the enemy name, or "introduction" for level 1
     public static function isTutorialRequired(levelNum:Int):String
     {
+        if (tutorialData == null)
+        {
+           tutorialData = getTutorialMap();
+        }
+
         if (levelNum == 1)
         {
             return "introduction";

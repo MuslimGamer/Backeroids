@@ -12,8 +12,8 @@ import helix.GameTime;
 class SplashState extends HelixState
 {
 
-    private var DISPLAY_TIME_SECONDS:Float = Config.get("splashDisplayTimeSeconds");
-    private var FADE_TIME_SECONDS:Float = Config.get("splashFadeTimeSeconds");
+    private var DISPLAY_TIME_SECONDS:Float;
+    private var FADE_TIME_SECONDS:Float;
     private var start:GameTime;
     private var image:HelixSprite;
     private var onComplete:Void->Void;
@@ -32,6 +32,9 @@ class SplashState extends HelixState
     override public function create()
     {
         super.create();
+
+        this.DISPLAY_TIME_SECONDS = Config.get("splashDisplayTimeSeconds");
+        this.FADE_TIME_SECONDS = Config.get("splashFadeTimeSeconds");
 
         image = new HelixSprite(imageFile);
         image.x = (FlxG.width - image.width) / 2;

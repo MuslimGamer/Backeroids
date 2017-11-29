@@ -6,8 +6,8 @@ import helix.GameTime;
 
 class Shield extends HelixSprite
 {
-    public var shieldHealth:Int = Config.get('ship').shield.health;
-    private var totalShieldHealth:Int = Config.get('ship').shield.health;
+    public var shieldHealth:Int;
+    private var totalShieldHealth:Int;
     public var working:Bool = true;
     public var isOn = false;
     private var lastRecharge:GameTime = new GameTime(0);
@@ -18,6 +18,10 @@ class Shield extends HelixSprite
     {
         super("assets/images/shield.png");
         this.immovable = true;
+        
+        var conf = Config.get('ship').shield;
+        this.shieldHealth = conf.health;
+        this.totalShieldHealth = conf.health;
     }
 
     override public function update(elapsedSeconds:Float):Void
