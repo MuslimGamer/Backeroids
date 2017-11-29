@@ -2,6 +2,7 @@ package backeroids.states;
 
 import backeroids.SoundManager;
 import flixel.FlxG;
+import flixel.system.FlxSound;
 import helix.core.HelixSprite;
 using helix.core.HelixSpriteFluentApi;
 import helix.core.HelixState;
@@ -11,33 +12,36 @@ import helix.GameTime;
 class SplashState extends HelixState
 {
 
-    private var DISPLAY_TIME_SECONDS:Float = Config.get("splashDisplayTimeSeconds");
-    private var FADE_TIME_SECONDS:Float = Config.get("splashFadeTimeSeconds");
+    private var DISPLAY_TIME_SECONDS:Float;
+    private var FADE_TIME_SECONDS:Float;
     private var start:GameTime;
     private var image:HelixSprite;
     private var onComplete:Void->Void;
     private var isDone:Bool = false;
     private var imageFile:String;
-    private var audioFile:String;
+    private var audioFile:FlxSound;
 
-    public function new(imageFile:String, audioFile:String, onComplete:Void->Void)
+    public function new(imageFile:String, audioFile:FlxSound, onComplete:Void->Void)
     {
         super();
         this.imageFile = imageFile;
         this.audioFile = audioFile;
         this.onComplete = onComplete;
-        // TODO: play audio
     }
 
     override public function create()
     {
         super.create();
 
+        this.DISPLAY_TIME_SECONDS = Config.get("splashDisplayTimeSeconds");
+        this.FADE_TIME_SECONDS = Config.get("splashFadeTimeSeconds");
+
         image = new HelixSprite(imageFile);
         image.x = (FlxG.width - image.width) / 2;
         image.y = (FlxG.height - image.height) / 2;
         image.alpha = 0;
         start = GameTime.now();
+        this.audioFile.play();
     }
 
     override public function update(elapsedSeconds:Float):Void

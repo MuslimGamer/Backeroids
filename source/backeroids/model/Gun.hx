@@ -6,10 +6,11 @@ import helix.data.Config;
 class Gun
 {
     private var lastShotAt:GameTime = GameTime.now();
-    private var fireCooldownSeconds = Config.get("gun").fireCooldownSeconds;
+    private var fireCooldownSeconds:Float;
 
     public function new():Void
     {
+        this.fireCooldownSeconds = Config.get("gun").fireCooldownSeconds;
     }
 
     public function canFire():Bool

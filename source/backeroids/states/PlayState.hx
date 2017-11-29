@@ -30,9 +30,9 @@ import helix.core.HelixSprite;
 
 class PlayState extends HelixState
 {
-	private static var NUM_INITIAL_ASTEROIDS:Int = Config.get("asteroids").initialNumber;
-	private static var SECONDS_PER_ASTEROID:Int = Config.get("asteroids").secondsToSpawn;
-	private static var SECONDS_PER_ENEMY:Int = Config.get("enemies").secondsToSpawn;
+	private static var NUM_INITIAL_ASTEROIDS:Int;
+	private static var SECONDS_PER_ASTEROID:Int;
+	private static var SECONDS_PER_ENEMY:Int;
 
 	public var isShowingTutorial(default, null):Bool = false;
 	private var asteroids = new FlxTypedGroup<Asteroid>();
@@ -72,6 +72,10 @@ class PlayState extends HelixState
 	override public function create():Void
 	{
 		super.create();
+
+		NUM_INITIAL_ASTEROIDS = Config.get("asteroids").initialNumber;
+		SECONDS_PER_ASTEROID = Config.get("asteroids").secondsToSpawn;
+		SECONDS_PER_ENEMY = Config.get("enemies").secondsToSpawn;
 		
 		this.playerShip = new PlayerShip(this);
 		this.playerShip.setRecycleBulletCallback(function():Bullet

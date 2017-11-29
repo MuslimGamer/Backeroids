@@ -19,6 +19,9 @@ class SoundManager
     public static var shooterAmbient = new FlxSound();
     public static var mineExplode = new FlxSound();
 
+    public static var heartBeatLogoSound = new FlxSound();
+    public static var nightingaleLogoSound = new FlxSound();
+
     public static function init():Void
     {
         playerShoot.loadEmbedded(AssetPaths.Laser_Shoot_0__wav);
@@ -35,5 +38,8 @@ class SoundManager
 
         shooterAmbient.loadEmbedded(AssetPaths.Shooter_Ambient__wav);
         mineExplode.loadEmbedded(AssetPaths.Explosion__wav);
+
+        heartBeatLogoSound.loadEmbedded(AssetPaths.heartbeat__wav);
+        nightingaleLogoSound.loadEmbedded(AssetPaths.nightingale__wav);
     }
 }
