@@ -1,6 +1,7 @@
 package backeroids.states;
 
 import backeroids.model.AsteroidType;
+import backeroids.model.Wave;
 import backeroids.tutorial.TutorialManager;
 import backeroids.view.Asteroid;
 import backeroids.view.Bullet;
@@ -52,10 +53,10 @@ class PlayState extends HelixState
 	private var levelNum:Int = 0;
 	private var waveTimer = new FlxTimer();
 
-	private var itemsLeftToSpawn = 0;
-	private var itemsPerWave = 0;
 	private var waveNum = 0;
-	private var currentWave = 0;
+	private var waveArray = new Array<Wave>();
+	private var currentWave:Wave;
+	private var currentWaveIndex:Int = 0;
 	private var waveCounter:HelixSprite;
 	private var livesCounter:HelixSprite;
 	private var shieldCounter:HelixSprite;
@@ -64,9 +65,17 @@ class PlayState extends HelixState
 	{
 		super();
 		this.levelNum = levelNum;
-		this.itemsLeftToSpawn = this.levelNum * Config.get('entitiesLevelMultiplier');
-		this.itemsPerWave = this.levelNum * Config.get('entitiesWaveMultiplier');
-		this.waveNum = Math.floor(this.itemsLeftToSpawn / this.itemsPerWave);
+		var totalEntitiesToSpawn = this.levelNum * Config.get('entitiesLevelMultiplier');
+		var entitiesPerWave = this.levelNum * Config.get('entitiesWaveMultiplier');
+		this.waveNum = Math.floor(totalEntitiesToSpawn / entitiesPerWave);
+
+		for (i in 1 ... this.waveNum + 1)
+		{
+			var wave = new Wave(entitiesPerWave, i, this.areEnemiesInLevel());
+			this.waveArray.push(wave);
+		}
+
+		this.currentWave = this.waveArray[0];
 	}
 
 	override public function create():Void
@@ -165,24 +174,49 @@ class PlayState extends HelixState
 
 	private function spawnMoreItemsIfNeeded(timer):Void
 	{
-		if (!this.areItemsDead())
+		if (!this.isCurrentWaveComplete())
 		{
 			return;
 		}
 		
-		if (this.itemsLeftToSpawn > 0)
+		if (this.hasNextWave())
 		{
+			this.nextWave();
 			this.startWave();
 		}
-		else if (this.itemsLeftToSpawn <= 0)
+		else
 		{
 			this.winLevel();
 		}
 	}
 
-	private function areItemsDead():Bool
+	private function hasNextWave():Bool
+	{
+		return this.waveArray[this.currentWaveIndex + 1] != null;
+	}
+
+	private function nextWave():Void
+	{
+		if (this.hasNextWave())
+		{
+			this.currentWaveIndex++;
+			this.currentWave = this.waveArray[this.currentWaveIndex];
+		}
+	}
+
+	private function isCurrentWaveComplete():Bool
+	{
+		return this.areAllEntitiesSpawned() && this.areEntitiesDead();
+	}
+
+	private function areEntitiesDead():Bool
 	{
 		return (this.asteroids.countLiving() <= 0) && (this.headstrongEnemies.countLiving() <= 0) && (this.knockbackableEnemies.countLiving() <= 0);
+	}
+
+	private function areAllEntitiesSpawned():Bool
+	{
+		return (this.currentWave.spawnedAsteroids == this.currentWave.asteroidNum) && (this.currentWave.spawnedEnemies == this.currentWave.enemyNum);
 	}
 
 	private function startWave():Void
@@ -192,28 +226,10 @@ class PlayState extends HelixState
 			return;
 		}
 
-		this.currentWave += 1;
-		this.waveCounter.text('Wave: ${this.currentWave}/${this.waveNum}');
+		this.waveCounter.text('Wave: ${this.currentWave.waveNumber}/${this.waveNum}');
 
-		var asteroidNum:Int, enemyNum:Int;
-		var enemiesInWave = this.itemsLeftToSpawn >= this.itemsPerWave ? this.itemsPerWave : this.itemsLeftToSpawn;
-
-		if (Config.get("asteroids").enabled && Config.get("enemies").enabled)
-		{
-			asteroidNum = Math.round(enemiesInWave / 2);
-			enemyNum = enemiesInWave - asteroidNum;
-		}
-		else if (Config.get("asteroids").enabled)
-		{
-			asteroidNum = enemiesInWave;
-			enemyNum = 0;
-		}
-		else { return; }
-
-		this.itemsLeftToSpawn -= asteroidNum + enemyNum;
-
-		this.spawnEntities(this.addAsteroid, asteroidNum, Config.get("secondsToSpawnAsteroidsOver"));
-		this.spawnEntities(this.addEnemy, enemyNum, Config.get("secondsToSpawnEnemiesOver"));
+		this.spawnEntities(this.addAsteroid, this.currentWave.asteroidNum, Config.get("secondsToSpawnAsteroidsOver"));
+		this.spawnEntities(this.addEnemy, this.currentWave.enemyNum, Config.get("secondsToSpawnEnemiesOver"));
 	}
 
 	private function spawnEntities(entitySpawner, entityNum:Int, secondsToSpawnOver:Int):Void
@@ -247,6 +263,11 @@ class PlayState extends HelixState
 		}
 
 		return enemyCallbacks;
+	}
+
+	private function areEnemiesInLevel():Bool
+	{
+		return this.getEnemyCallbacks().length != 0;
 	}
 
 	private function exitState():Void
@@ -394,6 +415,7 @@ class PlayState extends HelixState
 	{
 		var asteroid = this.recycleAsteroid();
 		asteroid.respawn();
+		this.currentWave.spawnedAsteroids++;
 		return asteroid;
 	}
 
@@ -489,6 +511,7 @@ class PlayState extends HelixState
 		{
 			var choice = FlxG.random.int(0, callbacks.length - 1);
 			callbacks[choice]();
+			this.currentWave.spawnedEnemies++;
 		}
 	}
 
@@ -503,7 +526,12 @@ class PlayState extends HelixState
 			messageWindow.y = (FlxG.height - messageWindow.height) / 2;
 			messageWindow.setFinishCallback(function() {
 				this.isShowingTutorial = false;
-				this.waveTimer.start(1, this.spawnMoreItemsIfNeeded, 0);
+				this.waveTimer.start(1, function(timer) 
+				{
+					this.startWave();
+					this.waveTimer.reset();
+					this.waveTimer.start(1, this.spawnMoreItemsIfNeeded, 0);
+				}, 1);
 			});
 
 			var group = messageWindow.getDrawables();
@@ -511,7 +539,12 @@ class PlayState extends HelixState
 		}
 		else
 		{
-			this.waveTimer.start(1, this.spawnMoreItemsIfNeeded, 0);
+			this.waveTimer.start(1, function(timer) 
+			{
+				this.startWave();
+				this.waveTimer.reset();
+				this.waveTimer.start(1, this.spawnMoreItemsIfNeeded, 0);
+			}, 1);
 		}
 	}
 }
