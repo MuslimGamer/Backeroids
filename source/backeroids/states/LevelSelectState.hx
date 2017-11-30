@@ -51,7 +51,7 @@ class LevelSelectState extends HelixState
             }
 
             var sprite = new HelixSprite('assets/images/ui/${filename}.png');
-            var xOffset = (FlxG.width - (2 * PADDING) - (numLevels / 2 * sprite.width)) / 2;
+            var xOffset = (FlxG.width - (2 * PADDING) - (numLevels / 2 * sprite.width * 4/3)) / 2;
             
             sprite.x = xOffset + ((i % (numLevels / 2)) * sprite.width * 2);
             sprite.y = selectLevel.y + selectLevel.height + PADDING + (i >= numLevels / 2 ? 2 * sprite.height : 0);
