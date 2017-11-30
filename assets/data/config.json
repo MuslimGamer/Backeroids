@@ -67,7 +67,7 @@
         "splitAsteroidsOnDeath": true,
         "collideAsteroidsWithAsteroids": true,
         "infiniteLives": false,
-        "unlockAllLevels": true
+        "unlockAllLevels": false
     },
 
     "enemies": {

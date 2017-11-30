@@ -65,12 +65,15 @@ class LevelSelectState extends HelixState
 
             sprite.onClick(function()
             {
-                SoundManager.buttonClick.play();
                 if (levelNum <= save.data.currentLevel)
                 {
+                    SoundManager.buttonClick.play();
                     FlxG.switchState(new PlayState(levelNum));
                 }
-                // else, play "denied" sfx
+                else
+                {
+                    SoundManager.buttonClickDisabled.play();
+                }
             });
         }
     }    
