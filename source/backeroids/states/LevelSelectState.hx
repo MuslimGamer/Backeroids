@@ -26,6 +26,12 @@ class LevelSelectState extends HelixState
             save.data.currentLevel = 1;
             save.flush();
         }
+
+        if (Config.get('features').unlockAllLevels)
+        {
+            save.data.currentLevel = numLevels;
+            save.flush();
+        }
         
         var title = new HelixSprite("assets/images/ui/title.png");
         title.x = (FlxG.width - title.width) / 2;
@@ -46,7 +52,7 @@ class LevelSelectState extends HelixState
             }
 
             var sprite = new HelixSprite('assets/images/ui/${filename}.png');
-            var xOffset = (FlxG.width - (2 * PADDING) - (numLevels / 2 * sprite.width)) / 2;
+            var xOffset = (FlxG.width - (2 * PADDING) - (numLevels / 2 * sprite.width * 4/3)) / 2;
             
             sprite.x = xOffset + ((i % (numLevels / 2)) * sprite.width * 2);
             sprite.y = selectLevel.y + selectLevel.height + PADDING + (i >= numLevels / 2 ? 2 * sprite.height : 0);
@@ -60,12 +66,15 @@ class LevelSelectState extends HelixState
 
             sprite.onClick(function()
             {
-                SoundManager.buttonClick.play();
                 if (levelNum <= save.data.currentLevel)
                 {
+                    SoundManager.buttonClick.play();
                     FlxG.switchState(new PlayState(levelNum));
                 }
-                // else, play "denied" sfx
+                else
+                {
+                    SoundManager.buttonClickDisabled.play();
+                }
             });
         }
     }    

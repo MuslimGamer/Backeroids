@@ -12,6 +12,7 @@ class SoundManager
     public static var asteroidSplit = new FlxSound();
 
     public static var buttonClick = new FlxSound();
+    public static var buttonClickDisabled = new FlxSound();
 
     public static var enemyShoot = new FlxSound();
     public static var enemyHit = new FlxSound();
@@ -37,6 +38,7 @@ class SoundManager
         enemyExplode.loadEmbedded(AssetPaths.Enemy_Explode__ogg);
 
         buttonClick.loadEmbedded(AssetPaths.Button_Click__ogg);
+        buttonClickDisabled.loadEmbedded(AssetPaths.Button_Click_Disabled__ogg);
 
         shooterAmbient.loadEmbedded(AssetPaths.Shooter_Ambient__ogg);
         mineExplode.loadEmbedded(AssetPaths.Explosion__ogg);

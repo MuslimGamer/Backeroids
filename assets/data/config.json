@@ -69,7 +69,8 @@
         "wrapBullets": false,
         "splitAsteroidsOnDeath": true,
         "collideAsteroidsWithAsteroids": true,
-        "infiniteLives": false
+        "infiniteLives": false,
+        "unlockAllLevels": false
     },
 
     "enemies": {
