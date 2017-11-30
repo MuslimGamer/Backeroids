@@ -3,11 +3,9 @@ package backeroids.states;
 import flixel.FlxG;
 import flixel.system.FlxSound;
 import flixel.tweens.FlxTween;
-import flixel.util.FlxTimer;
 import helix.core.HelixSprite;
 import helix.core.HelixState;
 import helix.data.Config;
-using helix.core.HelixSpriteFluentApi;
 
 class SplashState extends HelixState
 {

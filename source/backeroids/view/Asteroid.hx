@@ -9,7 +9,6 @@ import flixel.FlxG;
 import flixel.util.FlxTimer;
 import helix.core.HelixSprite;
 import helix.data.Config;
-using helix.core.HelixSpriteFluentApi;
 
 class Asteroid extends HelixSprite
 {

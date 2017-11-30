@@ -18,17 +18,14 @@ import backeroids.states.LevelSelectState;
 import backeroids.states.PauseSubState;
 import backeroids.SoundManager;
 import flixel.FlxG;
-import flixel.addons.ui.FlxUI9SliceSprite;
-import flash.geom.Rectangle;
 import flixel.group.FlxGroup;
 import flixel.util.FlxTimer;
 import flixel.math.FlxRandom;
 import flixel.input.keyboard.FlxKey;
-using helix.core.HelixSpriteFluentApi;
 import helix.core.HelixState;
-import helix.core.HelixSprite;
 import helix.data.Config;
 import helix.core.HelixSprite;
+using helix.core.HelixSpriteFluentApi;
 
 class PlayState extends HelixState
 {
