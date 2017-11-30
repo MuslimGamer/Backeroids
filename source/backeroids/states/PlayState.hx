@@ -15,6 +15,7 @@ import backeroids.view.enemies.Tank;
 import backeroids.view.enemies.Kamikaze;
 import backeroids.view.enemies.MineDropper;
 import backeroids.states.LevelSelectState;
+import backeroids.states.PauseSubState;
 import backeroids.SoundManager;
 import flixel.FlxG;
 import flixel.addons.ui.FlxUI9SliceSprite;
@@ -61,6 +62,8 @@ class PlayState extends HelixState
 	private var livesCounter:HelixSprite;
 	private var shieldCounter:HelixSprite;
 
+	private var pauseSubState = new PauseSubState();
+
 	override public function new(levelNum):Void
 	{
 		super();
@@ -81,6 +84,8 @@ class PlayState extends HelixState
 	override public function create():Void
 	{
 		super.create();
+
+		this.destroySubStates = false;
 
 		NUM_INITIAL_ASTEROIDS = Config.get("asteroids").initialNumber;
 		SECONDS_PER_ASTEROID = Config.get("asteroids").secondsToSpawn;
@@ -128,8 +133,11 @@ class PlayState extends HelixState
 
 			var damageShieldCallback = function(shield:Shield, thing:HelixSprite)
 			{
-				shield.damage();
-				this.collidePlayerShipWithAnything(this.playerShip, thing);
+				if (this.playerShip.alive)
+				{
+					shield.damage();
+					this.collidePlayerShipWithAnything(this.playerShip, thing);
+				}
 			}
 			this.playerShield.collideResolve(this.asteroids, damageShieldCallback);
 			this.playerShield.collideResolve(this.enemies, damageShieldCallback);
@@ -228,8 +236,11 @@ class PlayState extends HelixState
 
 		this.waveCounter.text('Wave: ${this.currentWave.waveNumber}/${this.waveNum}');
 
-		this.spawnEntities(this.addAsteroid, this.currentWave.asteroidNum, Config.get("secondsToSpawnAsteroidsOver"));
-		this.spawnEntities(this.addEnemy, this.currentWave.enemyNum, Config.get("secondsToSpawnEnemiesOver"));
+		var asteroidSeconds = this.currentWave.asteroidNum * Config.get("secondsPerAsteroidToSpawnOver");
+		var enemySeconds = this.currentWave.enemyNum * Config.get("secondsPerEnemyToSpawnOver");
+
+		this.spawnEntities(this.addAsteroid, this.currentWave.asteroidNum, asteroidSeconds);
+		this.spawnEntities(this.addEnemy, this.currentWave.enemyNum, enemySeconds);
 	}
 
 	private function spawnEntities(entitySpawner, entityNum:Int, secondsToSpawnOver:Int):Void
@@ -324,6 +335,14 @@ class PlayState extends HelixState
 		{
 			this.exitState();
 			return;
+		}
+		if (this.wasJustPressed(FlxKey.P))
+		{
+			FlxTimer.globalManager.forEach(function(timer:FlxTimer)
+			{
+				timer.active = false;
+			});
+			this.openSubState(this.pauseSubState);
 		}
 
 		super.update(elapsed);

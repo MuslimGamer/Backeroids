@@ -9,6 +9,7 @@ class LoadingState extends HelixState
 {
     override public function create():Void
     {
+        FlxG.autoPause = false;
         SoundManager.init();
         FlxG.switchState(new SplashState("assets/images/ui/splash-mg.png", SoundManager.heartBeatLogoSound, function()
         {

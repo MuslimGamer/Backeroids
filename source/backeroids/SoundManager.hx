@@ -6,6 +6,7 @@ class SoundManager
 {
     public static var playerShoot = new FlxSound();
     public static var playerExplode = new FlxSound();
+    public static var shieldHit = new FlxSound();
 
     public static var asteroidHit = new FlxSound();
     public static var asteroidSplit = new FlxSound();
@@ -27,6 +28,7 @@ class SoundManager
     {
         playerShoot.loadEmbedded(AssetPaths.Laser_Shoot_0__ogg);
         playerExplode.loadEmbedded(AssetPaths.Player_Explode__ogg);
+        shieldHit.loadEmbedded(AssetPaths.Hit_Shield__ogg);
 
         asteroidHit.loadEmbedded(AssetPaths.Hit_Asteroid__ogg);
         asteroidSplit.loadEmbedded(AssetPaths.Asteroid_Split_Explode__ogg);

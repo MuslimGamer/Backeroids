@@ -17,6 +17,7 @@ class LevelSelectState extends HelixState
     override public function create()
     {
         super.create();
+        FlxG.autoPause = true;
 
         var numLevels = Config.get("totalLevels");
         var save = FlxG.save;

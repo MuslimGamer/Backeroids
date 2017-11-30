@@ -1,23 +1,21 @@
 package backeroids.states;
 
-import backeroids.SoundManager;
 import flixel.FlxG;
 import flixel.system.FlxSound;
+import flixel.tweens.FlxTween;
+import flixel.util.FlxTimer;
 import helix.core.HelixSprite;
-using helix.core.HelixSpriteFluentApi;
 import helix.core.HelixState;
 import helix.data.Config;
-import helix.GameTime;
+using helix.core.HelixSpriteFluentApi;
 
 class SplashState extends HelixState
 {
 
     private var DISPLAY_TIME_SECONDS:Float;
     private var FADE_TIME_SECONDS:Float;
-    private var start:GameTime;
     private var image:HelixSprite;
     private var onComplete:Void->Void;
-    private var isDone:Bool = false;
     private var imageFile:String;
     private var audioFile:FlxSound;
 
@@ -40,33 +38,16 @@ class SplashState extends HelixState
         image.x = (FlxG.width - image.width) / 2;
         image.y = (FlxG.height - image.height) / 2;
         image.alpha = 0;
-        start = GameTime.now();
         this.audioFile.play();
-    }
-
-    override public function update(elapsedSeconds:Float):Void
-    {
-        super.update(elapsedSeconds);
-        var time = GameTime.now().elapsedSeconds - start.elapsedSeconds;
-        // Poor man's state machine
-        if (time <= FADE_TIME_SECONDS)
+        
+        FlxTween.tween(image, {alpha: 1}, this.FADE_TIME_SECONDS);
+        new FlxTimer().start(this.DISPLAY_TIME_SECONDS + this.FADE_TIME_SECONDS, function(timer)
         {
-            // image fading in
-            image.alpha += (1 / FADE_TIME_SECONDS * elapsedSeconds);
-        }
-        else if (time > FADE_TIME_SECONDS && time <= FADE_TIME_SECONDS + DISPLAY_TIME_SECONDS)
-        {
-            // image showing; do nothing
-        }
-        else if (time > FADE_TIME_SECONDS + DISPLAY_TIME_SECONDS && time <= FADE_TIME_SECONDS + DISPLAY_TIME_SECONDS + FADE_TIME_SECONDS)
-        {
-            // image fading out
-            image.alpha -= (FADE_TIME_SECONDS * elapsedSeconds);
-        }
-        else if (!isDone)
-        {
-            isDone = true;
-            this.onComplete();
-        }
+            FlxTween.tween(image, {alpha: 0}, this.FADE_TIME_SECONDS);
+            new FlxTimer().start(this.FADE_TIME_SECONDS, function(timer)
+            {
+                this.onComplete();
+            }, 1);
+        }, 1);
     }
 }

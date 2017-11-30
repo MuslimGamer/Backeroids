@@ -3,12 +3,12 @@ package backeroids.view;
 import backeroids.SoundManager;
 import backeroids.model.Gun;
 import backeroids.states.PlayState;
-import backeroids.states.PlayState;
 import flixel.effects.FlxFlicker;
 import flixel.input.keyboard.FlxKey;
 import flixel.math.FlxPoint;
 import flixel.util.FlxSpriteUtil;
 import flixel.util.FlxTimer;
+import flixel.FlxG;
 import helix.GameTime;
 import helix.core.HelixSprite;
 import helix.data.Config;
@@ -83,47 +83,49 @@ class PlayerShip extends HelixSprite
 
     private function processControls(keys:Array<FlxKey>):Void
     {
-        if (!this.currentState.isShowingTutorial)
+        if (this.currentState.isShowingTutorial)
         {
-            this.resetAcceleration();
-            if (Config.get('ship').shield.enabled)
-            {
-                this.shield.deactivate();
-            }
+            return;
+        }
+        
+        this.resetAcceleration();
 
-            if (keys.has(FlxKey.LEFT) || keys.has(FlxKey.A))
-            { 
-                this.angularVelocity = -ROTATION_VELOCITY;
-                isTurning = true;
-            }
-            else if (keys.has(FlxKey.RIGHT) || keys.has(FlxKey.D))
-            { 
-                this.angularVelocity = ROTATION_VELOCITY;
-                isTurning = true;
-            }
+        if (keys.has(FlxKey.LEFT) || keys.has(FlxKey.A))
+        { 
+            this.angularVelocity = -ROTATION_VELOCITY;
+            isTurning = true;
+        }
+        else if (keys.has(FlxKey.RIGHT) || keys.has(FlxKey.D))
+        { 
+            this.angularVelocity = ROTATION_VELOCITY;
+            isTurning = true;
+        }
 
-            if (keys.has(FlxKey.UP) || keys.has(FlxKey.W))
-            { 
-                this.accelerateForward(ACCELERATION); 
-            }
-            else if (keys.has(FlxKey.DOWN) || keys.has(FlxKey.S))
-            {
-                this.decelerate();
-            }
+        if (keys.has(FlxKey.UP) || keys.has(FlxKey.W))
+        { 
+            this.accelerateForward(ACCELERATION); 
+        }
+        else if (keys.has(FlxKey.DOWN) || keys.has(FlxKey.S))
+        {
+            this.decelerate();
+        }
 
-            if (keys.has(FlxKey.SPACE) && this.gun.canFire())
-            {
-                var bullet = this.recycleBulletCallback();
-                bullet.move(this.x + ((this.width - bullet.width) / 2), this.y + ((this.height - bullet.height) / 2));
-                bullet.shoot(this.angle);
-                SoundManager.playerShoot.play(true);
-            }
+        if (keys.has(FlxKey.SPACE) && this.gun.canFire())
+        {
+            var bullet = this.recycleBulletCallback();
+            bullet.move(this.x + ((this.width - bullet.width) / 2), this.y + ((this.height - bullet.height) / 2));
+            bullet.shoot(this.angle);
+            SoundManager.playerShoot.play(true);
         }
 
         if (Config.get('ship').shield.enabled && this.shield.functional)
         {
-            this.shield.activate();
             this.shield.move(this.x - this.width/2, this.y - this.height/2);
+            if (FlxG.keys.justPressed.SHIFT)
+            {
+                this.shield.isActivated = !this.shield.isActivated;
+                this.shield.visible = !this.shield.visible;
+            }
         }
     }
 
