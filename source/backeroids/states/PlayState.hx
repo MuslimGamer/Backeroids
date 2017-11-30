@@ -250,7 +250,7 @@ class PlayState extends HelixState
 	{
 		for (i in 0...entityNum)
 		{
-			new FlxTimer().start(FlxG.random.float(0, secondsToSpawnOver), entitySpawner, 1);
+			new FlxTimer().start(random.float(0, secondsToSpawnOver), entitySpawner, 1);
 		}
 	}
 
@@ -460,10 +460,9 @@ class PlayState extends HelixState
 
 			var padding = Math.floor(asteroid.width / 2);
 
-			var chunkNum = Math.floor(random.float() * Config.get('asteroids').maximumChunkNumber) + 1;
-			chunkNum = chunkNum > Config.get('asteroids').minimumChunkNumber ? chunkNum : Config.get('asteroids').minimumChunkNumber;
+			var numChunks = random.int(Config.get('asteroids').minChunks, Config.get('asteroids').maxChunks);
 
-			for (i in 0 ... chunkNum)
+			for (i in 0 ... numChunks)
 			{
 				// Respawn at half health
 				// Sets velocity and position				
@@ -473,29 +472,23 @@ class PlayState extends HelixState
 				if (asteroid.type == AsteroidType.Large)
 				{
 					newAsteroid.setMediumAsteroid();	
-					velocityMultiplier = 1.2;
+					velocityMultiplier = Config.get('asteroids').medium.velocityMultiplier;
 				}
 				else if (asteroid.type == AsteroidType.Medium)
 				{
 					newAsteroid.setSmallAsteroid();
-					velocityMultiplier = 1.5;
+					velocityMultiplier = Config.get('asteroids').small.velocityMultiplier;
 				}
 				else
 				{
-					trace(asteroid.type);
 					newAsteroid.kill();
 				}
 
 				newAsteroid.x = asteroid.x;
 				newAsteroid.y = asteroid.y;
 
-				var offsetX:Float = 0;
-				var offsetY:Float = 0;
-
-				for (j in 0 ... padding)
-				{
-					random.bool() ? offsetX++ : offsetY++;
-				}
+				var offsetX:Float = random.float(0, padding);
+				var offsetY:Float = padding - offsetX;
 
 				offsetX *= random.bool() ? -1 : 1;
 				offsetY *= random.bool() ? -1 : 1;
@@ -553,7 +546,7 @@ class PlayState extends HelixState
 		var callbacks = this.getEnemyCallbacks();
 		if (callbacks.length > 0)
 		{
-			var choice = FlxG.random.int(0, callbacks.length - 1);
+			var choice = random.int(0, callbacks.length - 1);
 			callbacks[choice]();
 			this.currentWave.spawnedEnemies++;
 		}
