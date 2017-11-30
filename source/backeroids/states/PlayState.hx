@@ -130,8 +130,11 @@ class PlayState extends HelixState
 
 		this.itemsLeftToSpawn -= asteroidNum + enemyNum;
 
-		this.spawnEntities(this.addAsteroid, asteroidNum, Config.get("secondsToSpawnAsteroidsOver"));
-		this.spawnEntities(this.addEnemy, enemyNum, Config.get("secondsToSpawnEnemiesOver"));
+		var asteroidSeconds = asteroidNum * Config.get("secondsPerAsteroidToSpawnOver");
+		var enemySeconds = enemyNum * Config.get("secondsPerEnemyToSpawnOver");
+
+		this.spawnEntities(this.addAsteroid, asteroidNum, asteroidSeconds);
+		this.spawnEntities(this.addEnemy, enemyNum, enemySeconds);
 	}
 
 	private function spawnEntities(entitySpawner, entityNum:Int, secondsToSpawnOver:Int):Void
