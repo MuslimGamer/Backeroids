@@ -25,6 +25,12 @@ class LevelSelectState extends HelixState
             save.data.currentLevel = 1;
             save.flush();
         }
+
+        if (Config.get('features').unlockAllLevels)
+        {
+            save.data.currentLevel = numLevels;
+            save.flush();
+        }
         
         var title = new HelixSprite("assets/images/ui/title.png");
         title.x = (FlxG.width - title.width) / 2;
