@@ -18,18 +18,14 @@ import backeroids.states.LevelSelectState;
 import backeroids.states.PauseSubState;
 import backeroids.SoundManager;
 import flixel.FlxG;
-import flixel.addons.ui.FlxUI9SliceSprite;
-import flash.geom.Rectangle;
 import flixel.group.FlxGroup;
 import flixel.util.FlxTimer;
 import flixel.math.FlxRandom;
-import flixel.math.FlxPoint;
 import flixel.input.keyboard.FlxKey;
-using helix.core.HelixSpriteFluentApi;
 import helix.core.HelixState;
-import helix.core.HelixSprite;
 import helix.data.Config;
 import helix.core.HelixSprite;
+using helix.core.HelixSpriteFluentApi;
 
 class PlayState extends HelixState
 {
@@ -134,20 +130,6 @@ class PlayState extends HelixState
 				this.shieldCounter.text('Shield: ${this.playerShield.shieldHealth}');
 			});
 
-			var damageShieldCallback = function(shield:Shield, thing:HelixSprite)
-			{
-				if (this.playerShip.alive)
-				{
-					shield.damage();
-					this.collidePlayerShipWithAnything(this.playerShip, thing);
-				}
-			}
-			this.playerShield.collideResolve(this.asteroids, damageShieldCallback);
-			this.playerShield.collideResolve(this.enemies, damageShieldCallback);
-			this.playerShield.collideResolve(this.enemyMines, damageShieldCallback);
-			this.playerShield.collideResolve(this.explosions, damageShieldCallback);
-			this.playerShield.collide(this.enemyBullets, damageShieldCallback);
-
 			this.playerShip.setShield(this.playerShield);
 		}
 
@@ -227,7 +209,7 @@ class PlayState extends HelixState
 
 	private function areAllEntitiesSpawned():Bool
 	{
-		return (this.currentWave.spawnedAsteroids == this.currentWave.asteroidNum) && (this.currentWave.spawnedEnemies == this.currentWave.enemyNum);
+		return (this.currentWave.spawnedAsteroids == this.currentWave.numAsteroid) && (this.currentWave.spawnedEnemies == this.currentWave.numEnemy);
 	}
 
 	private function startWave():Void
@@ -239,18 +221,18 @@ class PlayState extends HelixState
 
 		this.waveCounter.text('Wave: ${this.currentWave.waveNumber}/${this.waveNum}');
 
-		var asteroidSeconds = this.currentWave.asteroidNum * Config.get("secondsPerAsteroidToSpawnOver");
-		var enemySeconds = this.currentWave.enemyNum * Config.get("secondsPerEnemyToSpawnOver");
+		var asteroidSeconds = this.currentWave.numAsteroid * Config.get("secondsPerAsteroidToSpawnOver");
+		var enemySeconds = this.currentWave.numEnemy * Config.get("secondsPerEnemyToSpawnOver");
 
-		this.spawnEntities(this.addAsteroid, this.currentWave.asteroidNum, asteroidSeconds);
-		this.spawnEntities(this.addEnemy, this.currentWave.enemyNum, enemySeconds);
+		this.spawnEntities(this.addAsteroid, this.currentWave.numAsteroid, asteroidSeconds);
+		this.spawnEntities(this.addEnemy, this.currentWave.numEnemy, enemySeconds);
 	}
 
 	private function spawnEntities(entitySpawner, entityNum:Int, secondsToSpawnOver:Int):Void
 	{
 		for (i in 0...entityNum)
 		{
-			new FlxTimer().start(FlxG.random.float(0, secondsToSpawnOver), entitySpawner, 1);
+			new FlxTimer().start(random.float(0, secondsToSpawnOver), entitySpawner, 1);
 		}
 	}
 
@@ -414,6 +396,24 @@ class PlayState extends HelixState
 		{
 			FlxG.collide(asteroids);
 		}
+
+		if (this.playerShield.isActivated)
+		{
+			var damageShieldCallback = function(shield:Shield, thing:HelixSprite)
+			{
+				if (this.playerShip.alive)
+				{
+					shield.damage();
+					this.collidePlayerShipWithAnything(this.playerShip, thing);
+				}
+			}
+			
+			FlxG.collide(this.playerShield, this.asteroids, damageShieldCallback);
+			FlxG.collide(this.playerShield, this.enemies, damageShieldCallback);
+			FlxG.collide(this.playerShield, this.enemyMines, damageShieldCallback);
+			FlxG.collide(this.playerShield, this.explosions, damageShieldCallback);
+			FlxG.collide(this.playerShield, this.enemyBullets, damageShieldCallback);
+		}
 	}
 
 	private function killPlayerShip():Void
@@ -450,71 +450,45 @@ class PlayState extends HelixState
 
 	private function damageAndSplit(asteroid:Asteroid):Void
 	{
-		asteroid.health -= 1;
-        SoundManager.asteroidHit.play();
+		asteroid.damage();
 
 		if (Config.get("features").splitAsteroidsOnDeath == true && asteroid.health <= 0 &&
 			 asteroid.totalHealth > 1 && (asteroid.type == AsteroidType.Large || asteroid.type == AsteroidType.Medium))
 		{
 			SoundManager.asteroidSplit.play(true);
-
-			var padding = Math.floor(asteroid.width / 2);
-
-			var chunkNum = Math.floor(random.float() * Config.get('asteroids').maximumChunkNumber) + 1;
-			chunkNum = chunkNum > Config.get('asteroids').minimumChunkNumber ? chunkNum : Config.get('asteroids').minimumChunkNumber;
-
-			for (i in 0 ... chunkNum)
+			for (i in 0 ... 2)
 			{
 				// Respawn at half health
 				// Sets velocity and position				
 				var newAsteroid = recycleAsteroid();
-				var velocityMultiplier:Float = 1;
 
 				if (asteroid.type == AsteroidType.Large)
 				{
-					newAsteroid.setMediumAsteroid();	
-					velocityMultiplier = 1.2;
+					newAsteroid.setMediumAsteroid();					
 				}
 				else if (asteroid.type == AsteroidType.Medium)
 				{
 					newAsteroid.setSmallAsteroid();
-					velocityMultiplier = 1.5;
 				}
 				else
 				{
-					trace(asteroid.type);
 					newAsteroid.kill();
 				}
 
+				// Reset (move) to current destroyed position, offset so they don't
+				// immediately destroy each other
 				newAsteroid.x = asteroid.x;
-				newAsteroid.y = asteroid.y;
-
-				var offsetX:Float = 0;
-				var offsetY:Float = 0;
-
-				for (j in 0 ... padding)
+				if (i == 0)
 				{
-					random.bool() ? offsetX++ : offsetY++;
+					newAsteroid.x -=  (asteroid.width / 2);
 				}
-
-				offsetX *= random.bool() ? -1 : 1;
-				offsetY *= random.bool() ? -1 : 1;
-
-				newAsteroid.x += offsetX;
-				newAsteroid.y += offsetY;
-
-				var velocityAngle = FlxPoint.weak(0, 0).angleBetween(FlxPoint.weak(offsetX, offsetY));
-				newAsteroid.velocity.rotate(FlxPoint.weak(0, 0), velocityAngle);
-				newAsteroid.velocity.x *= velocityMultiplier;
-				newAsteroid.velocity.y *= velocityMultiplier;
-				newAsteroid.velocity.addPoint(asteroid.velocity);
+				else
+				{
+					 newAsteroid.x += (asteroid.width / 2);
+				}
+				newAsteroid.y = asteroid.y;
 			}
 		}
-
-		if (asteroid.health <= 0)
-        {
-            asteroid.kill();
-        }
 	}
 
 	private function addShooter():Void
@@ -553,7 +527,7 @@ class PlayState extends HelixState
 		var callbacks = this.getEnemyCallbacks();
 		if (callbacks.length > 0)
 		{
-			var choice = FlxG.random.int(0, callbacks.length - 1);
+			var choice = random.int(0, callbacks.length - 1);
 			callbacks[choice]();
 			this.currentWave.spawnedEnemies++;
 		}

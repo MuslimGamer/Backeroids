@@ -2,7 +2,6 @@ package backeroids.view.enemies;
 
 import backeroids.SoundManager;
 import flixel.FlxG;
-import flixel.math.FlxPoint;
 import flixel.math.FlxRandom;
 import flixel.util.FlxSpriteUtil;
 import helix.core.HelixSprite;

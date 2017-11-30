@@ -9,9 +9,9 @@ class Wave
     private var entityCount:Int;
     public var waveNumber:Int;
 
-    public var asteroidNum:Int = 0;
+    public var numAsteroid:Int = 0;
     public var spawnedAsteroids:Int = 0;
-    public var enemyNum:Int = 0;
+    public var numEnemy:Int = 0;
     public var spawnedEnemies:Int = 0;
 
     public function new(entityCount:Int, waveNumber:Int, enemiesInWave:Bool = true):Void
@@ -22,40 +22,23 @@ class Wave
         var enemiesConf = Config.get('enemies');
         var asteroidConf = Config.get("asteroids");
 
-        for (i in 0 ... this.entityCount)
+        if (!asteroidConf.enabled && !enemiesConf.enabled)
         {
-            if (!asteroidConf.enabled && !enemiesConf.enabled)
-		    {
-                return;
-            }
+            return;
+        }
 
-            if (asteroidConf.enabled && !enemiesConf.enabled)
-            {
-                this.asteroidNum++;
-                continue;
-            }
-            else if (enemiesConf.enabled && !asteroidConf.enabled)
-            {
-                this.enemyNum++;
-                continue;
-            }
-
-            // If both enemies and asteroids are enabled
-            else if (!enemiesInWave)
-            {
-                this.asteroidNum++;
-                continue;
-            }
-            else if (random.bool())
-            {
-                this.asteroidNum++;
-                continue;
-            }
-            else
-            {
-                this.enemyNum++;
-                continue;
-            }
+        else if ((asteroidConf.enabled && !enemiesConf.enabled) || (!enemiesInWave))
+        {
+            this.numAsteroid = this.entityCount;
+        }
+        else if (enemiesConf.enabled && !asteroidConf.enabled)
+        {
+            this.numEnemy = this.entityCount;
+        }
+        else
+        {
+            this.numAsteroid = random.int(0, this.entityCount);
+            this.numEnemy = this.entityCount - this.numAsteroid;
         }
     }
 }

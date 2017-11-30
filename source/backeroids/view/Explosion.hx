@@ -1,6 +1,5 @@
 package backeroids.view;
 
-import helix.data.Config;
 import helix.core.HelixSprite;
 import flixel.tweens.FlxTween;
 import flixel.util.FlxTimer;

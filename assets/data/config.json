@@ -15,8 +15,6 @@
         "collisionElasticity": 0.5,
         "initialVelocity": 90,
         "backeroidPercentage": 0,
-        "maximumChunkNumber": 3,
-        "minimumChunkNumber": 2,
 
         "backeroid": {
             "initialHealth": 8,
@@ -33,13 +31,15 @@
         "medium": {
             "initialHealth": 2,
             "scale": 0.5,
-            "mass": 3
+            "mass": 3,
+            "velocityMultiplier": 0.5
         },
 
         "small": {
             "initialHealth": 1,
             "scale": 0.25,
-            "mass": 1
+            "mass": 1,
+            "velocityMultiplier": 1
         }
     },
 
@@ -55,7 +55,7 @@
         "shield": {
             "enabled": true,
             "health": 5,
-            "secondsPerRecharge": 1.5
+            "secondsPerRecharge": 1.5,
             "invincibleSeconds": 0.4
         }
     },
