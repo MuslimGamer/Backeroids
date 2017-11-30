@@ -33,7 +33,7 @@ class Shield extends HelixSprite
         var now = GameTime.now();
         if (now.elapsedSeconds - this.lastRecharge.elapsedSeconds > Config.get('ship').shield.secondsPerRecharge)
         {
-            if (this.shieldHealth < this.totalShieldHealth)
+            if (this.shieldHealth < this.totalShieldHealth && !this.isActivated)
             {
                 this.shieldHealth += 1;
                 if (this.indicatorCallback != null)
