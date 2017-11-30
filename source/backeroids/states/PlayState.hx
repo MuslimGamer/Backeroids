@@ -124,8 +124,11 @@ class PlayState extends HelixState
 
 			var damageShieldCallback = function(shield:Shield, thing:HelixSprite)
 			{
-				shield.damage();
-				this.collidePlayerShipWithAnything(this.playerShip, thing);
+				if (this.playerShip.alive)
+				{
+					shield.damage();
+					this.collidePlayerShipWithAnything(this.playerShip, thing);
+				}
 			}
 			this.playerShield.collideResolve(this.asteroids, damageShieldCallback);
 			this.playerShield.collideResolve(this.enemies, damageShieldCallback);
@@ -217,8 +220,11 @@ class PlayState extends HelixState
 
 		this.itemsLeftToSpawn -= asteroidNum + enemyNum;
 
-		this.spawnEntities(this.addAsteroid, asteroidNum, Config.get("secondsToSpawnAsteroidsOver"));
-		this.spawnEntities(this.addEnemy, enemyNum, Config.get("secondsToSpawnEnemiesOver"));
+		var asteroidSeconds = asteroidNum * Config.get("secondsPerAsteroidToSpawnOver");
+		var enemySeconds = enemyNum * Config.get("secondsPerEnemyToSpawnOver");
+
+		this.spawnEntities(this.addAsteroid, asteroidNum, asteroidSeconds);
+		this.spawnEntities(this.addEnemy, enemyNum, enemySeconds);
 	}
 
 	private function spawnEntities(entitySpawner, entityNum:Int, secondsToSpawnOver:Int):Void

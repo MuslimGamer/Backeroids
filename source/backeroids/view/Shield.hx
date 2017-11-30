@@ -34,7 +34,7 @@ class Shield extends HelixSprite
         var now = GameTime.now();
         if (now.elapsedSeconds - this.lastRecharge.elapsedSeconds > Config.get('ship').shield.secondsPerRecharge)
         {
-            if (this.shieldHealth < this.totalShieldHealth)
+            if (this.shieldHealth < this.totalShieldHealth && !this.isActivated)
             {
                 this.shieldHealth += 1;
                 if (this.indicatorCallback != null)
@@ -65,12 +65,6 @@ class Shield extends HelixSprite
             }
             this.lastDamage = now;
         }
-    }
-
-    public function activate():Void
-    {
-        this.isActivated = true;
-        this.visible = true;
     }
 
     public function deactivate():Void
