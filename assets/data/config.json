@@ -54,11 +54,11 @@
         "decelerationMultiplier": 2, // decelerate n-times faster
         "deadstopVelocity": 15, // velocity to spontanously stop at, multiplied by above multiplier.
         "invincibleAfterSpawnSeconds": 3,
-        "lives": 3,
+        "lives": 5,
         "shield": {
             "enabled": true,
-            "health": 5,
-            "secondsPerRecharge": 1.5,
+            "health": 10,
+            "secondsPerRecharge": 0.8,
             "invincibleSeconds": 0.4
         }
     },
