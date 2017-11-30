@@ -1,5 +1,6 @@
 package backeroids.view;
 
+import backeroids.SoundManager;
 import helix.core.HelixSprite;
 import helix.data.Config;
 import helix.GameTime;
@@ -47,8 +48,9 @@ class Shield extends HelixSprite
 
     public function damage():Void
     {
+        SoundManager.shieldHit.play(true);
         var now = GameTime.now();
-        if (now.elapsedSeconds - this.lastDamage.elapsedSeconds > 0.4)
+        if (now.elapsedSeconds - this.lastDamage.elapsedSeconds > Config.get('ship').shield.invincibleSeconds)
         {
             this.shieldHealth -= 1;
             if (this.indicatorCallback != null)

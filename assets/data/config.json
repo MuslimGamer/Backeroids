@@ -54,6 +54,7 @@
             "enabled": true,
             "health": 5,
             "secondsPerRecharge": 1.5
+            "invincibleSeconds": 0.4
         }
     },
 

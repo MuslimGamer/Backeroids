@@ -14,6 +14,7 @@ import backeroids.view.enemies.Tank;
 import backeroids.view.enemies.Kamikaze;
 import backeroids.view.enemies.MineDropper;
 import backeroids.states.LevelSelectState;
+import backeroids.states.PauseSubState;
 import backeroids.SoundManager;
 import flixel.FlxG;
 import flixel.addons.ui.FlxUI9SliceSprite;
@@ -60,6 +61,8 @@ class PlayState extends HelixState
 	private var livesCounter:HelixSprite;
 	private var shieldCounter:HelixSprite;
 
+	private var pauseSubState = new PauseSubState();
+
 	override public function new(levelNum):Void
 	{
 		super();
@@ -72,6 +75,8 @@ class PlayState extends HelixState
 	override public function create():Void
 	{
 		super.create();
+
+		this.destroySubStates = false;
 
 		NUM_INITIAL_ASTEROIDS = Config.get("asteroids").initialNumber;
 		SECONDS_PER_ASTEROID = Config.get("asteroids").secondsToSpawn;
@@ -309,6 +314,14 @@ class PlayState extends HelixState
 		{
 			this.exitState();
 			return;
+		}
+		if (this.wasJustPressed(FlxKey.P))
+		{
+			FlxTimer.globalManager.forEach(function(timer:FlxTimer)
+			{
+				timer.active = false;
+			});
+			this.openSubState(this.pauseSubState);
 		}
 
 		super.update(elapsed);
