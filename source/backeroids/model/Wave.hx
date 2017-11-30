@@ -35,10 +35,10 @@ class Wave
         {
             this.numEnemy = this.entityCount;
         }
-
-        for (i in 0 ... this.entityCount)
+        else
         {
-            random.bool() ? this.numAsteroid++ : this.numEnemy++;
+            this.numAsteroid = random.int(0, this.entityCount);
+            this.numEnemy = this.entityCount - this.numAsteroid;
         }
     }
 }
