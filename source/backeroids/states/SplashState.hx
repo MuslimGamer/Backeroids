@@ -39,15 +39,13 @@ class SplashState extends HelixState
         image.y = (FlxG.height - image.height) / 2;
         image.alpha = 0;
         this.audioFile.play();
-        
-        FlxTween.tween(image, {alpha: 1}, this.FADE_TIME_SECONDS);
-        new FlxTimer().start(this.DISPLAY_TIME_SECONDS + this.FADE_TIME_SECONDS, function(timer)
+
+        var onComplete = function(tween):Void
         {
-            FlxTween.tween(image, {alpha: 0}, this.FADE_TIME_SECONDS);
-            new FlxTimer().start(this.FADE_TIME_SECONDS, function(timer)
-            {
-                this.onComplete();
-            }, 1);
-        }, 1);
+            this.onComplete();
+        }
+        
+        FlxTween.tween(image, {alpha: 1}, this.FADE_TIME_SECONDS)
+                .then(FlxTween.tween(image, {alpha: 0}, this.FADE_TIME_SECONDS, {onComplete: onComplete}));
     }
 }
