@@ -3,6 +3,7 @@ package backeroids.view;
 import backeroids.model.AsteroidType;
 import backeroids.SoundManager;
 import flixel.util.FlxColor;
+import flixel.math.FlxRandom;
 import flixel.util.FlxSpriteUtil;
 import flixel.FlxG;
 import flixel.util.FlxTimer;
@@ -12,7 +13,8 @@ using helix.core.HelixSpriteFluentApi;
 
 class Asteroid extends HelixSprite
 {
-    private static var startingVelocity = Config.get("asteroids").initialVelocity;
+    private static var random = new FlxRandom();
+    private static var startingVelocity:Float;
     public var totalHealth(default, default):Int = 0;
 
     public var asteroidSize:Int = 0;
@@ -24,8 +26,11 @@ class Asteroid extends HelixSprite
 
     public function new():Void
     {
-        super(null, {width: 60, height: 60, colour: FlxColor.fromString('gray')});
+        var type = random.bool() ? "1" : "2";
+        var image = 'assets/images/asteroid-${type}.png';
+        super(image);
         this.elasticity = Config.get("asteroids").collisionElasticity;
+        startingVelocity = Config.get("asteroids").initialVelocity;
         this.kill();
 
         // TODO: Figure out how to deal with this in a non-hacky way.

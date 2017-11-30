@@ -1,7 +1,9 @@
 package backeroids.view;
  
-import backeroids.model.Gun;
 import backeroids.SoundManager;
+import backeroids.model.Gun;
+import backeroids.states.PlayState;
+import backeroids.states.PlayState;
 import flixel.effects.FlxFlicker;
 import flixel.input.keyboard.FlxKey;
 import flixel.math.FlxPoint;
@@ -15,20 +17,25 @@ using Lambda;
 
 class PlayerShip extends HelixSprite
 {
-    private static var ACCELERATION:Int = Config.get("ship").acceleration;
-    private static var DECELERATION_MULTIPLIER:Float = Config.get("ship").decelerationMultiplier;
-    private static var DEADSTOP_VELOCITY:Float = Config.get("ship").deadstopVelocity;
-    private static var ROTATION_VELOCITY:Int = Config.get("ship").rotationVelocity;
-    private static var SECONDS_TO_REVIVE:Int = Config.get("ship").secondsToRevive;
-    private static var INVINCIBLE_SECONDS:Float = Config.get("ship").invincibleAfterSpawnSeconds;
+    public var lives:Int;
+    
+    private static var ACCELERATION:Int;
+    private static var DECELERATION_MULTIPLIER:Float;
+    private static var DEADSTOP_VELOCITY:Float;
+    private static var ROTATION_VELOCITY:Int;
+    private static var SECONDS_TO_REVIVE:Int;
+    private static var INVINCIBLE_SECONDS:Float;
 
+    private var currentState:PlayState;
     private var isTurning:Bool = false;
     private var recycleBulletCallback:Void->Bullet;
     private var spawnedOn:GameTime;
     private var gun:Gun;
+    private var shield:Shield;
 
-    public function new():Void
+    public function new(currentState:PlayState):Void
     {
+        this.currentState = currentState;
         this.gun = new Gun();
         this.spawnedOn = GameTime.now();
 
@@ -40,19 +47,22 @@ class PlayerShip extends HelixSprite
         // work quite as well, since your max is (200, 200) if you're going diagonally.
         var maxVelocity:Int = Config.get("ship").maxVelocity;
         this.maxVelocity.set(maxVelocity, maxVelocity);
+
+        var conf = Config.get('ship');
+        this.lives = conf.lives;
+
+        ACCELERATION = conf.acceleration;
+        DECELERATION_MULTIPLIER = conf.decelerationMultiplier;
+        DEADSTOP_VELOCITY = conf.deadstopVelocity;
+        ROTATION_VELOCITY = conf.rotationVelocity;
+        SECONDS_TO_REVIVE = conf.secondsToRevive;
+        INVINCIBLE_SECONDS = conf.invincibleAfterSpawnSeconds;
     }
 
     override public function update(elapsedSeconds:Float):Void
     {
         super.update(elapsedSeconds);
-
-        if (!this.isTurning)
-        {
-            this.angularVelocity = 0;
-        }
-
         FlxSpriteUtil.screenWrap(this);
-        isTurning = false;
     }
 
     override public function revive():Void
@@ -62,6 +72,7 @@ class PlayerShip extends HelixSprite
         this.velocity.set(0, 0);
         this.gun = new Gun();
         this.spawnedOn = GameTime.now();
+        this.shield.resetShield();
     }
 
     private function resetAcceleration():Void
@@ -72,34 +83,47 @@ class PlayerShip extends HelixSprite
 
     private function processControls(keys:Array<FlxKey>):Void
     {
-        this.resetAcceleration();
-
-        if (keys.has(FlxKey.LEFT) || keys.has(FlxKey.A))
-        { 
-            this.angularVelocity = -ROTATION_VELOCITY;
-            isTurning = true;
-        }
-        else if (keys.has(FlxKey.RIGHT) || keys.has(FlxKey.D))
-        { 
-            this.angularVelocity = ROTATION_VELOCITY;
-            isTurning = true;
-        }
-
-        if (keys.has(FlxKey.UP) || keys.has(FlxKey.W))
-        { 
-            this.accelerateForward(ACCELERATION); 
-        }
-        else if (keys.has(FlxKey.DOWN) || keys.has(FlxKey.S))
+        if (!this.currentState.isShowingTutorial)
         {
-            this.decelerate();
+            this.resetAcceleration();
+            if (Config.get('ship').shield.enabled)
+            {
+                this.shield.deactivate();
+            }
+
+            if (keys.has(FlxKey.LEFT) || keys.has(FlxKey.A))
+            { 
+                this.angularVelocity = -ROTATION_VELOCITY;
+                isTurning = true;
+            }
+            else if (keys.has(FlxKey.RIGHT) || keys.has(FlxKey.D))
+            { 
+                this.angularVelocity = ROTATION_VELOCITY;
+                isTurning = true;
+            }
+
+            if (keys.has(FlxKey.UP) || keys.has(FlxKey.W))
+            { 
+                this.accelerateForward(ACCELERATION); 
+            }
+            else if (keys.has(FlxKey.DOWN) || keys.has(FlxKey.S))
+            {
+                this.decelerate();
+            }
+
+            if (keys.has(FlxKey.SPACE) && this.gun.canFire())
+            {
+                var bullet = this.recycleBulletCallback();
+                bullet.move(this.x + ((this.width - bullet.width) / 2), this.y + ((this.height - bullet.height) / 2));
+                bullet.shoot(this.angle);
+                SoundManager.playerShoot.play(true);
+            }
         }
 
-        if (keys.has(FlxKey.SPACE) && this.gun.canFire())
+        if (Config.get('ship').shield.enabled && this.shield.functional)
         {
-            var bullet = this.recycleBulletCallback();
-            bullet.move(this.x + ((this.width - bullet.width) / 2), this.y + ((this.height - bullet.height) / 2));
-            bullet.shoot(this.angle);
-            SoundManager.playerShoot.play(true);
+            this.shield.activate();
+            this.shield.move(this.x - this.width/2, this.y - this.height/2);
         }
     }
 
@@ -141,17 +165,26 @@ class PlayerShip extends HelixSprite
 
     public function die(onReviveCallback:Void->Void):Void
     {
+        this.lives -= 1;
         this.kill();
         SoundManager.playerExplode.play();
-        new FlxTimer().start(SECONDS_TO_REVIVE, function(timer) {
-            this.revive();
-            onReviveCallback();
-            FlxFlicker.flicker(this, INVINCIBLE_SECONDS);
-        });
+        if (this.lives > 0)
+        {
+            new FlxTimer().start(SECONDS_TO_REVIVE, function(timer) {
+                this.revive();
+                onReviveCallback();
+                FlxFlicker.flicker(this, INVINCIBLE_SECONDS);
+            });
+        }
     }
 
     public function isInvincible():Bool
     {
         return (GameTime.now().elapsedSeconds - this.spawnedOn.elapsedSeconds <= INVINCIBLE_SECONDS);
+    }
+
+    public function setShield(shield:Shield):Void
+    {
+        this.shield = shield;
     }
 }

@@ -6,6 +6,7 @@ import backeroids.view.Asteroid;
 import backeroids.view.Bullet;
 import backeroids.view.Mine;
 import backeroids.view.PlayerShip;
+import backeroids.view.Shield;
 import backeroids.view.Explosion;
 import backeroids.view.enemies.AbstractEnemy;
 import backeroids.view.enemies.Shooter;
@@ -13,24 +14,31 @@ import backeroids.view.enemies.Tank;
 import backeroids.view.enemies.Kamikaze;
 import backeroids.view.enemies.MineDropper;
 import backeroids.states.LevelSelectState;
-import backeroids.extensions.ShootProjectileExtension;
 import backeroids.SoundManager;
 import flixel.FlxG;
+import flixel.addons.ui.FlxUI9SliceSprite;
+import flash.geom.Rectangle;
 import flixel.group.FlxGroup;
 import flixel.util.FlxTimer;
+import flixel.math.FlxPoint;
+import flixel.input.keyboard.FlxKey;
 using helix.core.HelixSpriteFluentApi;
 import helix.core.HelixState;
+import helix.core.HelixSprite;
 import helix.data.Config;
+import helix.core.HelixSprite;
 
 class PlayState extends HelixState
 {
-	private static var NUM_INITIAL_ASTEROIDS:Int = Config.get("asteroids").initialNumber;
-	private static var SECONDS_PER_ASTEROID:Int = Config.get("asteroids").secondsToSpawn;
-	private static var SECONDS_PER_ENEMY:Int = Config.get("enemies").secondsToSpawn;
+	private static var NUM_INITIAL_ASTEROIDS:Int;
+	private static var SECONDS_PER_ASTEROID:Int;
+	private static var SECONDS_PER_ENEMY:Int;
 
+	public var isShowingTutorial(default, null):Bool = false;
 	private var asteroids = new FlxTypedGroup<Asteroid>();
 
 	private var playerShip:PlayerShip;
+	private var playerShield:Shield;
 	private var bullets = new FlxTypedGroup<Bullet>();
 
 	private var explosions = new FlxTypedGroup<Explosion>();
@@ -45,43 +53,114 @@ class PlayState extends HelixState
 	private var waveTimer = new FlxTimer();
 
 	private var itemsLeftToSpawn = 0;
+	private var itemsPerWave = 0;
 	private var waveNum = 0;
-	private var showingTutorial:Bool = false;
+	private var currentWave = 0;
+	private var waveCounter:HelixSprite;
+	private var livesCounter:HelixSprite;
+	private var shieldCounter:HelixSprite;
 
 	override public function new(levelNum):Void
 	{
 		super();
 		this.levelNum = levelNum;
 		this.itemsLeftToSpawn = this.levelNum * Config.get('entitiesLevelMultiplier');
-		this.waveNum = this.levelNum * Config.get('entitiesWaveMultiplier');
+		this.itemsPerWave = this.levelNum * Config.get('entitiesWaveMultiplier');
+		this.waveNum = Math.floor(this.itemsLeftToSpawn / this.itemsPerWave);
 	}
 
 	override public function create():Void
 	{
 		super.create();
+
+		NUM_INITIAL_ASTEROIDS = Config.get("asteroids").initialNumber;
+		SECONDS_PER_ASTEROID = Config.get("asteroids").secondsToSpawn;
+		SECONDS_PER_ENEMY = Config.get("enemies").secondsToSpawn;
 		
-		this.playerShip = new PlayerShip();
+		this.playerShip = new PlayerShip(this);
 		this.playerShip.setRecycleBulletCallback(function():Bullet
 		{
 			return bullets.recycle(Bullet);
 		});
 		resetShip();
 
-		this.playerShip.collideResolve(this.asteroids, function(player:PlayerShip, asteroid:Asteroid)
-		{
-			// Player hits asteroid.
-			this.killPlayerShip();
+		this.playerShip.collideResolve(this.asteroids, this.collidePlayerShipWithAnything);
+		this.playerShip.collideResolve(this.enemies, this.collidePlayerShipWithAnything);
+		this.playerShip.collideResolve(this.enemyMines, this.collidePlayerShipWithAnything);
+		this.playerShip.collideResolve(this.enemyBullets, this.collidePlayerShipWithAnything);
+		this.playerShip.collideResolve(this.explosions, this.collidePlayerShipWithAnything);
 
-			if (asteroid.type != AsteroidType.Backeroid) {
-				this.damageAndSplit(asteroid);
-			}
-		});
-
-		this.waveTimer.start(1, this.spawnMoreItemsIfNeeded, 0);
 		this.enemies.add(this.knockbackableEnemies);
 		this.enemies.add(this.headstrongEnemies);
 
+		this.waveCounter = new HelixSprite(null, {width: 1, height: 1, colour: 0xFF000000});
+		this.waveCounter.alpha = 0;
+		this.waveCounter.text('Wave: 0/${this.waveNum}');
+
+		this.livesCounter = new HelixSprite(null, {width: 1, height: 1, colour: 0xFF000000});
+		this.livesCounter.alpha = 0;
+		this.livesCounter.text('Lives: ${this.playerShip.lives}');
+		this.livesCounter.x = FlxG.width - this.livesCounter.width - this.livesCounter.textField.textField.textWidth;
+
+		if (Config.get('ship').shield.enabled)
+		{
+			this.playerShield = new Shield();
+	
+			this.shieldCounter = new HelixSprite(null, {width: 1, height: 1, colour: 0xFF000000});
+			this.shieldCounter.alpha = 0;
+			this.shieldCounter.text('Shield: ${this.playerShield.shieldHealth}');
+			this.shieldCounter.x = FlxG.width - this.shieldCounter.width - this.shieldCounter.textField.textField.textWidth;
+			this.shieldCounter.y = this.livesCounter.textField.textField.textHeight;
+
+			this.playerShield.setIndicatorCallback(function():Void
+			{
+				this.shieldCounter.text('Shield: ${this.playerShield.shieldHealth}');
+			});
+
+			var damageShieldCallback = function(shield:Shield, thing:HelixSprite)
+			{
+				shield.damage();
+				this.collidePlayerShipWithAnything(this.playerShip, thing);
+			}
+			this.playerShield.collideResolve(this.asteroids, damageShieldCallback);
+			this.playerShield.collideResolve(this.enemies, damageShieldCallback);
+			this.playerShield.collideResolve(this.enemyMines, damageShieldCallback);
+			this.playerShield.collideResolve(this.explosions, damageShieldCallback);
+			this.playerShield.collide(this.enemyBullets, damageShieldCallback);
+
+			this.playerShip.setShield(this.playerShield);
+		}
+
 		this.showTutorialIfRequired();
+	}
+
+	private function collidePlayerShipWithAnything(player:PlayerShip, thing:HelixSprite):Void
+	{
+		var thingType = Type.getClassName(Type.getClass(thing));
+		if (thingType == 'backeroids.view.Bullet')
+		{
+			thing.kill();
+		}
+		else if (thingType == 'backeroids.view.Mine')
+		{
+			var mine:Mine = cast thing;
+			mine.explode();
+		}
+		else if (thingType == 'backeroids.view.Asteroid')
+		{
+			var asteroid:Asteroid = cast(thing, Asteroid);
+
+			if (asteroid.type != AsteroidType.Backeroid) 
+			{
+				this.damageAndSplit(asteroid);
+			}
+		}
+
+		if (Config.get('ship').shield.enabled && this.playerShield.isActivated)
+		{
+			return;
+		}
+		this.killPlayerShip();
 	}
 
 	private function spawnMoreItemsIfNeeded(timer):Void
@@ -113,8 +192,11 @@ class PlayState extends HelixState
 			return;
 		}
 
+		this.currentWave += 1;
+		this.waveCounter.text('Wave: ${this.currentWave}/${this.waveNum}');
+
 		var asteroidNum:Int, enemyNum:Int;
-		var enemiesInWave = this.itemsLeftToSpawn >= this.waveNum ? this.waveNum : this.itemsLeftToSpawn;
+		var enemiesInWave = this.itemsLeftToSpawn >= this.itemsPerWave ? this.itemsPerWave : this.itemsLeftToSpawn;
 
 		if (Config.get("asteroids").enabled && Config.get("enemies").enabled)
 		{
@@ -178,30 +260,55 @@ class PlayState extends HelixState
 	
 	private function winLevel():Void
 	{
-		trace("Horray! You won.");
 		var save = FlxG.save;
 		if (save.data.currentLevel < this.levelNum + 1)
 		{
 			save.data.currentLevel = this.levelNum + 1;
 			save.flush();
 		}
-		this.exitState();
+		var gameWinText = new HelixSprite(null, {height: 1, width: 1, colour: 0xFF000000});
+		gameWinText.alpha = 0;
+		gameWinText.text('YOU WIN!\nPress anything to exit.');
+		gameWinText.move((FlxG.width / 2) - (gameWinText.textField.textField.textWidth / 2), (FlxG.height / 2) - (gameWinText.textField.textField.textHeight / 2));
+		new FlxTimer().start(1, function(timer)
+		{
+			gameWinText.onKeyDown(function (keys:Array<FlxKey>)
+			{
+				if (keys.length != 0)
+				{
+					this.exitState();
+				}
+			});
+		});
 	}
 
 	private function loseLevel():Void
 	{
-		trace('Oh no! You lost.');
-		this.exitState();
+		var gameWinText = new HelixSprite(null, {height: 1, width: 1, colour: 0xFF000000});
+		gameWinText.alpha = 0;
+		gameWinText.text('GAME OVER!\nPress anything to exit.');
+		gameWinText.move((FlxG.width / 2) - (gameWinText.textField.textField.textWidth / 2), (FlxG.height / 2) - (gameWinText.textField.textField.textHeight / 2));
+		new FlxTimer().start(1, function(timer)
+		{
+			gameWinText.onKeyDown(function (keys:Array<FlxKey>)
+			{
+				if (keys.length != 0)
+				{
+					this.exitState();
+				}
+			});
+		});
 	}
 
 	override public function update(elapsed:Float):Void
 	{
-		super.update(elapsed);
-
-		FlxG.collide(enemies, playerShip, function(e:AbstractEnemy, p:PlayerShip)
+		if (this.isKeyPressed(FlxKey.ESCAPE))
 		{
-			this.killPlayerShip();
-		});
+			this.exitState();
+			return;
+		}
+
+		super.update(elapsed);
 		
 		FlxG.collide(bullets, asteroids, function(b:Bullet, asteroid:Asteroid)
 		{
@@ -234,12 +341,6 @@ class PlayState extends HelixState
 				this.damageAndSplit(asteroid);
 		});
 
-		FlxG.collide(enemyBullets, playerShip, function(enemyBullet:Bullet, p:PlayerShip)
-		{
-				enemyBullet.kill();
-				this.killPlayerShip();
-		});
-
 		FlxG.collide(enemyBullets, enemyMines, function(enemyBullet:Bullet, mine:Mine)
 		{
 				enemyBullet.kill();
@@ -251,20 +352,10 @@ class PlayState extends HelixState
 			mine.explode();
 		});
 
-		FlxG.collide(enemyMines, playerShip, function(mine:Mine, p:PlayerShip)
-		{
-			mine.explode();
-		});
-
 		FlxG.collide(enemyMines, bullets, function(mine:Mine, bullet:Bullet)
 		{
 			bullet.kill();
 			mine.explode();
-		});
-
-		FlxG.collide(explosions, playerShip, function(explosion:Explosion, player:PlayerShip)
-		{
-			this.killPlayerShip();
 		});
 
 		FlxG.collide(explosions, asteroids, function(explosion:Explosion, asteroid:Asteroid)
@@ -294,7 +385,8 @@ class PlayState extends HelixState
 		if (!this.playerShip.isInvincible())
 		{
 			this.playerShip.die(this.resetShip);
-			if (!Config.get('features').infiniteLives)
+			this.livesCounter.text('Lives: ${this.playerShip.lives}');
+			if (!Config.get('features').infiniteLives && this.playerShip.lives <= 0)
 			{
 				this.loseLevel();
 			}
@@ -326,7 +418,7 @@ class PlayState extends HelixState
 		if (Config.get("features").splitAsteroidsOnDeath == true && asteroid.health <= 0 &&
 			 asteroid.totalHealth > 1 && (asteroid.type == AsteroidType.Large || asteroid.type == AsteroidType.Medium))
 		{
-			SoundManager.asteroidSplit.play();
+			SoundManager.asteroidSplit.play(true);
 			for (i in 0 ... 2)
 			{
 				// Respawn at half health
@@ -408,7 +500,21 @@ class PlayState extends HelixState
 		var tutorialTag = TutorialManager.isTutorialRequired(this.levelNum);
 		if (tutorialTag != null)
 		{
-			trace(TutorialManager.getTutorialText(tutorialTag));
+			this.isShowingTutorial = true;
+			var messageWindow = TutorialManager.createTutorialWindow(tutorialTag);
+			messageWindow.x = (FlxG.width - messageWindow.width) / 2;
+			messageWindow.y = (FlxG.height - messageWindow.height) / 2;
+			messageWindow.setFinishCallback(function() {
+				this.isShowingTutorial = false;
+				this.waveTimer.start(1, this.spawnMoreItemsIfNeeded, 0);
+			});
+
+			var group = messageWindow.getDrawables();
+			add(group);
+		}
+		else
+		{
+			this.waveTimer.start(1, this.spawnMoreItemsIfNeeded, 0);
 		}
 	}
 }

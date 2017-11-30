@@ -2,6 +2,7 @@ package backeroids.view;
 
 import backeroids.interfaces.IProjectile;
 import backeroids.view.Explosion;
+import backeroids.SoundManager;
 import flixel.util.FlxTimer;
 import flixel.util.FlxColor;
 import helix.core.HelixSprite;
@@ -14,7 +15,7 @@ class Mine extends HelixSprite implements IProjectile
 
     public function new():Void
     {
-        super(null, {width: 20, height: 20, colour: FlxColor.fromString('red')});
+        super("assets/images/mine.png");
         this.kill();
         this.immovable = true;
     }
@@ -43,5 +44,6 @@ class Mine extends HelixSprite implements IProjectile
         explosion.x = this.x + (this.width / 2 - Config.get("enemies").minedropper.explosionWidth / 2);
         explosion.y = this.y + (this.height / 2 - Config.get("enemies").minedropper.explosionHeight / 2);
         explosion.explode();
+        SoundManager.mineExplode.play(true);
     }
 }

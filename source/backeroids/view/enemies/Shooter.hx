@@ -20,7 +20,7 @@ class Shooter extends AbstractEnemy implements IShooter
 
     public function new(recycleBulletCallback:Void->IProjectile)
     {
-        super(null, {width: 60, height: 30, colour: FlxColor.GREEN });
+        super("assets/images/shooter.png");
         this.recycleProjectileCallback = recycleBulletCallback;
 
         var config:Dynamic = Config.get("enemies").shooter;

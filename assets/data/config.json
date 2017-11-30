@@ -1,4 +1,6 @@
 {
+    "splashDisplayTimeSeconds": 3,
+    "splashFadeTimeSeconds": 1,
     "totalLevels": 6,
     "entitiesLevelMultiplier": 15,
     "entitiesWaveMultiplier": 3,
@@ -46,7 +48,13 @@
         "maxVelocity": 200,
         "decelerationMultiplier": 2, // decelerate n-times faster
         "deadstopVelocity": 15, // velocity to spontanously stop at, multiplied by above multiplier.
-        "invincibleAfterSpawnSeconds": 3
+        "invincibleAfterSpawnSeconds": 3,
+        "lives": 3,
+        "shield": {
+            "enabled": true,
+            "health": 3,
+            "secondsPerRecharge": 3
+        }
     },
 
     "gun": {
@@ -58,7 +66,7 @@
         "wrapBullets": false,
         "splitAsteroidsOnDeath": true,
         "collideAsteroidsWithAsteroids": true,
-        "infiniteLives": true
+        "infiniteLives": false
     },
 
     "enemies": {
@@ -103,8 +111,8 @@
                 "y": 30
             },
             "mineFuseSeconds": 8,
-            "explosionWidth": 100,
-            "explosionHeight": 100
+            "explosionWidth": 99,
+            "explosionHeight": 99
         }
     }
 }
