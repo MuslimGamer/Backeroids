@@ -17,6 +17,7 @@
         "backeroidPercentage": 0,
         "maxChunks": 3,
         "minChunks": 2,
+        "maxVelocity": 250,
 
         "backeroid": {
             "initialHealth": 8,

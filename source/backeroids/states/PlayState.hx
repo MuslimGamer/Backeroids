@@ -404,8 +404,8 @@ class PlayState extends HelixState
 			{
 				if (this.playerShip.alive)
 				{
-					shield.damage();
 					this.collidePlayerShipWithAnything(this.playerShip, thing);
+					shield.damage();
 				}
 			}
 			

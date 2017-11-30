@@ -40,6 +40,9 @@ class Asteroid extends HelixSprite
                 this.kill();
             } 
         }, 0);
+        
+        var maxVelocity = Config.get('asteroids').maxVelocity;
+        this.maxVelocity.set(maxVelocity, maxVelocity);
     }
 
     public function setBackeroid():Asteroid
