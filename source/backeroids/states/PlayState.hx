@@ -130,20 +130,6 @@ class PlayState extends HelixState
 				this.shieldCounter.text('Shield: ${this.playerShield.shieldHealth}');
 			});
 
-			var damageShieldCallback = function(shield:Shield, thing:HelixSprite)
-			{
-				if (this.playerShip.alive)
-				{
-					shield.damage();
-					this.collidePlayerShipWithAnything(this.playerShip, thing);
-				}
-			}
-			this.playerShield.collideResolve(this.asteroids, damageShieldCallback);
-			this.playerShield.collideResolve(this.enemies, damageShieldCallback);
-			this.playerShield.collideResolve(this.enemyMines, damageShieldCallback);
-			this.playerShield.collideResolve(this.explosions, damageShieldCallback);
-			this.playerShield.collide(this.enemyBullets, damageShieldCallback);
-
 			this.playerShip.setShield(this.playerShield);
 		}
 
@@ -409,6 +395,24 @@ class PlayState extends HelixState
 		if (Config.get("features").collideAsteroidsWithAsteroids)
 		{
 			FlxG.collide(asteroids);
+		}
+
+		if (this.playerShield.isActivated)
+		{
+			var damageShieldCallback = function(shield:Shield, thing:HelixSprite)
+			{
+				if (this.playerShip.alive)
+				{
+					shield.damage();
+					this.collidePlayerShipWithAnything(this.playerShip, thing);
+				}
+			}
+			
+			FlxG.collide(this.playerShield, this.asteroids, damageShieldCallback);
+			FlxG.collide(this.playerShield, this.enemies, damageShieldCallback);
+			FlxG.collide(this.playerShield, this.enemyMines, damageShieldCallback);
+			FlxG.collide(this.playerShield, this.explosions, damageShieldCallback);
+			FlxG.collide(this.playerShield, this.enemyBullets, damageShieldCallback);
 		}
 	}
 
