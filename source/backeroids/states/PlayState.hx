@@ -20,6 +20,7 @@ import flixel.addons.ui.FlxUI9SliceSprite;
 import flash.geom.Rectangle;
 import flixel.group.FlxGroup;
 import flixel.util.FlxTimer;
+import flixel.math.FlxRandom;
 import flixel.math.FlxPoint;
 import flixel.input.keyboard.FlxKey;
 using helix.core.HelixSpriteFluentApi;
@@ -40,6 +41,8 @@ class PlayState extends HelixState
 	private var playerShip:PlayerShip;
 	private var playerShield:Shield;
 	private var bullets = new FlxTypedGroup<Bullet>();
+
+	private var random = new FlxRandom();
 
 	private var explosions = new FlxTypedGroup<Explosion>();
 
@@ -410,45 +413,71 @@ class PlayState extends HelixState
 
 	private function damageAndSplit(asteroid:Asteroid):Void
 	{
-		asteroid.damage();
+		asteroid.health -= 1;
+        SoundManager.asteroidHit.play();
 
 		if (Config.get("features").splitAsteroidsOnDeath == true && asteroid.health <= 0 &&
 			 asteroid.totalHealth > 1 && (asteroid.type == AsteroidType.Large || asteroid.type == AsteroidType.Medium))
 		{
 			SoundManager.asteroidSplit.play(true);
-			for (i in 0 ... 2)
+
+			var padding = Math.floor(asteroid.width / 2);
+
+			var chunkNum = Math.floor(random.float() * Config.get('asteroids').maximumChunkNumber) + 1;
+			chunkNum = chunkNum > Config.get('asteroids').minimumChunkNumber ? chunkNum : Config.get('asteroids').minimumChunkNumber;
+
+			for (i in 0 ... chunkNum)
 			{
 				// Respawn at half health
 				// Sets velocity and position				
 				var newAsteroid = recycleAsteroid();
+				var velocityMultiplier:Float = 1;
 
 				if (asteroid.type == AsteroidType.Large)
 				{
-					newAsteroid.setMediumAsteroid();					
+					newAsteroid.setMediumAsteroid();	
+					velocityMultiplier = 1.2;
 				}
 				else if (asteroid.type == AsteroidType.Medium)
 				{
 					newAsteroid.setSmallAsteroid();
+					velocityMultiplier = 1.5;
 				}
 				else
 				{
+					trace(asteroid.type);
 					newAsteroid.kill();
 				}
 
-				// Reset (move) to current destroyed position, offset so they don't
-				// immediately destroy each other
 				newAsteroid.x = asteroid.x;
-				if (i == 0)
-				{
-					newAsteroid.x -=  (asteroid.width / 2);
-				}
-				else
-				{
-					 newAsteroid.x += (asteroid.width / 2);
-				}
 				newAsteroid.y = asteroid.y;
+
+				var offsetX:Float = 0;
+				var offsetY:Float = 0;
+
+				for (j in 0 ... padding)
+				{
+					random.bool() ? offsetX++ : offsetY++;
+				}
+
+				offsetX *= random.bool() ? -1 : 1;
+				offsetY *= random.bool() ? -1 : 1;
+
+				newAsteroid.x += offsetX;
+				newAsteroid.y += offsetY;
+
+				var velocityAngle = FlxPoint.weak(0, 0).angleBetween(FlxPoint.weak(offsetX, offsetY));
+				newAsteroid.velocity.rotate(FlxPoint.weak(0, 0), velocityAngle);
+				newAsteroid.velocity.x *= velocityMultiplier;
+				newAsteroid.velocity.y *= velocityMultiplier;
+				newAsteroid.velocity.addPoint(asteroid.velocity);
 			}
 		}
+
+		if (asteroid.health <= 0)
+        {
+            asteroid.kill();
+        }
 	}
 
 	private function addShooter():Void
