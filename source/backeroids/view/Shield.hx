@@ -65,12 +65,6 @@ class Shield extends HelixSprite
         }
     }
 
-    public function activate():Void
-    {
-        this.isActivated = true;
-        this.visible = true;
-    }
-
     public function deactivate():Void
     {
         this.isActivated = false;

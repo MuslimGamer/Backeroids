@@ -119,8 +119,11 @@ class PlayState extends HelixState
 
 			var damageShieldCallback = function(shield:Shield, thing:HelixSprite)
 			{
-				shield.damage();
-				this.collidePlayerShipWithAnything(this.playerShip, thing);
+				if (this.playerShip.alive)
+				{
+					shield.damage();
+					this.collidePlayerShipWithAnything(this.playerShip, thing);
+				}
 			}
 			this.playerShield.collideResolve(this.asteroids, damageShieldCallback);
 			this.playerShield.collideResolve(this.enemies, damageShieldCallback);
