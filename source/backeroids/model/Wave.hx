@@ -22,40 +22,23 @@ class Wave
         var enemiesConf = Config.get('enemies');
         var asteroidConf = Config.get("asteroids");
 
+        if (!asteroidConf.enabled && !enemiesConf.enabled)
+        {
+            return;
+        }
+
+        else if ((asteroidConf.enabled && !enemiesConf.enabled) || (!enemiesInWave))
+        {
+            this.numAsteroid = this.entityCount;
+        }
+        else if (enemiesConf.enabled && !asteroidConf.enabled)
+        {
+            this.numEnemy = this.entityCount;
+        }
+
         for (i in 0 ... this.entityCount)
         {
-            if (!asteroidConf.enabled && !enemiesConf.enabled)
-		    {
-                return;
-            }
-
-            if (asteroidConf.enabled && !enemiesConf.enabled)
-            {
-                this.numAsteroid++;
-                continue;
-            }
-            else if (enemiesConf.enabled && !asteroidConf.enabled)
-            {
-                this.numEnemy++;
-                continue;
-            }
-
-            // If both enemies and asteroids are enabled
-            else if (!enemiesInWave)
-            {
-                this.numAsteroid++;
-                continue;
-            }
-            else if (random.bool())
-            {
-                this.numAsteroid++;
-                continue;
-            }
-            else
-            {
-                this.numEnemy++;
-                continue;
-            }
+            random.bool() ? this.numAsteroid++ : this.numEnemy++;
         }
     }
 }
