@@ -458,7 +458,7 @@ class PlayState extends HelixState
 		{
 			SoundManager.asteroidSplit.play(true);
 
-			var padding = Math.floor(asteroid.width / 2);
+			var padding = Math.floor(asteroid.width / 4);
 
 			var numChunks = random.int(Config.get('asteroids').minChunks, Config.get('asteroids').maxChunks);
 
