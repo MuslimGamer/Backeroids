@@ -53,7 +53,8 @@
         "shield": {
             "enabled": true,
             "health": 3,
-            "secondsPerRecharge": 3
+            "secondsPerRecharge": 3,
+            "invincibleSeconds": 0.4
         }
     },
 
