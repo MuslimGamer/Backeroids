@@ -3,7 +3,6 @@ package backeroids.view;
 import backeroids.SoundManager;
 import backeroids.model.Gun;
 import backeroids.states.PlayState;
-import backeroids.states.PlayState;
 import flixel.effects.FlxFlicker;
 import flixel.input.keyboard.FlxKey;
 import flixel.math.FlxPoint;
