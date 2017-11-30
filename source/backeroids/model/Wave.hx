@@ -9,9 +9,9 @@ class Wave
     private var entityCount:Int;
     public var waveNumber:Int;
 
-    public var asteroidNum:Int = 0;
+    public var numAsteroid:Int = 0;
     public var spawnedAsteroids:Int = 0;
-    public var enemyNum:Int = 0;
+    public var numEnemy:Int = 0;
     public var spawnedEnemies:Int = 0;
 
     public function new(entityCount:Int, waveNumber:Int, enemiesInWave:Bool = true):Void
@@ -31,29 +31,29 @@ class Wave
 
             if (asteroidConf.enabled && !enemiesConf.enabled)
             {
-                this.asteroidNum++;
+                this.numAsteroid++;
                 continue;
             }
             else if (enemiesConf.enabled && !asteroidConf.enabled)
             {
-                this.enemyNum++;
+                this.numEnemy++;
                 continue;
             }
 
             // If both enemies and asteroids are enabled
             else if (!enemiesInWave)
             {
-                this.asteroidNum++;
+                this.numAsteroid++;
                 continue;
             }
             else if (random.bool())
             {
-                this.asteroidNum++;
+                this.numAsteroid++;
                 continue;
             }
             else
             {
-                this.enemyNum++;
+                this.numEnemy++;
                 continue;
             }
         }

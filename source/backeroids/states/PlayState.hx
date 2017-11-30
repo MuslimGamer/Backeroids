@@ -227,7 +227,7 @@ class PlayState extends HelixState
 
 	private function areAllEntitiesSpawned():Bool
 	{
-		return (this.currentWave.spawnedAsteroids == this.currentWave.asteroidNum) && (this.currentWave.spawnedEnemies == this.currentWave.enemyNum);
+		return (this.currentWave.spawnedAsteroids == this.currentWave.numAsteroid) && (this.currentWave.spawnedEnemies == this.currentWave.numEnemy);
 	}
 
 	private function startWave():Void
@@ -239,11 +239,11 @@ class PlayState extends HelixState
 
 		this.waveCounter.text('Wave: ${this.currentWave.waveNumber}/${this.waveNum}');
 
-		var asteroidSeconds = this.currentWave.asteroidNum * Config.get("secondsPerAsteroidToSpawnOver");
-		var enemySeconds = this.currentWave.enemyNum * Config.get("secondsPerEnemyToSpawnOver");
+		var asteroidSeconds = this.currentWave.numAsteroid * Config.get("secondsPerAsteroidToSpawnOver");
+		var enemySeconds = this.currentWave.numEnemy * Config.get("secondsPerEnemyToSpawnOver");
 
-		this.spawnEntities(this.addAsteroid, this.currentWave.asteroidNum, asteroidSeconds);
-		this.spawnEntities(this.addEnemy, this.currentWave.enemyNum, enemySeconds);
+		this.spawnEntities(this.addAsteroid, this.currentWave.numAsteroid, asteroidSeconds);
+		this.spawnEntities(this.addEnemy, this.currentWave.numEnemy, enemySeconds);
 	}
 
 	private function spawnEntities(entitySpawner, entityNum:Int, secondsToSpawnOver:Int):Void
