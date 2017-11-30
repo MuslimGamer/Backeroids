@@ -57,6 +57,5 @@ class Wave
                 continue;
             }
         }
-        trace('wave ${this.waveNumber} has ${this.asteroidNum} asteroids and ${this.enemyNum} enemies.');
     }
 }
