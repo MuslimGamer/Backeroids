@@ -89,6 +89,7 @@ class PlayState extends HelixState
 		super.create();
 
 		this.destroySubStates = false;
+		FlxG.mouse.load(AssetPaths.crosshairs__png);
 
 		NUM_INITIAL_ASTEROIDS = Config.get("asteroids").initialNumber;
 		SECONDS_PER_ASTEROID = Config.get("asteroids").secondsToSpawn;
@@ -273,6 +274,7 @@ class PlayState extends HelixState
 
 	private function exitState():Void
 	{
+		FlxG.mouse.unload();
 		this.waveTimer.cancel();
 		FlxG.switchState(new LevelSelectState());
 	}
