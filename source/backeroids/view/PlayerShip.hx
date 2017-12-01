@@ -112,10 +112,13 @@ class PlayerShip extends HelixSprite
 
         if (keys.has(FlxKey.SPACE) && this.gun.canFire())
         {
-            var bullet = this.recycleBulletCallback();
-            bullet.move(this.x + ((this.width - bullet.width) / 2), this.y + ((this.height - bullet.height) / 2));
-            bullet.shoot(this.angle);
-            SoundManager.playerShoot.play(true);
+            this.shootBullet(this.angle);
+        }
+
+        if (FlxG.mouse.pressed && this.gun.canFire())
+        {
+            var mouseAngle = FlxPoint.weak(this.x, this.y).angleBetween(FlxG.mouse.getPosition());
+            this.shootBullet(mouseAngle);
         }
 
         if (Config.get('ship').shield.enabled && this.shield.functional)
@@ -127,6 +130,14 @@ class PlayerShip extends HelixSprite
                 this.shield.visible = !this.shield.visible;
             }
         }
+    }
+
+    private function shootBullet(angle:Float):Void
+    {
+        var bullet = this.recycleBulletCallback();
+        bullet.move(this.x + ((this.width - bullet.width) / 2), this.y + ((this.height - bullet.height) / 2));
+        bullet.shoot(angle);
+        SoundManager.playerShoot.play(true);
     }
 
     public function setRecycleBulletCallback(callback):Void
