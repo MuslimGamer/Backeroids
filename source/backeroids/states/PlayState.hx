@@ -195,6 +195,7 @@ class PlayState extends HelixState
 		{
 			this.currentWaveIndex++;
 			this.currentWave = this.waveArray[this.currentWaveIndex];
+			SoundManager.waveComplete.play();
 		}
 	}
 
@@ -281,6 +282,7 @@ class PlayState extends HelixState
 			save.data.currentLevel = this.levelNum + 1;
 			save.flush();
 		}
+		SoundManager.levelComplete.play();
 		var gameWinText = new HelixSprite(null, {height: 1, width: 1, colour: 0xFF000000});
 		gameWinText.alpha = 0;
 		gameWinText.text('YOU WIN!\nPress anything to exit.');
