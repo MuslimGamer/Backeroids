@@ -22,6 +22,8 @@ import flixel.group.FlxGroup;
 import flixel.util.FlxTimer;
 import flixel.math.FlxRandom;
 import flixel.math.FlxPoint;
+import flixel.text.FlxText;
+import flixel.tweens.FlxTween;
 import flixel.input.keyboard.FlxKey;
 import helix.core.HelixState;
 import helix.data.Config;
@@ -197,9 +199,25 @@ class PlayState extends HelixState
 	{
 		if (this.hasNextWave())
 		{
+			SoundManager.waveComplete.play();
+			var waveWinSprite = new HelixSprite(null, {height: 1, width: 1, colour: 0x00000000});
+			waveWinSprite.alpha = 0;
+
+			waveWinSprite.textField = new FlxText(waveWinSprite.x, waveWinSprite.y, FlxG.width, 'Wave ${this.currentWave.waveNumber} complete!');
+			waveWinSprite.textField.setFormat(null, 32, 0x00FFFFFF);
+			waveWinSprite.textField.alpha = 0;
+
+			add(waveWinSprite.textField);
+			waveWinSprite.move(FlxG.width / 2 - waveWinSprite.textField.textField.textWidth / 2, FlxG.height / 2 - waveWinSprite.textField.textField.textHeight / 2);
+			FlxTween.tween(waveWinSprite.textField, {alpha: 1}, 1)
+				.then(FlxTween.tween(waveWinSprite.textField, {alpha: 1}, 1, {onComplete: function(tween)
+				{
+					waveWinSprite.textField.kill();
+					waveWinSprite.kill();
+				}}));
+
 			this.currentWaveIndex++;
 			this.currentWave = this.waveArray[this.currentWaveIndex];
-			SoundManager.waveComplete.play();
 		}
 	}
 
