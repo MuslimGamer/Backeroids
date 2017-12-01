@@ -204,7 +204,7 @@ ApplicationMain.init = function() {
 	}
 };
 ApplicationMain.main = function() {
-	ApplicationMain.config = { build : "924", company : "TBD", file : "Backeroids", fps : 60, name : "Backeroids", orientation : "", packageName : "com.example.myapp", version : "0.0.1", windows : [{ antialiasing : 0, background : 0, borderless : false, depthBuffer : false, display : 0, fullscreen : false, hardware : false, height : 450, parameters : "{}", resizable : false, stencilBuffer : true, title : "Backeroids", vsync : true, width : 800, x : null, y : null}]};
+	ApplicationMain.config = { build : "925", company : "TBD", file : "Backeroids", fps : 60, name : "Backeroids", orientation : "", packageName : "com.example.myapp", version : "0.0.1", windows : [{ antialiasing : 0, background : 0, borderless : false, depthBuffer : false, display : 0, fullscreen : false, hardware : false, height : 450, parameters : "{}", resizable : false, stencilBuffer : true, title : "Backeroids", vsync : true, width : 800, x : null, y : null}]};
 };
 ApplicationMain.start = function() {
 	var hasMain = false;
@@ -6491,6 +6491,7 @@ backeroids_states_PauseSubState.prototype = $extend(flixel_FlxSubState.prototype
 });
 var backeroids_states_PlayState = function(levelNum) {
 	this.pauseSubState = new backeroids_states_PauseSubState();
+	this.levelWon = false;
 	this.currentWaveIndex = 0;
 	this.waveArray = [];
 	this.waveNum = 0;
@@ -6545,6 +6546,7 @@ backeroids_states_PlayState.prototype = $extend(helix_core_HelixState.prototype,
 	,waveArray: null
 	,currentWave: null
 	,currentWaveIndex: null
+	,levelWon: null
 	,waveCounter: null
 	,livesCounter: null
 	,shieldCounter: null
@@ -6614,7 +6616,7 @@ backeroids_states_PlayState.prototype = $extend(helix_core_HelixState.prototype,
 		if(this.hasNextWave()) {
 			this.nextWave();
 			this.startWave();
-		} else {
+		} else if(!this.levelWon) {
 			this.winLevel();
 		}
 	}
@@ -6701,6 +6703,7 @@ backeroids_states_PlayState.prototype = $extend(helix_core_HelixState.prototype,
 			save.data.currentLevel = this.levelNum + 1;
 			save.flush();
 		}
+		this.levelWon = true;
 		backeroids_SoundManager.levelComplete.play();
 		var gameWinText = new helix_core_HelixSprite(null,{ height : 1, width : 1, colour : -16777216});
 		gameWinText.set_alpha(0);
