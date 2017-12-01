@@ -167,22 +167,18 @@ class PlayState extends HelixState
 
 		if (Config.get('ship').shield.enabled && this.playerShield.isActivated)
 		{
+			this.playerShield.damage();
 			return;
 		}
 		this.killPlayerShip();
 	}
 
-	private function spawnMoreItemsIfNeeded(timer):Void
+	private function spawnMoreItemsIfNeeded():Void
 	{
-		if (!this.isCurrentWaveComplete())
-		{
-			return;
-		}
-		
 		if (this.hasNextWave())
 		{
 			this.nextWave();
-			this.startWave();
+			this.waveTimer.start(1, this.startWave, 1);
 		}
 		else if (!this.levelWon)
 		{
@@ -200,20 +196,11 @@ class PlayState extends HelixState
 		if (this.hasNextWave())
 		{
 			SoundManager.waveComplete.play();
-			var waveWinSprite = new HelixSprite(null, {height: 1, width: 1, colour: 0x00000000});
-			waveWinSprite.alpha = 0;
-
-			waveWinSprite.textField = new FlxText(waveWinSprite.x, waveWinSprite.y, FlxG.width, 'Wave ${this.currentWave.waveNumber} complete!');
-			waveWinSprite.textField.setFormat(null, 32, 0x00FFFFFF);
-			waveWinSprite.textField.alpha = 0;
-
-			add(waveWinSprite.textField);
-			waveWinSprite.move(FlxG.width / 2 - waveWinSprite.textField.textField.textWidth / 2, FlxG.height / 2 - waveWinSprite.textField.textField.textHeight / 2);
-			FlxTween.tween(waveWinSprite.textField, {alpha: 1}, 1)
-				.then(FlxTween.tween(waveWinSprite.textField, {alpha: 1}, 1, {onComplete: function(tween)
+			var waveCompleteText = this.makeText('Wave ${this.currentWave.waveNumber} complete!');
+			FlxTween.tween(waveCompleteText, {alpha: 1}, 1)
+				.then(FlxTween.tween(waveCompleteText, {alpha: 1}, 1, {onComplete: function(tween)
 				{
-					waveWinSprite.textField.kill();
-					waveWinSprite.kill();
+					waveCompleteText.kill();
 				}}));
 
 			this.currentWaveIndex++;
@@ -236,7 +223,7 @@ class PlayState extends HelixState
 		return (this.currentWave.spawnedAsteroids == this.currentWave.numAsteroid) && (this.currentWave.spawnedEnemies == this.currentWave.numEnemy);
 	}
 
-	private function startWave():Void
+	private function startWave(?timer):Void
 	{
 		if (!Config.get("asteroids").enabled && !Config.get("enemies").enabled)
 		{
@@ -293,7 +280,6 @@ class PlayState extends HelixState
 	private function exitState():Void
 	{
 		FlxG.mouse.unload();
-		this.waveTimer.cancel();
 		FlxG.switchState(new LevelSelectState());
 	}
 	
@@ -358,6 +344,12 @@ class PlayState extends HelixState
 		}
 
 		super.update(elapsed);
+		
+		if (this.isCurrentWaveComplete())
+		{
+			this.spawnMoreItemsIfNeeded();
+		}
+
 		
 		FlxG.collide(bullets, asteroids, function(b:Bullet, asteroid:Asteroid)
 		{
@@ -426,21 +418,25 @@ class PlayState extends HelixState
 
 		if (this.playerShield.isActivated)
 		{
-			var damageShieldCallback = function(shield:Shield, thing:HelixSprite)
-			{
-				if (this.playerShip.alive)
-				{
-					this.collidePlayerShipWithAnything(this.playerShip, thing);
-					shield.damage();
-				}
-			}
-			
-			FlxG.collide(this.playerShield, this.asteroids, damageShieldCallback);
-			FlxG.collide(this.playerShield, this.enemies, damageShieldCallback);
-			FlxG.collide(this.playerShield, this.enemyMines, damageShieldCallback);
-			FlxG.collide(this.playerShield, this.explosions, damageShieldCallback);
-			FlxG.collide(this.playerShield, this.enemyBullets, damageShieldCallback);
+			FlxG.collide(this.playerShield, this.asteroids, this.collidePlayerShipWithAnything);
+			FlxG.collide(this.playerShield, this.enemies, this.collidePlayerShipWithAnything);
+			FlxG.collide(this.playerShield, this.enemyMines, this.collidePlayerShipWithAnything);
+			FlxG.collide(this.playerShield, this.explosions, this.collidePlayerShipWithAnything);
+			FlxG.collide(this.playerShield, this.enemyBullets, this.collidePlayerShipWithAnything);
 		}
+	}
+
+	private function makeText(text:String):FlxText
+	{
+		var textField = new FlxText(1, 1, FlxG.width, text);
+		textField.setFormat(null, 32, 0x00FFFFFF);
+		textField.alpha = 0;
+
+		add(textField);
+		textField.x = FlxG.width / 2 - textField.textField.textWidth / 2;
+		textField.y = FlxG.height / 2 - textField.textField.textHeight / 3;
+
+		return textField;
 	}
 
 	private function killPlayerShip():Void
@@ -592,12 +588,7 @@ class PlayState extends HelixState
 			messageWindow.y = (FlxG.height - messageWindow.height) / 2;
 			messageWindow.setFinishCallback(function() {
 				this.isShowingTutorial = false;
-				this.waveTimer.start(1, function(timer) 
-				{
 					this.startWave();
-					this.waveTimer.reset();
-					this.waveTimer.start(1, this.spawnMoreItemsIfNeeded, 0);
-				}, 1);
 			});
 
 			var group = messageWindow.getDrawables();
@@ -605,12 +596,7 @@ class PlayState extends HelixState
 		}
 		else
 		{
-			this.waveTimer.start(1, function(timer) 
-			{
 				this.startWave();
-				this.waveTimer.reset();
-				this.waveTimer.start(1, this.spawnMoreItemsIfNeeded, 0);
-			}, 1);
 		}
 	}
 }
