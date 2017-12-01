@@ -457,7 +457,7 @@ class PlayState extends HelixState
         SoundManager.asteroidHit.play();
 
 		if (Config.get("features").splitAsteroidsOnDeath == true && asteroid.health <= 0 &&
-			 asteroid.totalHealth > 1 && (asteroid.type == AsteroidType.Large || asteroid.type == AsteroidType.Medium))
+			 asteroid.totalHealth >= 1 && (asteroid.type == AsteroidType.Large || asteroid.type == AsteroidType.Medium))
 		{
 			SoundManager.asteroidSplit.play(true);
 

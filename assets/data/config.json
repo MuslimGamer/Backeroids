@@ -26,13 +26,13 @@
         },
 
         "big": {
-            "initialHealth": 4,
+            "initialHealth": 1,
             "scale": 1,
             "mass": 9
         },
 
         "medium": {
-            "initialHealth": 2,
+            "initialHealth": 1,
             "scale": 0.5,
             "mass": 3,
             "velocityMultiplier": 0.5
@@ -64,7 +64,7 @@
     },
 
     "gun": {
-        "fireCooldownSeconds": 0.3,
+        "fireCooldownSeconds": 0.5,
         "bulletVelocity": 400,
         "bulletExpireSeconds": 3
     },
