@@ -26,13 +26,13 @@
         },
 
         "big": {
-            "initialHealth": 4,
+            "initialHealth": 1,
             "scale": 1,
             "mass": 9
         },
 
         "medium": {
-            "initialHealth": 2,
+            "initialHealth": 1,
             "scale": 0.5,
             "mass": 3,
             "velocityMultiplier": 0.5
@@ -48,7 +48,7 @@
 
     "ship": {
         "secondsToRevive": 3,
-        "rotationVelocity": 350, // pixels per second
+        "rotationVelocity": 270, // pixels per second
         "acceleration": 150,
         "maxVelocity": 200,
         "decelerationMultiplier": 2, // decelerate n-times faster
@@ -64,12 +64,13 @@
     },
 
     "gun": {
-        "fireCooldownSeconds": 0.3,
-        "bulletVelocity": 300
+        "fireCooldownSeconds": 0.5,
+        "bulletVelocity": 400,
+        "bulletExpireSeconds": 3
     },
 
     "features": {
-        "wrapBullets": false,
+        "wrapBullets": true,
         "splitAsteroidsOnDeath": true,
         "collideAsteroidsWithAsteroids": true,
         "infiniteLives": false,
@@ -86,6 +87,7 @@
             "health": 3,
             "appearsOnLevel": 2,
             "fireRatePerSecond": 0.5, // per second
+            "bulletVelocity": 250,
             "velocity": 
             {
                 "x": 100,
