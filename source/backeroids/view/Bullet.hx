@@ -9,12 +9,13 @@ import helix.core.HelixSprite;
 
 class Bullet extends HelixSprite implements IProjectile
 {
-    private var baseVelocity:Float;
+    public var baseVelocity:Float;
     private var hasAppearedOnscreen:Bool = false;
 
     public function new():Void
     {
         super(null, {width: 2, height: 8, colour: FlxColor.fromString('white')});
+        this.width = 8;
         this.kill();
         this.baseVelocity = Config.get("gun").bulletVelocity;
     }

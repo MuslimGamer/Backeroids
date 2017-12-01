@@ -48,7 +48,7 @@
 
     "ship": {
         "secondsToRevive": 3,
-        "rotationVelocity": 350, // pixels per second
+        "rotationVelocity": 270, // pixels per second
         "acceleration": 150,
         "maxVelocity": 200,
         "decelerationMultiplier": 2, // decelerate n-times faster
@@ -65,7 +65,7 @@
 
     "gun": {
         "fireCooldownSeconds": 0.3,
-        "bulletVelocity": 300
+        "bulletVelocity": 400
     },
 
     "features": {
@@ -86,6 +86,7 @@
             "health": 3,
             "appearsOnLevel": 2,
             "fireRatePerSecond": 0.5, // per second
+            "bulletVelocity": 250,
             "velocity": 
             {
                 "x": 100,

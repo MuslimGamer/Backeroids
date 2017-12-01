@@ -515,7 +515,9 @@ class PlayState extends HelixState
 	{
 		this.headstrongEnemies.add(new Shooter(function():Bullet
 		{
-			return enemyBullets.recycle(Bullet);
+			var bullet = enemyBullets.recycle(Bullet);
+			bullet.baseVelocity = Config.get('enemies').shooter.bulletVelocity;
+			return bullet;
 		}));
 	}
 
