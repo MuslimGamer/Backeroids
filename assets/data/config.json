@@ -65,11 +65,12 @@
 
     "gun": {
         "fireCooldownSeconds": 0.3,
-        "bulletVelocity": 400
+        "bulletVelocity": 400,
+        "bulletExpireSeconds": 3
     },
 
     "features": {
-        "wrapBullets": false,
+        "wrapBullets": true,
         "splitAsteroidsOnDeath": true,
         "collideAsteroidsWithAsteroids": true,
         "infiniteLives": false,

@@ -4,6 +4,7 @@ import backeroids.interfaces.IProjectile;
 import flixel.util.FlxColor;
 import flixel.math.FlxPoint;
 import flixel.util.FlxSpriteUtil;
+import flixel.util.FlxTimer;
 import helix.data.Config;
 import helix.core.HelixSprite;
 
@@ -11,6 +12,7 @@ class Bullet extends HelixSprite implements IProjectile
 {
     public var baseVelocity:Float;
     private var hasAppearedOnscreen:Bool = false;
+    private var expireTimer = new FlxTimer();
 
     public function new():Void
     {
@@ -45,5 +47,10 @@ class Bullet extends HelixSprite implements IProjectile
 
         this.velocity.set(0, -this.baseVelocity);
         this.velocity.rotate(FlxPoint.weak(0, 0), this.angle);
+
+        this.expireTimer.start(Config.get('gun').bulletExpireSeconds, function(timer)
+        {
+            this.kill();
+        });
     }
 }
