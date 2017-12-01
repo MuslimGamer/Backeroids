@@ -58,6 +58,9 @@ class PlayState extends HelixState
 	private var waveArray = new Array<Wave>();
 	private var currentWave:Wave;
 	private var currentWaveIndex:Int = 0;
+
+	private var levelWon = false;
+
 	private var waveCounter:HelixSprite;
 	private var livesCounter:HelixSprite;
 	private var shieldCounter:HelixSprite;
@@ -178,7 +181,7 @@ class PlayState extends HelixState
 			this.nextWave();
 			this.startWave();
 		}
-		else
+		else if (!this.levelWon)
 		{
 			this.winLevel();
 		}
@@ -195,6 +198,7 @@ class PlayState extends HelixState
 		{
 			this.currentWaveIndex++;
 			this.currentWave = this.waveArray[this.currentWaveIndex];
+			SoundManager.waveComplete.play();
 		}
 	}
 
@@ -281,6 +285,8 @@ class PlayState extends HelixState
 			save.data.currentLevel = this.levelNum + 1;
 			save.flush();
 		}
+		this.levelWon = true;
+		SoundManager.levelComplete.play();
 		var gameWinText = new HelixSprite(null, {height: 1, width: 1, colour: 0xFF000000});
 		gameWinText.alpha = 0;
 		gameWinText.text('YOU WIN!\nPress anything to exit.');
@@ -455,7 +461,7 @@ class PlayState extends HelixState
         SoundManager.asteroidHit.play();
 
 		if (Config.get("features").splitAsteroidsOnDeath == true && asteroid.health <= 0 &&
-			 asteroid.totalHealth > 1 && (asteroid.type == AsteroidType.Large || asteroid.type == AsteroidType.Medium))
+			 asteroid.totalHealth >= 1 && (asteroid.type == AsteroidType.Large || asteroid.type == AsteroidType.Medium))
 		{
 			SoundManager.asteroidSplit.play(true);
 
@@ -515,7 +521,9 @@ class PlayState extends HelixState
 	{
 		this.headstrongEnemies.add(new Shooter(function():Bullet
 		{
-			return enemyBullets.recycle(Bullet);
+			var bullet = enemyBullets.recycle(Bullet);
+			bullet.baseVelocity = Config.get('enemies').shooter.bulletVelocity;
+			return bullet;
 		}));
 	}
 

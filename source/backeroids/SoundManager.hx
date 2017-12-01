@@ -24,6 +24,9 @@ class SoundManager
     public static var heartBeatLogoSound = new FlxSound();
     public static var nightingaleLogoSound = new FlxSound();
 
+    public static var waveComplete = new FlxSound();
+    public static var levelComplete = new FlxSound();
+
     public static function init():Void
     {
         playerShoot.loadEmbedded(AssetPaths.Laser_Shoot_0__ogg);
@@ -45,5 +48,8 @@ class SoundManager
 
         heartBeatLogoSound.loadEmbedded(AssetPaths.heartbeat__ogg);
         nightingaleLogoSound.loadEmbedded(AssetPaths.nightingale__ogg);
+
+        waveComplete.loadEmbedded(AssetPaths.Wave_Complete__ogg);
+        levelComplete.loadEmbedded(AssetPaths.Level_Complete__ogg);
     }
 }
