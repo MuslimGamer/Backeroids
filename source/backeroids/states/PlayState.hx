@@ -58,6 +58,9 @@ class PlayState extends HelixState
 	private var waveArray = new Array<Wave>();
 	private var currentWave:Wave;
 	private var currentWaveIndex:Int = 0;
+
+	private var levelWon = false;
+
 	private var waveCounter:HelixSprite;
 	private var livesCounter:HelixSprite;
 	private var shieldCounter:HelixSprite;
@@ -178,7 +181,7 @@ class PlayState extends HelixState
 			this.nextWave();
 			this.startWave();
 		}
-		else
+		else if (!this.levelWon)
 		{
 			this.winLevel();
 		}
@@ -282,6 +285,7 @@ class PlayState extends HelixState
 			save.data.currentLevel = this.levelNum + 1;
 			save.flush();
 		}
+		this.levelWon = true;
 		SoundManager.levelComplete.play();
 		var gameWinText = new HelixSprite(null, {height: 1, width: 1, colour: 0xFF000000});
 		gameWinText.alpha = 0;
