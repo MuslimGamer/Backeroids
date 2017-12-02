@@ -46,4 +46,9 @@ class Mine extends HelixSprite implements IProjectile
         explosion.explode();
         SoundManager.mineExplode.play(true);
     }
+
+    public function collide():Void
+    {
+        this.explode();
+    }
 }
