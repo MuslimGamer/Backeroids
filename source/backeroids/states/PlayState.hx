@@ -64,9 +64,9 @@ class PlayState extends HelixState
 
 	private var levelWon = false;
 
-	private var waveCounter:HelixSprite;
-	private var livesCounter:HelixSprite;
-	private var shieldCounter:HelixSprite;
+	private var waveCounter:FlxText;
+	private var livesCounter:FlxText;
+	private var shieldCounter:FlxText;
 
 	private var pauseSubState = new PauseSubState();
 
@@ -111,28 +111,21 @@ class PlayState extends HelixState
 		this.enemies.add(this.knockbackableEnemies);
 		this.enemies.add(this.headstrongEnemies);
 
-		this.waveCounter = new HelixSprite(null, {width: 1, height: 1, colour: 0xFF000000});
-		this.waveCounter.alpha = 0;
-		this.waveCounter.text('Wave: 0/${this.waveNum}');
-
-		this.livesCounter = new HelixSprite(null, {width: 1, height: 1, colour: 0xFF000000});
-		this.livesCounter.alpha = 0;
-		this.livesCounter.text('Lives: ${this.playerShip.lives}');
-		this.livesCounter.x = FlxG.width - this.livesCounter.width - this.livesCounter.textField.textField.textWidth;
+		this.waveCounter = this.makeText('Wave: 0/${this.waveNum}', 16);
+		this.livesCounter = this.makeText('Lives: ${this.playerShip.lives}', 16);
+		this.livesCounter.x = FlxG.width - this.livesCounter.textField.textWidth;
 
 		if (Config.get('ship').shield.enabled)
 		{
 			this.playerShield = new Shield();
 	
-			this.shieldCounter = new HelixSprite(null, {width: 1, height: 1, colour: 0xFF000000});
-			this.shieldCounter.alpha = 0;
-			this.shieldCounter.text('Shield: ${this.playerShield.shieldHealth}');
-			this.shieldCounter.x = FlxG.width - this.shieldCounter.width - this.shieldCounter.textField.textField.textWidth;
-			this.shieldCounter.y = this.livesCounter.textField.textField.textHeight;
+			this.shieldCounter = this.makeText('Shield: ${this.playerShield.shieldHealth}', 16);
+			this.shieldCounter.x = FlxG.width - this.shieldCounter.textField.textWidth;
+			this.shieldCounter.y = this.livesCounter.textField.textHeight;
 
 			this.playerShield.setIndicatorCallback(function():Void
 			{
-				this.shieldCounter.text('Shield: ${this.playerShield.shieldHealth}');
+				this.shieldCounter.text = 'Shield: ${this.playerShield.shieldHealth}';
 			});
 
 			this.playerShip.setShield(this.playerShield);
@@ -207,7 +200,11 @@ class PlayState extends HelixState
 		if (this.hasNextWave())
 		{
 			SoundManager.waveComplete.play();
-			var waveCompleteText = this.makeText('Wave ${this.currentWave.waveNumber} complete!');
+			var waveCompleteText = this.makeText('Wave ${this.currentWave.waveNumber} complete!', 32);
+			waveCompleteText.alpha = 0;
+			waveCompleteText.x = FlxG.width / 2 - waveCompleteText.textField.textWidth / 2;
+			waveCompleteText.y = FlxG.height / 2 - waveCompleteText.textField.textHeight / 3;
+
 			FlxTween.tween(waveCompleteText, {alpha: 1}, 1)
 				.then(FlxTween.tween(waveCompleteText, {alpha: 1}, 1, {onComplete: function(tween)
 				{
@@ -241,7 +238,7 @@ class PlayState extends HelixState
 			return;
 		}
 
-		this.waveCounter.text('Wave: ${this.currentWave.waveNumber}/${this.waveNum}');
+		this.waveCounter.text = 'Wave: ${this.currentWave.waveNumber}/${this.waveNum}';
 
 		var asteroidSeconds = this.currentWave.numAsteroid * Config.get("secondsPerAsteroidToSpawnOver");
 		var enemySeconds = this.currentWave.numEnemy * Config.get("secondsPerEnemyToSpawnOver");
@@ -369,16 +366,11 @@ class PlayState extends HelixState
 		}
 	}
 
-	private function makeText(text:String):FlxText
+	private function makeText(text:String, textSize:Int):FlxText
 	{
 		var textField = new FlxText(1, 1, FlxG.width, text);
-		textField.setFormat(null, 32, 0x00FFFFFF);
-		textField.alpha = 0;
-
+		textField.setFormat(null, textSize, 0xFFFFFFFF);
 		add(textField);
-		textField.x = FlxG.width / 2 - textField.textField.textWidth / 2;
-		textField.y = FlxG.height / 2 - textField.textField.textHeight / 3;
-
 		return textField;
 	}
 
@@ -387,7 +379,7 @@ class PlayState extends HelixState
 		if (!this.playerShip.isInvincible())
 		{
 			this.playerShip.die(this.resetShip);
-			this.livesCounter.text('Lives: ${this.playerShip.lives}');
+			this.livesCounter.text = 'Lives: ${this.playerShip.lives}';
 			if (!Config.get('features').infiniteLives && this.playerShip.lives <= 0)
 			{
 				this.loseLevel();
