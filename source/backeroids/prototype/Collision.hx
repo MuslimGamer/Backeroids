@@ -15,18 +15,22 @@ class Collision
 
     }
 
-    public function collideResolve(objectOrGroup1:FlxBasic, objectOrGroup2:FlxBasic, ?callback:Dynamic->Dynamic->Void = null):Collision
+    public function collideResolve(objectOrGroup1:FlxBasic, ?objectOrGroup2:FlxBasic, ?callback:Dynamic->Dynamic->Void = null):Collision
     {
         return this.genericCollide(objectOrGroup1, objectOrGroup2, callback, this.collideAndResolveTargets);
     }
 
-    public function collide(objectOrGroup1:FlxBasic, objectOrGroup2:FlxBasic, ?callback:Dynamic->Dynamic->Void):Collision
+    public function collide(objectOrGroup1:FlxBasic, ?objectOrGroup2:FlxBasic, ?callback:Dynamic->Dynamic->Void):Collision
     {
         return this.genericCollide(objectOrGroup1, objectOrGroup2, callback, this.collisionTargets);
     }
 
-    private function genericCollide(objectOrGroup1:FlxBasic, objectOrGroup2:FlxBasic, ?callback:Dynamic->Dynamic->Void = null, collisionArray:Array<CollisionMetadata>):Collision
+    private function genericCollide(objectOrGroup1:FlxBasic, ?objectOrGroup2:FlxBasic, ?callback:Dynamic->Dynamic->Void = null, collisionArray:Array<CollisionMetadata>):Collision
     {
+        if (objectOrGroup2 == null)
+        {
+            objectOrGroup2 = objectOrGroup1;
+        }
         if (callback == null)
         {
             callback = function(obj1:ICollidable, obj2:ICollidable):Void

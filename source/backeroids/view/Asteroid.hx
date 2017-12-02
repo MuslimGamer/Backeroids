@@ -1,6 +1,7 @@
 package backeroids.view;
 
 import backeroids.model.AsteroidType;
+import backeroids.prototype.ICollidable;
 import backeroids.SoundManager;
 import flixel.util.FlxColor;
 import flixel.math.FlxRandom;
@@ -11,7 +12,7 @@ import flixel.util.FlxTimer;
 import helix.core.HelixSprite;
 import helix.data.Config;
 
-class Asteroid extends HelixSprite
+class Asteroid extends HelixSprite implements ICollidable
 {
     private static var random = new FlxRandom();
     private static var startingVelocity:Float;
@@ -183,6 +184,8 @@ class Asteroid extends HelixSprite
         this.velocity.y *= velocityMultiplier;
         this.velocity.addPoint(asteroid.velocity);
     }
+
+    public function collide():Void {}
 
     private function processVelocity():Void
     {

@@ -18,11 +18,11 @@ import backeroids.states.LevelSelectState;
 import backeroids.states.PauseSubState;
 import backeroids.SoundManager;
 import backeroids.prototype.Collision;
+import backeroids.prototype.ICollidable;
 import flixel.FlxG;
 import flixel.group.FlxGroup;
 import flixel.util.FlxTimer;
 import flixel.math.FlxRandom;
-import flixel.math.FlxPoint;
 import flixel.text.FlxText;
 import flixel.tweens.FlxTween;
 import flixel.input.keyboard.FlxKey;
@@ -105,24 +105,11 @@ class PlayState extends HelixState
 		{
 			return bullets.recycle(Bullet);
 		});
+		this.playerShip.setKillCallback(this.killPlayerShip);
 		resetShip();
 
 		this.enemies.add(this.knockbackableEnemies);
 		this.enemies.add(this.headstrongEnemies);
-
-		this.playerShip.collideResolve(this.asteroids, this.collidePlayerShipWithAnything);
-		this.playerShip.collideResolve(this.enemies, this.collidePlayerShipWithAnything);
-		this.playerShip.collideResolve(this.enemyMines, this.collidePlayerShipWithAnything);
-		this.playerShip.collideResolve(this.enemyBullets, this.collidePlayerShipWithAnything);
-		this.playerShip.collideResolve(this.explosions, this.collidePlayerShipWithAnything);
-
-		this.collisionManager.collideResolve(this.bullets, this.knockbackableEnemies)
-							.collide(this.bullets, this.headstrongEnemies);
-
-		this.collisionManager.collideResolve(this.enemyBullets, this.enemyMines)
-							.collideResolve(this.bullets, this.enemyMines);
-
-		this.collisionManager.collideResolve(this.explosions, this.enemies);
 
 		this.waveCounter = new HelixSprite(null, {width: 1, height: 1, colour: 0xFF000000});
 		this.waveCounter.alpha = 0;
@@ -151,37 +138,50 @@ class PlayState extends HelixState
 			this.playerShip.setShield(this.playerShield);
 		}
 
+		this.setCollisions();
+
 		this.showTutorialIfRequired();
 	}
 
-	private function collidePlayerShipWithAnything(player:PlayerShip, thing:HelixSprite):Void
+	private function setCollisions():Void
 	{
-		var thingType = Type.getClassName(Type.getClass(thing));
-		if (thingType == 'backeroids.view.Bullet')
-		{
-			thing.kill();
-		}
-		else if (thingType == 'backeroids.view.Mine')
-		{
-			var mine:Mine = cast thing;
-			mine.explode();
-		}
-		else if (thingType == 'backeroids.view.Asteroid')
-		{
-			var asteroid:Asteroid = cast(thing, Asteroid);
 
-			if (asteroid.type != AsteroidType.Backeroid) 
-			{
-				this.damageAndSplit(asteroid);
-			}
+		this.collisionManager.collideResolve(this.playerShip, this.enemies)
+							.collideResolve(this.playerShip, this.enemyMines)
+							.collideResolve(this.playerShip, this.enemyBullets)
+							.collideResolve(this.playerShip, this.explosions);
+
+		if (Config.get('ship').shield.enabled)
+		{
+			this.collisionManager.collideResolve(this.playerShield, this.enemies)
+								.collideResolve(this.playerShield, this.enemyMines)
+								.collideResolve(this.playerShield, this.enemyBullets)
+								.collideResolve(this.playerShield, this.explosions);
 		}
 
-		if (Config.get('ship').shield.enabled && this.playerShield.isActivated)
+		var asteroidCollisionCallback = function(asteroid:Asteroid, thing:ICollidable):Void
 		{
-			this.playerShield.damage();
-			return;
+			thing.collide();
+			this.damageAndSplit(asteroid);
 		}
-		this.killPlayerShip();
+
+		this.collisionManager.collideResolve(this.asteroids, this.bullets, asteroidCollisionCallback)
+							.collideResolve(this.asteroids, this.enemies, asteroidCollisionCallback)
+							.collideResolve(this.asteroids, this.enemyBullets, asteroidCollisionCallback)
+							.collideResolve(this.asteroids, this.enemyMines, asteroidCollisionCallback)
+							.collideResolve(this.asteroids, this.explosions, asteroidCollisionCallback)
+							.collideResolve(this.asteroids, this.playerShip, asteroidCollisionCallback)
+							.collideResolve(this.asteroids, this.playerShield, asteroidCollisionCallback)
+							.collideResolve(this.asteroids);
+
+		this.collisionManager.collideResolve(this.bullets, this.knockbackableEnemies)
+							.collide(this.bullets, this.headstrongEnemies);
+
+		this.collisionManager.collideResolve(this.enemyBullets, this.enemyMines)
+							.collideResolve(this.bullets, this.enemyMines);
+
+		this.collisionManager.collideResolve(this.enemies, this.explosions)
+							.collideResolve(this.enemies);
 	}
 
 	private function spawnMoreItemsIfNeeded():Void
@@ -363,50 +363,9 @@ class PlayState extends HelixState
 
 		this.collisionManager.update(elapsed);
 
-		
-		FlxG.collide(bullets, asteroids, function(b:Bullet, asteroid:Asteroid)
-		{
-				b.kill();
-				if (asteroid.type != AsteroidType.Backeroid) {
-					this.damageAndSplit(asteroid);
-				}
-		});
-
-		FlxG.collide(enemies, asteroids, function(enemy:AbstractEnemy, asteroid:Asteroid)
-		{
-				this.damageAndSplit(asteroid);
-		});
-
-		FlxG.collide(enemyBullets, asteroids, function(enemyBullet:Bullet, asteroid:Asteroid)
-		{
-				enemyBullet.kill();
-				this.damageAndSplit(asteroid);
-		});
-
-		FlxG.collide(enemyMines, asteroids, function(mine:Mine, asteroid:Asteroid)
-		{
-			mine.explode();
-		});
-
-		FlxG.collide(explosions, asteroids, function(explosion:Explosion, asteroid:Asteroid)
-		{
-			this.damageAndSplit(asteroid);
-		});
-
-		FlxG.collide(enemies);
-
-		if (Config.get("features").collideAsteroidsWithAsteroids)
-		{
-			FlxG.collide(asteroids);
-		}
-
 		if (this.playerShield.isActivated)
 		{
-			FlxG.collide(this.playerShield, this.asteroids, this.collidePlayerShipWithAnything);
-			FlxG.collide(this.playerShield, this.enemies, this.collidePlayerShipWithAnything);
-			FlxG.collide(this.playerShield, this.enemyMines, this.collidePlayerShipWithAnything);
-			FlxG.collide(this.playerShield, this.explosions, this.collidePlayerShipWithAnything);
-			FlxG.collide(this.playerShield, this.enemyBullets, this.collidePlayerShipWithAnything);
+
 		}
 	}
 
