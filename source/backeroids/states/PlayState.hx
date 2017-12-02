@@ -17,6 +17,7 @@ import backeroids.view.enemies.MineDropper;
 import backeroids.states.LevelSelectState;
 import backeroids.states.PauseSubState;
 import backeroids.SoundManager;
+import backeroids.prototype.Collision;
 import flixel.FlxG;
 import flixel.group.FlxGroup;
 import flixel.util.FlxTimer;
@@ -69,6 +70,8 @@ class PlayState extends HelixState
 
 	private var pauseSubState = new PauseSubState();
 
+	private var collisionManager = new Collision();
+
 	override public function new(levelNum):Void
 	{
 		super();
@@ -104,14 +107,17 @@ class PlayState extends HelixState
 		});
 		resetShip();
 
+		this.enemies.add(this.knockbackableEnemies);
+		this.enemies.add(this.headstrongEnemies);
+
 		this.playerShip.collideResolve(this.asteroids, this.collidePlayerShipWithAnything);
 		this.playerShip.collideResolve(this.enemies, this.collidePlayerShipWithAnything);
 		this.playerShip.collideResolve(this.enemyMines, this.collidePlayerShipWithAnything);
 		this.playerShip.collideResolve(this.enemyBullets, this.collidePlayerShipWithAnything);
 		this.playerShip.collideResolve(this.explosions, this.collidePlayerShipWithAnything);
 
-		this.enemies.add(this.knockbackableEnemies);
-		this.enemies.add(this.headstrongEnemies);
+		this.collisionManager.collideResolve(this.bullets, this.knockbackableEnemies)
+							.collide(this.bullets, this.headstrongEnemies);
 
 		this.waveCounter = new HelixSprite(null, {width: 1, height: 1, colour: 0xFF000000});
 		this.waveCounter.alpha = 0;
@@ -350,6 +356,8 @@ class PlayState extends HelixState
 			this.spawnMoreItemsIfNeeded();
 		}
 
+		this.collisionManager.update(elapsed);
+
 		
 		FlxG.collide(bullets, asteroids, function(b:Bullet, asteroid:Asteroid)
 		{
@@ -357,18 +365,6 @@ class PlayState extends HelixState
 				if (asteroid.type != AsteroidType.Backeroid) {
 					this.damageAndSplit(asteroid);
 				}
-		});
-
-		FlxG.collide(bullets, knockbackableEnemies, function(bullet:Bullet, enemy:AbstractEnemy)
-		{
-				bullet.kill();
-				enemy.damage();
-		});
-
-		FlxG.overlap(bullets, headstrongEnemies, function(bullet:Bullet, enemy:AbstractEnemy) 
-		{
-			bullet.kill();
-			enemy.damage();
 		});
 
 		FlxG.collide(enemies, asteroids, function(enemy:AbstractEnemy, asteroid:Asteroid)

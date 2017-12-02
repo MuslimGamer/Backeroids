@@ -53,4 +53,9 @@ class Bullet extends HelixSprite implements IProjectile
             this.kill();
         });
     }
+
+    public function collide():Void
+    {
+        this.kill();
+    }
 }
