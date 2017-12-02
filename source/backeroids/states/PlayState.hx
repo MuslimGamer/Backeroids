@@ -459,62 +459,25 @@ class PlayState extends HelixState
 	{
 		asteroid.health -= 1;
         SoundManager.asteroidHit.play();
+		if (asteroid.health > 0)
+		{
+			return;
+		}
 
-		if (Config.get("features").splitAsteroidsOnDeath == true && asteroid.health <= 0 &&
-			 asteroid.totalHealth >= 1 && (asteroid.type == AsteroidType.Large || asteroid.type == AsteroidType.Medium))
+		if (Config.get("features").splitAsteroidsOnDeath == true && asteroid.totalHealth >= 1 
+		    && (asteroid.type == AsteroidType.Large || asteroid.type == AsteroidType.Medium))
 		{
 			SoundManager.asteroidSplit.play(true);
-
 			var padding = Math.floor(asteroid.width / 4);
-
 			var numChunks = random.int(Config.get('asteroids').minChunks, Config.get('asteroids').maxChunks);
 
 			for (i in 0 ... numChunks)
-			{
-				// Respawn at half health
-				// Sets velocity and position				
+			{			
 				var newAsteroid = recycleAsteroid();
-				var velocityMultiplier:Float = 1;
-
-				if (asteroid.type == AsteroidType.Large)
-				{
-					newAsteroid.setMediumAsteroid();	
-					velocityMultiplier = Config.get('asteroids').medium.velocityMultiplier;
-				}
-				else if (asteroid.type == AsteroidType.Medium)
-				{
-					newAsteroid.setSmallAsteroid();
-					velocityMultiplier = Config.get('asteroids').small.velocityMultiplier;
-				}
-				else
-				{
-					newAsteroid.kill();
-				}
-
-				newAsteroid.x = asteroid.x;
-				newAsteroid.y = asteroid.y;
-
-				var offsetX:Float = random.float(0, padding);
-				var offsetY:Float = padding - offsetX;
-
-				offsetX *= random.bool() ? -1 : 1;
-				offsetY *= random.bool() ? -1 : 1;
-
-				newAsteroid.x += offsetX;
-				newAsteroid.y += offsetY;
-
-				var velocityAngle = FlxPoint.weak(0, 0).angleBetween(FlxPoint.weak(offsetX, offsetY));
-				newAsteroid.velocity.rotate(FlxPoint.weak(0, 0), velocityAngle);
-				newAsteroid.velocity.x *= velocityMultiplier;
-				newAsteroid.velocity.y *= velocityMultiplier;
-				newAsteroid.velocity.addPoint(asteroid.velocity);
+				newAsteroid.splitOffFrom(asteroid, padding);
 			}
 		}
-
-		if (asteroid.health <= 0)
-        {
-            asteroid.kill();
-        }
+		asteroid.kill();
 	}
 
 	private function addShooter():Void

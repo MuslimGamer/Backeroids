@@ -4,6 +4,7 @@ import backeroids.model.AsteroidType;
 import backeroids.SoundManager;
 import flixel.util.FlxColor;
 import flixel.math.FlxRandom;
+import flixel.math.FlxPoint;
 import flixel.util.FlxSpriteUtil;
 import flixel.FlxG;
 import flixel.util.FlxTimer;
@@ -143,6 +144,44 @@ class Asteroid extends HelixSprite
         {
             this.kill();
         }
+    }
+
+    public function splitOffFrom(asteroid:Asteroid, padding:Int):Void
+    {
+        var velocityMultiplier:Float = 1;
+
+        if (asteroid.type == AsteroidType.Large)
+        {
+            this.setMediumAsteroid();	
+            velocityMultiplier = Config.get('asteroids').medium.velocityMultiplier;
+        }
+        else if (asteroid.type == AsteroidType.Medium)
+        {
+            this.setSmallAsteroid();
+            velocityMultiplier = Config.get('asteroids').small.velocityMultiplier;
+        }
+        else
+        {
+            this.kill();
+        }
+
+        this.x = asteroid.x;
+        this.y = asteroid.y;
+
+        var offsetX:Float = random.float(0, padding);
+        var offsetY:Float = padding - offsetX;
+
+        offsetX *= random.bool() ? -1 : 1;
+        offsetY *= random.bool() ? -1 : 1;
+
+        this.x += offsetX;
+        this.y += offsetY;
+
+        var velocityAngle = FlxPoint.weak(0, 0).angleBetween(FlxPoint.weak(offsetX, offsetY));
+        this.velocity.rotate(FlxPoint.weak(0, 0), velocityAngle);
+        this.velocity.x *= velocityMultiplier;
+        this.velocity.y *= velocityMultiplier;
+        this.velocity.addPoint(asteroid.velocity);
     }
 
     private function processVelocity():Void
