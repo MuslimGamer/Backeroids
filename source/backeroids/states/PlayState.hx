@@ -122,6 +122,8 @@ class PlayState extends HelixState
 		this.collisionManager.collideResolve(this.enemyBullets, this.enemyMines)
 							.collideResolve(this.bullets, this.enemyMines);
 
+		this.collisionManager.collideResolve(this.explosions, this.enemies);
+
 		this.waveCounter = new HelixSprite(null, {width: 1, height: 1, colour: 0xFF000000});
 		this.waveCounter.alpha = 0;
 		this.waveCounter.text('Wave: 0/${this.waveNum}');
@@ -389,11 +391,6 @@ class PlayState extends HelixState
 		FlxG.collide(explosions, asteroids, function(explosion:Explosion, asteroid:Asteroid)
 		{
 			this.damageAndSplit(asteroid);
-		});
-
-		FlxG.collide(explosions, enemies, function(explosion:Explosion, enemy:AbstractEnemy)
-		{
-			enemy.damage();
 		});
 
 		FlxG.collide(enemies);
