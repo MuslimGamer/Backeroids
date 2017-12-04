@@ -1,13 +1,14 @@
 package backeroids.view.enemies;
 
 import backeroids.SoundManager;
+import backeroids.prototype.ICollidable;
 import flixel.FlxG;
 import flixel.math.FlxRandom;
 import flixel.util.FlxSpriteUtil;
 import helix.core.HelixSprite;
 import helix.data.Config;
 
-class AbstractEnemy extends HelixSprite
+class AbstractEnemy extends HelixSprite implements ICollidable
 {
     private static var random = new FlxRandom();
 
@@ -45,5 +46,10 @@ class AbstractEnemy extends HelixSprite
             this.kill();
             SoundManager.enemyExplode.play(true);
         }
+    }
+
+    public function collide():Void
+    {
+        this.damage();
     }
 }

@@ -1,10 +1,11 @@
 package backeroids.view;
 
+import backeroids.prototype.ICollidable;
 import helix.core.HelixSprite;
 import flixel.tweens.FlxTween;
 import flixel.util.FlxTimer;
 
-class Explosion extends HelixSprite
+class Explosion extends HelixSprite implements ICollidable
 {
     private var killTimer = new FlxTimer();
 
@@ -34,5 +35,10 @@ class Explosion extends HelixSprite
         {
             this.kill();
         }, 1);
+    }
+
+    public function collide():Void 
+    {
+        // Empty since nothing should happen to explosions when they collide with something else.
     }
 }

@@ -2,6 +2,7 @@ package backeroids.view;
  
 import backeroids.SoundManager;
 import backeroids.model.Gun;
+import backeroids.prototype.ICollidable;
 import backeroids.states.PlayState;
 import flixel.effects.FlxFlicker;
 import flixel.input.keyboard.FlxKey;
@@ -15,7 +16,7 @@ import helix.data.Config;
 using helix.core.HelixSpriteFluentApi;
 using Lambda;
 
-class PlayerShip extends HelixSprite
+class PlayerShip extends HelixSprite implements ICollidable
 {
     public var lives:Int;
     
@@ -32,6 +33,8 @@ class PlayerShip extends HelixSprite
     private var spawnedOn:GameTime;
     private var gun:Gun;
     private var shield:Shield;
+
+    private var killCallback:Void->Void;
 
     public function new(currentState:PlayState):Void
     {
@@ -121,14 +124,17 @@ class PlayerShip extends HelixSprite
             this.shootBullet(mouseAngle);
         }
 
-        if (Config.get('ship').shield.enabled && this.shield.functional)
+        if (Config.get('ship').shield.enabled)
         {
-            this.shield.move(this.x - this.width/2, this.y - this.height/2);
-            if (FlxG.keys.justPressed.SHIFT)
+            if (this.shield.functional)
             {
-                this.shield.isActivated = !this.shield.isActivated;
-                this.shield.visible = !this.shield.visible;
+                this.shield.move(this.x - this.width/2, this.y - this.height/2);
+                if (FlxG.keys.justPressed.SHIFT)
+                {
+                    this.shield.toggle();
+                }
             }
+            this.shield.recharge();
         }
     }
 
@@ -199,5 +205,20 @@ class PlayerShip extends HelixSprite
     public function setShield(shield:Shield):Void
     {
         this.shield = shield;
+    }
+
+    public function setKillCallback(callback:Void->Void)
+    {
+        this.killCallback = callback;
+    }
+
+    public function collide():Void
+    {
+        if (Config.get('ship').shield.enabled && this.shield.isActivated)
+			{
+				this.shield.damage();
+				return;
+			}
+        this.killCallback();
     }
 }

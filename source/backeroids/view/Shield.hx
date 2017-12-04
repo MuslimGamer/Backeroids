@@ -1,11 +1,12 @@
 package backeroids.view;
 
 import backeroids.SoundManager;
+import backeroids.prototype.ICollidable;
 import helix.core.HelixSprite;
 import helix.data.Config;
 import helix.GameTime;
 
-class Shield extends HelixSprite
+class Shield extends HelixSprite implements ICollidable
 {
     public var shieldHealth:Int;
     private var totalShieldHealth:Int;
@@ -27,10 +28,8 @@ class Shield extends HelixSprite
         this.deactivate();
     }
 
-    override public function update(elapsedSeconds:Float):Void
+    public function recharge():Void
     {
-        super.update(elapsedSeconds);
-
         var now = GameTime.now();
         if (now.elapsedSeconds - this.lastRecharge.elapsedSeconds > Config.get('ship').shield.secondsPerRecharge)
         {
@@ -48,10 +47,10 @@ class Shield extends HelixSprite
 
     public function damage():Void
     {
-        SoundManager.shieldHit.play(true);
         var now = GameTime.now();
         if (now.elapsedSeconds - this.lastDamage.elapsedSeconds > Config.get('ship').shield.invincibleSeconds)
         {
+            SoundManager.shieldHit.play(true);
             this.shieldHealth -= 1;
             if (this.indicatorCallback != null)
             {
@@ -71,6 +70,7 @@ class Shield extends HelixSprite
     {
         this.isActivated = false;
         this.visible = false;
+        this.solid = false;
     }
 
     public function resetShield():Void
@@ -84,8 +84,20 @@ class Shield extends HelixSprite
         this.functional = true;
     }
 
+    public function toggle():Void
+    {
+        this.isActivated = !this.isActivated;
+        this.visible = !this.visible;
+        this.solid = !this.solid;
+    }
+
     public function setIndicatorCallback(callback):Void
     {
         this.indicatorCallback = callback;
+    }
+
+    public function collide():Void
+    {
+        this.damage();
     }
 }
