@@ -37,5 +37,8 @@ class Explosion extends HelixSprite implements ICollidable
         }, 1);
     }
 
-    public function collide():Void {}
+    public function collide():Void 
+    {
+        // Empty since nothing should happen to explosions when they collide with something else.
+    }
 }

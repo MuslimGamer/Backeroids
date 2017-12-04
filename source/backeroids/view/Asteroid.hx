@@ -159,7 +159,7 @@ class Asteroid extends HelixSprite implements ICollidable
         else if (asteroid.type == AsteroidType.Medium)
         {
             this.setSmallAsteroid();
-            velocityMultiplier = Config.get('asteroids').small.velocityMultiplier;
+            velocityMultiplier = Config.get('asteroids').small.velocityMultiplier / Config.get('asteroids').medium.velocityMultiplier;
         }
         else
         {
@@ -185,7 +185,11 @@ class Asteroid extends HelixSprite implements ICollidable
         this.velocity.addPoint(asteroid.velocity);
     }
 
-    public function collide():Void {}
+    public function collide():Void 
+    {
+        // This is empty since asteroid collision proccessing happens in PlayState, not here.
+        //TODO: Add low "thud" sound
+    }
 
     private function processVelocity():Void
     {
