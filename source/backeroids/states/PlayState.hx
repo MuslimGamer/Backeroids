@@ -80,10 +80,13 @@ class PlayState extends HelixState
 		var entitiesPerWave = this.levelNum * Config.get('entitiesWaveMultiplier');
 		this.waveNum = Math.floor(totalEntitiesToSpawn / entitiesPerWave);
 
+		var delta:Int = -Math.floor(this.waveNum / 2);
+
 		for (i in 1 ... this.waveNum + 1)
 		{
-			var wave = new Wave(entitiesPerWave, i, this.areEnemiesInLevel());
+			var wave = new Wave(entitiesPerWave + delta, i, this.areEnemiesInLevel());
 			this.waveArray.push(wave);
+			delta++;
 		}
 
 		this.currentWave = this.waveArray[0];
