@@ -27,7 +27,6 @@ class PlayerShip extends HelixSprite implements ICollidable
     private static var SECONDS_TO_REVIVE:Int;
     private static var INVINCIBLE_SECONDS:Float;
 
-    private var currentState:PlayState;
     private var isTurning:Bool = false;
     private var recycleBulletCallback:Void->Bullet;
     private var spawnedOn:GameTime;
@@ -36,9 +35,8 @@ class PlayerShip extends HelixSprite implements ICollidable
 
     private var killCallback:Void->Void;
 
-    public function new(currentState:PlayState):Void
+    public function new():Void
     {
-        this.currentState = currentState;
         this.gun = new Gun();
         this.spawnedOn = GameTime.now();
 
@@ -86,11 +84,6 @@ class PlayerShip extends HelixSprite implements ICollidable
 
     private function processControls(keys:Array<FlxKey>):Void
     {
-        if (this.currentState.isShowingTutorial)
-        {
-            return;
-        }
-        
         this.resetAcceleration();
 
         if (keys.has(FlxKey.LEFT) || keys.has(FlxKey.A))
