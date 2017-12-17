@@ -115,9 +115,9 @@ class PlayState extends HelixState
 		waveCompleteText.x = FlxG.width / 2 - waveCompleteText.textField.textWidth / 2;
 		waveCompleteText.y = FlxG.height / 2 - waveCompleteText.textField.textHeight / 3;
 
-		FlxTween.tween(waveCompleteText, {alpha: 1}, 1)
-				.then(FlxTween.tween(waveCompleteText, {alpha: 1}, 1)
-					.then(FlxTween.tween(waveCompleteText, {}, 1, {
+		FlxTween.tween(waveCompleteText, {alpha: 1}, 0.5)
+				.then(FlxTween.tween(waveCompleteText, {alpha: 1}, 0.5)
+					.then(FlxTween.tween(waveCompleteText, {alpha: 0}, 0.5, {
 						onComplete: function(tween)
 						{
 							waveCompleteText.kill();

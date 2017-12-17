@@ -30,7 +30,7 @@ class PlayStateMediator
 
 	public function update(elapsed):Void
 	{
-		if (this.playState.isKeyPressed(FlxKey.ESCAPE))
+		if (this.playState.isKeyPressed(FlxKey.ESCAPE) || (this.level.lost && this.playState.isKeyPressed(FlxKey.ANY)))
 		{
 			this.playState.exitState();
 			return;
@@ -51,6 +51,11 @@ class PlayStateMediator
 
 	public function create():Void
 	{
+		this.showTutorialIfRequired();
+	}
+
+	private function createEntities():Void
+	{
 		this.entities.create();
 		this.entities.playerShip.setKillCallback(this.killPlayerShip);
 
@@ -69,8 +74,12 @@ class PlayStateMediator
 		}
 
 		this.entities.setCollisions(this.collisionManager);
+	}
 
-		this.showTutorialIfRequired();
+	private function startLevel():Void
+	{
+		this.createEntities();
+		this.startWave();
 	}
 
 	private function killPlayerShip():Void
@@ -89,6 +98,7 @@ class PlayStateMediator
 	private function loseLevel():Void
 	{
 		this.playState.showGameOverText();
+		new FlxTimer().start(1, function(timer) { this.level.lost = true; }, 1);
 	}
 
 	private function winLevel():Void
@@ -106,12 +116,12 @@ class PlayStateMediator
 		{
 			var messageWindow = this.playState.createTutorialMessage(tutorialTag);
 			messageWindow.setFinishCallback(function() {
-				this.startWave();
+				this.startLevel();
 			});
 		}
 		else
 		{
-			this.startWave();
+			this.startLevel();
 		}
 	}
 

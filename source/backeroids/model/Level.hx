@@ -19,6 +19,7 @@ class Level
     private var mediator:PlayStateMediator;
 
 	public var won = false;
+    public var lost = false;
 
     public function new(num, mediator:PlayStateMediator):Void
     {
