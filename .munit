@@ -1,0 +1,7 @@
+version=2.1.2
+src=source/test
+bin=export/test
+report=report
+hxml=test.hxml
+classPaths=source/backeroids
+resources=assets

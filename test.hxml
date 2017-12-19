@@ -1,0 +1,57 @@
+## Flash 9+
+-main TestMain
+-lib munit
+-lib hamcrest
+-cp source/backeroids
+
+-cp source/test
+-swf-version 11
+-swf export/test/as3_test.swf
+
+--next
+
+## Flash 8
+-main TestMain
+-lib munit
+-lib hamcrest
+-cp source/backeroids
+
+-cp source/test
+-swf-version 8
+-swf export/test/as2_test.swf
+
+--next
+
+## JavaScript
+-main TestMain
+-lib munit
+-lib hamcrest
+-cp source/backeroids
+
+-cp source/test
+-js export/test/js_test.js
+
+--next
+
+## Neko
+-main TestMain
+-lib munit
+-lib hamcrest
+-cp source/backeroids
+
+-cp source/test
+-neko export/test/neko_test.n
+
+--next
+
+## CPP
+-main TestMain
+-lib munit
+-lib hamcrest
+-cp source/backeroids
+
+-cp source/test
+#-D HXCPP_M64
+-cpp export/test/cpp_test
+
+
