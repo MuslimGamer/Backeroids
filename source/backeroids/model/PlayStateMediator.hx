@@ -30,7 +30,7 @@ class PlayStateMediator
 
 	public function update(elapsed):Void
 	{
-		if (this.playState.isKeyPressed(FlxKey.ESCAPE) || (this.level.lost && this.playState.isKeyPressed(FlxKey.ANY)))
+		if (this.playState.isKeyPressed(FlxKey.ESCAPE) || (this.level.state == LevelState.Lost && this.playState.isKeyPressed(FlxKey.ANY)))
 		{
 			this.playState.exitState();
 			return;
@@ -98,14 +98,14 @@ class PlayStateMediator
 	private function loseLevel():Void
 	{
 		this.playState.showGameOverText();
-		new FlxTimer().start(1, function(timer) { this.level.lost = true; }, 1);
+		new FlxTimer().start(1, function(timer) { this.level.state == LevelState.Lost; }, 1);
 	}
 
 	private function winLevel():Void
 	{
 		SaveManager.save(this.level.num);
 		SoundManager.levelComplete.play();
-		this.level.won = true;
+		this.level.state = LevelState.Won;
 		this.playState.showGameWinText();
 	}
 
@@ -161,7 +161,7 @@ class PlayStateMediator
 			this.level.nextWave();
 			this.level.startWaveTimer(function(?timer) { this.startWave(); });
 		}
-		else if (!this.level.won)
+		else if (this.level.state == LevelState.InProgress)
 		{
 			this.winLevel();
 		}

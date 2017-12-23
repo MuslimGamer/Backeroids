@@ -93,7 +93,10 @@ class EntityGroupManager
 
     public function makeShield():Void
     {
-        this.playerShield = new Shield();
+		if (this.playerShield == null) 
+		{
+        	this.playerShield = new Shield();
+		}
     }
 
     private function addAsteroid():Asteroid

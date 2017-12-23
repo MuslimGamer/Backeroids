@@ -5,6 +5,12 @@ import flixel.util.FlxTimer;
 import flixel.math.FlxRandom;
 import helix.data.Config;
 
+enum LevelState {
+	Won;
+	Lost;
+	InProgress;
+}
+
 class Level
 {
     public var num:Int = 0;
@@ -18,8 +24,7 @@ class Level
 
     private var mediator:PlayStateMediator;
 
-	public var won = false;
-    public var lost = false;
+	public var state = InProgress;
 
     public function new(num, mediator:PlayStateMediator):Void
     {
