@@ -98,7 +98,7 @@ class PlayStateMediator
 	private function loseLevel():Void
 	{
 		this.playState.showGameOverText();
-		new FlxTimer().start(1, function(timer) { this.level.state == LevelState.Lost; }, 1);
+		new FlxTimer().start(1, function(timer) { this.level.state = LevelState.Lost; }, 1);
 	}
 
 	private function winLevel():Void
