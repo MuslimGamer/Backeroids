@@ -51,6 +51,11 @@ class PlayState extends HelixState
 	override public function update(elapsed:Float):Void
 	{
 		super.update(elapsed);
+		if (this.isKeyPressed(FlxKey.ESCAPE) || (this.mediator.levelLost() && this.isKeyPressed(FlxKey.ANY)))
+		{
+			this.exitState();
+			return;
+		}
 		if (this.wasJustPressed(FlxKey.P))
 		{
 			this.pause();

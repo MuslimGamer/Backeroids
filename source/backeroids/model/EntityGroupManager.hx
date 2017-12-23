@@ -26,6 +26,8 @@ class EntityGroupManager
     private var random = new FlxRandom();
 	public var explosions = new FlxTypedGroup<Explosion>();
 
+	private var collisionManager = new Collision();
+
 	public var knockbackableEnemies = new FlxTypedGroup<AbstractEnemy>();
 	public var headstrongEnemies = new FlxTypedGroup<AbstractEnemy>();
 	public var enemies = new FlxTypedGroup<FlxTypedGroup<AbstractEnemy>>();
@@ -58,6 +60,33 @@ class EntityGroupManager
 		this.enemies.add(this.headstrongEnemies);
     }
 
+	public function update(elapsed):Void
+	{
+		this.collisionManager.update(elapsed);
+	}
+
+	public function createEntities():Void
+	{
+		this.create();
+		this.playerShip.setKillCallback(this.killPlayerShip);
+
+		this.mediator.counters.makeWave(this.mediator.getWaveNum());
+		this.mediator.counters.makeLives(this.playerShip.lives);
+
+		if (Config.get('ship').shield.enabled)
+		{
+			this.makeShield();
+			this.mediator.counters.makeShield(this.playerShield.shieldHealth);
+			this.playerShield.setIndicatorCallback(function():Void
+			{
+				this.mediator.counters.updateShield(this.playerShield.shieldHealth);
+			});
+			this.playerShip.setShield(this.playerShield);
+		}
+
+		this.setCollisions();
+	}
+
     public function spawnWaveEntities(numAsteroid, numEnemy, levelNum):Void
     {
         var asteroidSeconds = numAsteroid * Config.get("secondsPerAsteroidToSpawnOver");
@@ -88,7 +117,15 @@ class EntityGroupManager
 
     public function killPlayerShip():Void
     {
-        this.playerShip.die(this.resetShip);
+        if (!this.playerShip.isInvincible())
+		{
+			this.playerShip.die(this.resetShip);
+			this.mediator.counters.updateLives(this.playerShip.lives);
+			if (!Config.get('features').infiniteLives && this.playerShip.lives <= 0)
+			{
+				this.mediator.loseLevel();
+			}
+		}
     }
 
     public function makeShield():Void
@@ -211,17 +248,16 @@ class EntityGroupManager
 		asteroid.kill();
 	}
 
-    public function setCollisions(collisionManager:Collision):Void
+    private function setCollisions():Void
 	{
-
-		collisionManager.collideResolve(this.playerShip, this.enemies)
+		this.collisionManager.collideResolve(this.playerShip, this.enemies)
                         .collideResolve(this.playerShip, this.enemyMines)
                         .collideResolve(this.playerShip, this.enemyBullets)
                         .collideResolve(this.playerShip, this.explosions);
 
 		if (Config.get('ship').shield.enabled)
 		{
-            collisionManager.collideResolve(this.playerShield, this.enemies)
+            this.collisionManager.collideResolve(this.playerShield, this.enemies)
                             .collideResolve(this.playerShield, this.enemyMines)
                             .collideResolve(this.playerShield, this.enemyBullets)
                             .collideResolve(this.playerShield, this.explosions);
@@ -233,7 +269,7 @@ class EntityGroupManager
 			this.damageAndSplit(asteroid);
 		}
 
-		collisionManager.collideResolve(this.asteroids, this.bullets, asteroidCollisionCallback)
+		this.collisionManager.collideResolve(this.asteroids, this.bullets, asteroidCollisionCallback)
                         .collideResolve(this.asteroids, this.enemies, asteroidCollisionCallback)
                         .collideResolve(this.asteroids, this.enemyBullets, asteroidCollisionCallback)
                         .collideResolve(this.asteroids, this.enemyMines, asteroidCollisionCallback)
@@ -242,13 +278,13 @@ class EntityGroupManager
                         .collideResolve(this.asteroids, this.playerShield, asteroidCollisionCallback)
                         .collideResolve(this.asteroids);
 
-		collisionManager.collideResolve(this.bullets, this.knockbackableEnemies)
+		this.collisionManager.collideResolve(this.bullets, this.knockbackableEnemies)
                         .collide(this.bullets, this.headstrongEnemies);
 
-		collisionManager.collideResolve(this.enemyBullets, this.enemyMines)
+		this.collisionManager.collideResolve(this.enemyBullets, this.enemyMines)
                         .collideResolve(this.bullets, this.enemyMines);
 
-		collisionManager.collideResolve(this.enemies, this.explosions)
+		this.collisionManager.collideResolve(this.enemies, this.explosions)
                         .collideResolve(this.enemies);
 	}
 }

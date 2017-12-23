@@ -2,25 +2,21 @@ package backeroids.model;
 
 import backeroids.model.Level;
 import backeroids.model.EntityGroupManager;
-import backeroids.model.SaveManager;
 import backeroids.model.TutorialDisplayer;
+import backeroids.view.controls.MessageWindow;
 import backeroids.states.PlayState;
-import backeroids.SoundManager;
-import backeroids.prototype.Collision;
-import flixel.util.FlxTimer;
 import flixel.math.FlxRandom;
 import flixel.input.keyboard.FlxKey;
-import helix.data.Config;
 
 class PlayStateMediator
 {
 	private var random = new FlxRandom();
-	private var collisionManager = new Collision();
 
 	private var level:Level;
 	private var playState:PlayState;
 	private var entities:EntityGroupManager;
 	private var tutorial:TutorialDisplayer;
+	public var counters:CounterMediator;
 
 	public function new(playState:PlayState, levelNum)
 	{
@@ -28,22 +24,13 @@ class PlayStateMediator
 		this.entities = new EntityGroupManager(this);
 		this.level = new Level(levelNum, this);
 		this.tutorial = new TutorialDisplayer(this);
+		this.counters = new CounterMediator(this.playState);
 	}
 
 	public function update(elapsed):Void
 	{
-		if (this.playState.isKeyPressed(FlxKey.ESCAPE) || (this.level.state == LevelState.Lost && this.playState.isKeyPressed(FlxKey.ANY)))
-		{
-			this.playState.exitState();
-			return;
-		}
-		
-		if (this.level.isCurrentWaveComplete())
-		{
-			this.spawnMoreItemsIfNeeded();
-		}
-
-		this.collisionManager.update(elapsed);
+		this.level.update(elapsed);
+		this.entities.update(elapsed);
 	}
 
 	public function create():Void
@@ -51,59 +38,16 @@ class PlayStateMediator
 		this.tutorial.showIfRequired();
 	}
 
-	private function createEntities():Void
-	{
-		this.entities.create();
-		this.entities.playerShip.setKillCallback(this.killPlayerShip);
-
-		this.playState.makeWaveCounter(this.level.waveNum);
-		this.playState.makeLivesCounter(this.entities.playerShip.lives);
-
-		if (Config.get('ship').shield.enabled)
-		{
-			this.entities.makeShield();
-			this.playState.makeShieldCounter(this.entities.playerShield.shieldHealth);
-			this.entities.playerShield.setIndicatorCallback(function():Void
-			{
-				this.playState.updateShieldCounter(this.entities.playerShield.shieldHealth);
-			});
-			this.entities.playerShip.setShield(this.entities.playerShield);
-		}
-
-		this.entities.setCollisions(this.collisionManager);
-	}
-
 	public function startLevel():Void
 	{
-		this.createEntities();
-		this.startWave();
+		this.entities.createEntities();
+		this.level.startWave();
 	}
 
-	private function killPlayerShip():Void
-	{
-		if (!this.entities.playerShip.isInvincible())
-		{
-			this.entities.killPlayerShip();
-			this.playState.updateLivesCounter(this.entities.playerShip.lives);
-			if (!Config.get('features').infiniteLives && this.entities.playerShip.lives <= 0)
-			{
-				this.loseLevel();
-			}
-		}
-	}
-
-	private function loseLevel():Void
+	public function loseLevel():Void
 	{
 		this.playState.showGameOverText();
-		new FlxTimer().start(1, function(timer) { this.level.state = LevelState.Lost; }, 1);
-	}
-
-	private function winLevel():Void
-	{
-		SaveManager.save(this.level.num);
-		SoundManager.levelComplete.play();
-		this.level.state = LevelState.Won;
-		this.playState.showGameWinText();
+		this.level.lose();
 	}
 
 	public function addAsteroid():Void
@@ -116,29 +60,6 @@ class PlayStateMediator
 		this.level.currentWave.spawnedEnemies++;
 	}
 
-	public function startWave():Void
-	{
-		if (!Config.get("asteroids").enabled && !Config.get("enemies").enabled)
-		{
-			return;
-		}
-		this.playState.updateWaveCounter(this.level.currentWave.waveNumber, this.level.waveNum);
-		this.entities.spawnWaveEntities(this.level.currentWave.numAsteroid, this.level.currentWave.numEnemy, this.level.num);
-	}
-
-	private function spawnMoreItemsIfNeeded():Void
-	{
-		if (this.level.hasNextWave())
-		{
-			this.level.nextWave();
-			this.level.startWaveTimer(function(?timer) { this.startWave(); });
-		}
-		else if (this.level.state == LevelState.InProgress)
-		{
-			this.winLevel();
-		}
-	}
-
 	public function areEnemiesInLevel(num):Bool
 	{
 		return this.entities.areEnemiesInLevel(num);
@@ -147,6 +68,11 @@ class PlayStateMediator
 	public function areEntitiesDead():Bool
 	{
 		return this.entities.areEnemiesDead();
+	}
+
+	public function levelLost():Bool
+	{
+		return this.level.state == LevelState.Lost;
 	}
 
 	public function showWaveCompleteText():Void
@@ -159,8 +85,63 @@ class PlayStateMediator
 		return this.level.num;
 	}
 
-	public function createTutorialMessage(tutorialTag)
+	public function getWaveNum():Int
+	{
+		return this.level.waveNum;
+	}
+
+	public function createTutorialMessage(tutorialTag):MessageWindow
 	{
 		return this.playState.createTutorialMessage(tutorialTag);
+	}
+
+	public function showGameWinText():Void
+	{
+		this.playState.showGameWinText();
+	}
+
+	public function spawnWaveEntities(numAsteroid, numEnemy, levelNum):Void
+	{
+		this.entities.spawnWaveEntities(numAsteroid, numEnemy, levelNum);
+	}
+}
+
+class CounterMediator
+{
+	private var playState:PlayState;
+
+	public function new(playState)
+	{
+		this.playState = playState;
+	}
+
+	public function updateWave(currentWaveNumber, totalWaveNum):Void
+	{
+		this.playState.updateWaveCounter(currentWaveNumber, totalWaveNum);
+	}
+
+	public function updateLives(lives):Void
+	{
+		this.playState.updateLivesCounter(lives);
+	}
+
+	public function updateShield(shieldHealth):Void
+	{
+		this.playState.updateShieldCounter(shieldHealth);
+	}
+
+	public function makeWave(waveNum):Void
+	{
+		this.playState.makeWaveCounter(waveNum);
+	}
+
+	public function makeLives(lives):Void
+	{
+		this.playState.makeLivesCounter(lives);
+	}
+
+	public function makeShield(shieldHealth):Void
+	{
+		this.playState.makeShieldCounter(shieldHealth);
 	}
 }

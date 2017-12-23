@@ -14,13 +14,13 @@ enum LevelState {
 class Level
 {
     public var num:Int = 0;
-	public var waveTimer = new FlxTimer();
-    public var random = new FlxRandom();
+	private var waveTimer = new FlxTimer();
+    private var random = new FlxRandom();
 
 	public var waveNum = 0;
-	public var waveArray = new Array<Wave>();
 	public var currentWave:Wave;
-	public var currentWaveIndex:Int = 0;
+	private var waveArray = new Array<Wave>();
+	private var currentWaveIndex:Int = 0;
 
     private var mediator:PlayStateMediator;
 
@@ -46,6 +46,50 @@ class Level
 
 		this.currentWave = this.waveArray[0];
     }
+
+	public function update(elapsed):Void
+	{
+		if (this.isCurrentWaveComplete())
+		{
+			this.spawnMoreItemsIfNeeded();
+		}
+	}
+
+	public function startWave():Void
+	{
+		if (!Config.get("asteroids").enabled && !Config.get("enemies").enabled)
+		{
+			return;
+		}
+		this.mediator.counters.updateWave(this.currentWave.waveNumber, this.waveNum);
+		this.mediator.spawnWaveEntities(this.currentWave.numAsteroid, this.currentWave.numEnemy, this.num);
+	}
+
+	public function spawnMoreItemsIfNeeded():Void
+	{
+		if (this.hasNextWave())
+		{
+			this.nextWave();
+			this.startWaveTimer(function(?timer) { this.startWave(); });
+		}
+		else if (this.state == LevelState.InProgress)
+		{
+			this.win();
+		}
+	}
+
+	private function win():Void
+	{
+		SaveManager.save(this.num);
+		SoundManager.levelComplete.play();
+		this.state = LevelState.Won;
+		this.mediator.showGameWinText();
+	}
+
+	public function lose():Void
+	{
+		new FlxTimer().start(1, function(timer) { this.state = LevelState.Lost; }, 1);
+	}
 
 	public function hasNextWave():Bool
 	{
