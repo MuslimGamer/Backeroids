@@ -2,7 +2,6 @@ package backeroids.model;
 
 import backeroids.model.PlayStateMediator;
 import flixel.util.FlxTimer;
-import flixel.math.FlxRandom;
 import helix.data.Config;
 
 enum LevelState {
@@ -15,7 +14,6 @@ class Level
 {
     public var num:Int = 0;
 	private var waveTimer = new FlxTimer();
-    private var random = new FlxRandom();
 
 	public var waveNum = 0;
 	public var currentWave:Wave;
@@ -42,6 +40,10 @@ class Level
 			var wave = new Wave(entitiesPerWave + delta, i, this.mediator.areEnemiesInLevel(this.num));
 			this.waveArray.push(wave);
 			delta++;
+			if (this.waveNum % 2 == 0 && i == this.waveNum)
+			{
+				delta++;
+			}
 		}
 
 		this.currentWave = this.waveArray[0];

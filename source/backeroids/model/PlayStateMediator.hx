@@ -5,13 +5,9 @@ import backeroids.model.EntityGroupManager;
 import backeroids.model.TutorialDisplayer;
 import backeroids.view.controls.MessageWindow;
 import backeroids.states.PlayState;
-import flixel.math.FlxRandom;
-import flixel.input.keyboard.FlxKey;
 
 class PlayStateMediator
 {
-	private var random = new FlxRandom();
-
 	private var level:Level;
 	private var playState:PlayState;
 	private var entities:EntityGroupManager;
