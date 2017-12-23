@@ -3,10 +3,10 @@ package backeroids.model;
 import backeroids.model.Level;
 import backeroids.model.EntityGroupManager;
 import backeroids.model.SaveManager;
+import backeroids.model.TutorialDisplayer;
 import backeroids.states.PlayState;
 import backeroids.SoundManager;
 import backeroids.prototype.Collision;
-import backeroids.tutorial.TutorialManager;
 import flixel.util.FlxTimer;
 import flixel.math.FlxRandom;
 import flixel.input.keyboard.FlxKey;
@@ -20,12 +20,14 @@ class PlayStateMediator
 	private var level:Level;
 	private var playState:PlayState;
 	private var entities:EntityGroupManager;
+	private var tutorial:TutorialDisplayer;
 
 	public function new(playState:PlayState, levelNum)
 	{
 		this.playState = playState;
 		this.entities = new EntityGroupManager(this);
 		this.level = new Level(levelNum, this);
+		this.tutorial = new TutorialDisplayer(this);
 	}
 
 	public function update(elapsed):Void
@@ -34,11 +36,6 @@ class PlayStateMediator
 		{
 			this.playState.exitState();
 			return;
-		}
-
-		if (this.playState.wasJustPressed(FlxKey.P))
-		{
-			this.pause();
 		}
 		
 		if (this.level.isCurrentWaveComplete())
@@ -51,7 +48,7 @@ class PlayStateMediator
 
 	public function create():Void
 	{
-		this.showTutorialIfRequired();
+		this.tutorial.showIfRequired();
 	}
 
 	private function createEntities():Void
@@ -76,7 +73,7 @@ class PlayStateMediator
 		this.entities.setCollisions(this.collisionManager);
 	}
 
-	private function startLevel():Void
+	public function startLevel():Void
 	{
 		this.createEntities();
 		this.startWave();
@@ -107,31 +104,6 @@ class PlayStateMediator
 		SoundManager.levelComplete.play();
 		this.level.state = LevelState.Won;
 		this.playState.showGameWinText();
-	}
-
-	private function showTutorialIfRequired():Void
-	{
-		var tutorialTag = TutorialManager.isTutorialRequired(this.level.num);
-		if (tutorialTag != null)
-		{
-			var messageWindow = this.playState.createTutorialMessage(tutorialTag);
-			messageWindow.setFinishCallback(function() {
-				this.startLevel();
-			});
-		}
-		else
-		{
-			this.startLevel();
-		}
-	}
-
-	public function pause():Void
-	{
-		FlxTimer.globalManager.forEach(function(timer:FlxTimer)
-		{
-			timer.active = false;
-		});
-		this.playState.pause();
 	}
 
 	public function addAsteroid():Void
@@ -174,11 +146,21 @@ class PlayStateMediator
 
 	public function areEntitiesDead():Bool
 	{
-		return (this.entities.asteroids.countLiving() <= 0) && (this.entities.headstrongEnemies.countLiving() <= 0) && (this.entities.knockbackableEnemies.countLiving() <= 0);
+		return this.entities.areEnemiesDead();
 	}
 
 	public function showWaveCompleteText():Void
 	{
 		this.playState.showWaveCompleteText(this.level.currentWave.waveNumber);
+	}
+
+	public function getLevelNum():Int
+	{
+		return this.level.num;
+	}
+
+	public function createTutorialMessage(tutorialTag)
+	{
+		return this.playState.createTutorialMessage(tutorialTag);
 	}
 }

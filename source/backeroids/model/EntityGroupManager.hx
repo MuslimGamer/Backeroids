@@ -181,6 +181,11 @@ class EntityGroupManager
 		return this.getEnemyCallbacks(levelNum).length != 0;
 	}
 
+	public function areEnemiesDead():Bool
+	{
+		return (this.asteroids.countLiving() <= 0) && (this.headstrongEnemies.countLiving() <= 0) && (this.knockbackableEnemies.countLiving() <= 0);
+	}
+
     private function damageAndSplit(asteroid:Asteroid):Void
 	{
 		asteroid.health -= 1;

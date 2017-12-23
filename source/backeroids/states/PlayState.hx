@@ -8,6 +8,8 @@ import flixel.FlxG;
 import flixel.math.FlxRandom;
 import flixel.text.FlxText;
 import flixel.tweens.FlxTween;
+import flixel.util.FlxTimer;
+import flixel.input.keyboard.FlxKey;
 import helix.core.HelixState;
 import helix.data.Config;
 
@@ -49,6 +51,10 @@ class PlayState extends HelixState
 	override public function update(elapsed:Float):Void
 	{
 		super.update(elapsed);
+		if (this.wasJustPressed(FlxKey.P))
+		{
+			this.pause();
+		}
 		this.mediator.update(elapsed);
 	}
 
@@ -142,6 +148,10 @@ class PlayState extends HelixState
 
 	public function pause():Void
 	{
+		FlxTimer.globalManager.forEach(function(timer:FlxTimer)
+		{
+			timer.active = false;
+		});
 		this.openSubState(this.pauseSubState);
 	}
 
